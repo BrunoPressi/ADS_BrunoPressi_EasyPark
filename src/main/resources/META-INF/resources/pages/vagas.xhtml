@@ -7,7 +7,7 @@
     <ui:define name="content">
 
         <!-- Formulário para cadastrar uma nova vaga -->
-        <h:form id="formVaga">
+        <h:form id="formVaga" style="margin-left: .9rem">
             <div class="inputs">
                 <div class="inputs">
                     <p:outputLabel for="nomeVaga" value="Nome da Vaga" styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
@@ -22,7 +22,7 @@
                 </div>
             </div>
 
-            <div style="margin-top: .5rem">
+            <div style="margin-top: .7rem">
                 <p:commandButton action="#{vagaBean.processarVaga}" value="Cadastrar Vaga" process="@form" update="@form :dataTableForm"/>
             </div>
 
@@ -31,18 +31,37 @@
         <!-- Formulário contendo uma data table para listagem das vagas -->
         <h:form id="dataTableForm" style="margin-top: .7rem">
 
-            <p:dataTable id="listaVagas" var="vaga" value="#{vagaBean.vagasList}" rowKey="#{vaga.id}" paginator="true" rows="5" paginatorPosition="bottom">
+            <p:dataTable id="listaVagas"
+                         filteredValue="#{vagaBean.vagasListFiltrado}"
+                         widgetVar="listaVagasFiltro"
+                         var="vaga"
+                         value="#{vagaBean.vagasList}"
+                         rowKey="#{vaga.id}"
+                         paginator="true"
+                         rows="5"
+                         paginatorPosition="bottom"
+                         globalFilterOnly="true">
+
+                <f:facet name="header">
+
+                    <span class="ui-input-icon-left">
+                        <i class="pi pi-search" />
+                        <p:inputText id="globalFilter"
+                                     onkeyup="PF('listaVagasFiltro').filter()"
+                                     placeholder="Pesquisar pelo nome..." />
+                    </span>
+                </f:facet>
 
                 <p:column headerText="Id" sortBy="#{vaga.id}">
                     <h:outputText value="#{vaga.id}"/>
                 </p:column>
 
-                <p:column headerText="Nome" sortBy="#{vaga.nome}">
+                <p:column headerText="Nome" sortBy="#{vaga.nome}" filterBy="#{vaga.nome}">
                     <h:outputText value="#{vaga.nome}" />
                 </p:column>
 
                 <p:column headerText="Status" sortBy="#{vaga.status}">
-                    <h:outputText value="#{vaga.status}" />
+                    <h:outputText value="#{(vaga.status) == 'em_manutencao' ? 'Em Manutenção' : (vaga.status == 'ocupada' ? 'Ocupada' : 'Disponível') }" />
                 </p:column>
 
                 <p:column headerText="Editar">
@@ -68,6 +87,7 @@
                     <div>
                         <p:outputLabel for="nomeVaga" value="Nome da Vaga" styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
                         <p:inputText id="nomeVaga" value="#{vagaBean.vagaSelecionada.nome}" placeholder="Ex: V01"/>
+
                         <div>
                             <h:message id="teste" for="nomeVaga" style="color:red;" />
                         </div>

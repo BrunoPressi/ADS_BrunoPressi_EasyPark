@@ -4,6 +4,7 @@ import ads.upf.model.DTOs.VagaCreateDTO;
 import ads.upf.model.DTOs.VagaEditDTO;
 import ads.upf.model.DTOs.VagaResponseDTO;
 import ads.upf.model.entities.Vaga;
+import ads.upf.model.enums.VagaStatus;
 import ads.upf.model.mappers.VagaMapper;
 import ads.upf.repositories.VagaRepository;
 import io.quarkus.logging.Log;
@@ -35,15 +36,14 @@ public class VagaService {
         }
 
         Vaga vaga = vagaRepository.findById(id);
-        if (vaga != null) {
-            vaga.setNome(vagaDTO.getNome());
-            vaga.setStatus(vagaDTO.getStatus());
-            vagaRepository.persist(vaga);
-        }
-        else {
-            throw new RuntimeException("Vaga não encontrada");
+
+        if (vaga.getStatus().equals(VagaStatus.ocupada)) {
+            throw new IllegalArgumentException("Vagas ocupadas não podem ser alteradas.");
         }
 
+        vaga.setNome(vagaDTO.getNome());
+        vaga.setStatus(vagaDTO.getStatus());
+        vagaRepository.persist(vaga);
     }
 
     @Transactional

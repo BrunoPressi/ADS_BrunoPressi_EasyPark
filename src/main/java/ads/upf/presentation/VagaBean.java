@@ -32,6 +32,7 @@ public class VagaBean implements Serializable {
     private VagaEditDTO vagaSelecionada;
     private VagaCreateDTO vagaNova;
     private boolean emManutencao;
+    private List<VagaResponseDTO> vagasListFiltrado = new ArrayList<>();
 
     @PostConstruct
     void postConstruct() {

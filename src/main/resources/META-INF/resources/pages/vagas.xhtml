@@ -4,19 +4,9 @@
                 xmlns:f="jakarta.faces.core"
                 xmlns:ui="jakarta.faces.facelets"
                 xmlns:p="http://primefaces.org/ui">
-
     <ui:define name="content">
 
-        <style>
-            button.ui-button {
-                margin-top: .5rem;
-            }
-            .inputs {
-                margin-bottom: .5rem;
-            }
-        </style>
-
-
+        <!-- Formulário para cadastrar uma nova vaga -->
         <h:form id="formVaga">
             <div class="inputs">
                 <div class="inputs">
@@ -24,7 +14,7 @@
                 </div>
                 <div>
                     <div class="col-12 md:col-10">
-                        <p:inputText id="nomeVaga" value="#{vagaBean.vagaCreateDTO.nome}" placeholder="Ex: V01"/>
+                        <p:inputText id="nomeVaga" value="#{vagaBean.vagaNova.nome}" placeholder="Ex: V01"/>
                         <div>
                             <h:message for="nomeVaga" style="color:red;" />
                         </div>
@@ -32,30 +22,73 @@
                 </div>
             </div>
 
-            <div>
-                <p:commandButton type="button" action="#{vagaBean.processarVaga}" value="Cadastrar Vaga" >
-                    <f:ajax execute="@form" render="@form listaVagas"/>
-                </p:commandButton>
+            <div style="margin-top: .5rem">
+                <p:commandButton action="#{vagaBean.processarVaga}" value="Cadastrar Vaga" process="@form" update="@form :dataTableForm"/>
             </div>
 
         </h:form>
 
-        <p:dataTable id="listaVagas" var="vaga" value="#{vagaBean.vagasList}" rowKey="#{vaga.id}"
-                     paginator="true" rows="5" paginatorPosition="bottom">
-            <p:column headerText="Id">
-                <h:outputText value="#{vaga.id}" />
-            </p:column>
+        <!-- Formulário contendo uma data table para listagem das vagas -->
+        <h:form id="dataTableForm" style="margin-top: .7rem">
 
-            <p:column headerText="Nome" sortBy="#{vaga.nome}">
-                <h:outputText value="#{vaga.nome}" />
-            </p:column>
+            <p:dataTable id="listaVagas" var="vaga" value="#{vagaBean.vagasList}" rowKey="#{vaga.id}" paginator="true" rows="5" paginatorPosition="bottom">
 
-            <p:column headerText="Status" sortBy="#{vaga.status}">
-                <h:outputText value="#{vaga.status}" />
-            </p:column>
+                <p:column headerText="Id" sortBy="#{vaga.id}">
+                    <h:outputText value="#{vaga.id}"/>
+                </p:column>
 
-        </p:dataTable>
+                <p:column headerText="Nome" sortBy="#{vaga.nome}">
+                    <h:outputText value="#{vaga.nome}" />
+                </p:column>
 
+                <p:column headerText="Status" sortBy="#{vaga.status}">
+                    <h:outputText value="#{vaga.status}" />
+                </p:column>
+
+                <p:column headerText="Editar">
+                        <p:commandButton onclick="PF('editarVagaDialog').show()"
+                                         action="#{vagaBean.selecionarVaga(vaga)}"
+                                         update=":dialogs:editarVagaPanel"
+                                         value="Clique aqui para editar"
+                                     icon="pi pi-pencil" styleClass="rounded-button ui-button-help">
+                    </p:commandButton>
+                </p:column>
+
+            </p:dataTable>
+
+        </h:form>
+
+        <!-- Formulário contendo um dialog para edição de determinada vaga -->
+        <h:form id="dialogs">
+
+            <p:dialog header="Editar Vaga" widgetVar="editarVagaDialog" minHeight="40"
+                      width="350" showEffect="fade" focus="btnYes" closeOnEscape="true">
+                <p:outputPanel id="editarVagaPanel">
+
+                    <div>
+                        <p:outputLabel for="nomeVaga" value="Nome da Vaga" styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
+                        <p:inputText id="nomeVaga" value="#{vagaBean.vagaSelecionada.nome}" placeholder="Ex: V01"/>
+                        <div>
+                            <h:message id="teste" for="nomeVaga" style="color:red;" />
+                        </div>
+
+                        <p>Em manutenção?</p>
+                        <p:selectBooleanCheckbox id="booleanCheckBox" value="#{vagaBean.emManutencao}" itemLabel="#{vagaBean.emManutencao == false ? 'Não' : 'Sim'}">
+                            <p:ajax update=":dialogs:booleanCheckBox"/>
+                        </p:selectBooleanCheckbox>
+                    </div>
+
+                </p:outputPanel>
+
+                <f:facet name="footer">
+                    <p:commandButton type="button" value="Fechar" onclick="PF('editarVagaDialog').hide()" styleClass="ui-button-flat mr-2" style="width: 6rem" />
+                    <p:commandButton id="btnYes" value="Salvar"
+                                     action="#{vagaBean.editarVaga}"
+                                     process="@form"
+                                     update=":dialogs:editarVagaPanel :dataTableForm"
+                                     style="width: 5rem" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
     </ui:define>
-
 </ui:composition>

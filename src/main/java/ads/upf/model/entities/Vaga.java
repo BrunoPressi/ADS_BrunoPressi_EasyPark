@@ -28,14 +28,14 @@ public class Vaga {
 
     private LocalDateTime atualizadoEm;
 
-    @PostPersist
-    void postPersist() {
+    @PrePersist
+    void prePersist() {
         this.status = VagaStatus.disponivel;
         this.criadoEm = LocalDateTime.now();
     }
 
-    @PostUpdate
-    void postUpdate() {
+    @PreUpdate
+    void preUpdate() {
         this.atualizadoEm = LocalDateTime.now();
     }
 

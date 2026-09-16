@@ -1,16 +1,15 @@
-package ads.upf.model.DTOs.vagaDTOs;
-
+package ads.upf.model.DTOs;
 
 import ads.upf.model.enums.VagaStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Getter
-@AllArgsConstructor
+@Getter @Setter
+@AllArgsConstructor @NoArgsConstructor
 public class VagaResponseDTO {
-
-    private long id;
+    private Long id;
     private String nome;
     private VagaStatus status;
-
 }

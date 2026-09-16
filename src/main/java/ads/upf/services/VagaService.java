@@ -1,13 +1,16 @@
 package ads.upf.services;
 
-import ads.upf.model.DTOs.vagaDTOs.VagaCreateDTO;
-import ads.upf.model.DTOs.vagaDTOs.VagaResponseDTO;
+import ads.upf.model.DTOs.VagaCreateDTO;
+import ads.upf.model.DTOs.VagaEditDTO;
+import ads.upf.model.DTOs.VagaResponseDTO;
 import ads.upf.model.entities.Vaga;
 import ads.upf.model.mappers.VagaMapper;
 import ads.upf.repositories.VagaRepository;
+import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -18,9 +21,29 @@ public class VagaService {
     VagaRepository vagaRepository;
 
     @Transactional
-    public void criarNovaVaga(VagaCreateDTO vagaCreateDTO) {
-        Vaga vaga = VagaMapper.INSTANCE.toVaga(vagaCreateDTO);
+    public void criarNovaVaga(VagaCreateDTO vagaDTO) {
+        Vaga vaga = VagaMapper.INSTANCE.toVaga(vagaDTO);
         vagaRepository.persist(vaga);
+    }
+
+    @Transactional
+    public void editarVaga(Long id, VagaEditDTO vagaDTO) {
+        Vaga vagaExistente = vagaRepository.find("id != ?1 and nome = ?2", id, vagaDTO.getNome()).firstResult();
+
+        if (vagaExistente != null) {
+            throw new IllegalArgumentException("Já existe uma vaga com esse nome");
+        }
+
+        Vaga vaga = vagaRepository.findById(id);
+        if (vaga != null) {
+            vaga.setNome(vagaDTO.getNome());
+            vaga.setStatus(vagaDTO.getStatus());
+            vagaRepository.persist(vaga);
+        }
+        else {
+            throw new RuntimeException("Vaga não encontrada");
+        }
+
     }
 
     @Transactional

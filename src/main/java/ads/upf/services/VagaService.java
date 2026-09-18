@@ -1,17 +1,15 @@
 package ads.upf.services;
 
-import ads.upf.model.DTOs.VagaCreateDTO;
-import ads.upf.model.DTOs.VagaEditDTO;
-import ads.upf.model.DTOs.VagaResponseDTO;
+import ads.upf.model.DTOs.vaga.VagaCreateDTO;
+import ads.upf.model.DTOs.vaga.VagaEditDTO;
+import ads.upf.model.DTOs.vaga.VagaResponseDTO;
 import ads.upf.model.entities.Vaga;
 import ads.upf.model.enums.VagaStatus;
 import ads.upf.model.mappers.VagaMapper;
 import ads.upf.repositories.VagaRepository;
-import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 
 import java.util.List;
 

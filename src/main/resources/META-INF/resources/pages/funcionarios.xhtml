@@ -1,0 +1,128 @@
+<ui:composition template="/templates/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="content">
+
+        <style>
+            .outputs {
+                margin-bottom: .3rem;
+                margin-top: .5rem;
+            }
+        </style>
+
+        <p:commandButton value="Cadastrar Funcionário"
+                         style="margin-bottom: .8rem"
+                         onclick="PF('dialogFuncionario').show()"/>
+
+        <h:form id="formListaFuncionarios">
+            <p:dataTable id="dataTableFuncionarios"
+                         filteredValue="#{funcionarioBean.funcionariosListFiltrado}"
+                         widgetVar="listaFuncionariosFiltro"
+                         var="funcionario"
+                         paginator="true"
+                         rows="10"
+                         rowKey="#{funcionario.id}"
+                         paginatorPosition="bottom"
+                         globalFilterOnly="true"
+                         value="#{funcionarioBean.funcionarioResponseDTOList}">
+
+                <f:facet name="header">
+
+                    <span class="ui-input-icon-left">
+                        <i class="pi pi-search" />
+                        <p:inputText id="globalFilter"
+                                     onkeyup="PF('listaFuncionariosFiltro').filter()"
+                                     placeholder="Pesquisar pelo nome..." />
+                    </span>
+                </f:facet>
+
+                <p:column headerText="ID" sortBy="#{funcionario.id}">
+                    <h:outputText value="#{funcionario.id}" />
+                </p:column>
+                <p:column headerText="Nome Completo" sortBy="#{funcionario.nomeCompleto}" filterBy="#{funcionario.nomeCompleto}">
+                    <h:outputText value="#{funcionario.nomeCompleto}" />
+                </p:column>
+                <p:column headerText="Email">
+                    <h:outputText value="#{funcionario.email}" />
+                </p:column>
+                <p:column headerText="Telefone">
+                    <h:outputText value="#{funcionario.telefone}" />
+                </p:column>
+                <p:column headerText="Data de Nascimento">
+                    <h:outputText value="#{funcionario.dataNascimento}" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <!-- Formulário de cadastro de novo funcionário -->
+        <h:form id="formDialog">
+            <p:dialog header="Preencha com os dados do funcionário"
+                      widgetVar="dialogFuncionario"
+                      minHeight="40" width="470"
+                      modal="true"
+                      showEffect="fade"
+                      closeOnEscape="true">
+                <p:outputPanel id="formFuncionario">
+                    <div style="margin-left: .5rem">
+                        <div>
+                            <div class="outputs">
+                                <p:outputLabel for="nomeCompleto" value="Nome Completo"/>
+                            </div>
+                            <p:inputText style="width: 250px"
+                                         id="nomeCompleto"
+                                         value="#{funcionarioBean.funcionario.nomeCompleto}"
+                                         placeholder="Ex: John Doe"/><br/>
+                            <h:message for="nomeCompleto" style="color:red;" />
+                        </div>
+                        <div>
+                            <div class="outputs">
+                                <p:outputLabel for="email" value="Email"/>
+                            </div>
+                            <p:inputText style="width: 250px"
+                                         id="email"
+                                         value="#{funcionarioBean.funcionario.email}"
+                                         placeholder="Ex: johndoe@email.com"/><br/>
+                            <h:message for="email" style="color:red;" />
+                        </div>
+                        <div>
+                            <div class="outputs">
+                                <p:outputLabel for="telefone" value="Telefone"/>
+                            </div>
+                            <p:inputText style="width: 250px"
+                                         id="telefone"
+                                         value="#{funcionarioBean.funcionario.telefone}"
+                                         placeholder="Ex: 54 9 96322831"/><br/>
+                            <h:message for="telefone" style="color:red;" />
+                        </div>
+                        <div>
+                            <div class="outputs">
+                                <p:outputLabel for="dataNascimento" value="Data de Nascimento"/>
+                            </div>
+                            <p:inputText style="width: 250px"
+                                         id="dataNascimento"
+                                         value="#{funcionarioBean.funcionario.dataNascimento}"
+                                         placeholder="Ex: 03/06/2005"/><br/>
+                            <h:message for="dataNascimento" style="color:red;" />
+                        </div>
+                    </div>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton type="button"
+                                     value="Voltar"
+                                     onclick="PF('dialogFuncionario').hide()"
+                                     styleClass="ui-button-flat mr-2"
+                                     style="width: 6rem" />
+                    <p:commandButton id="btnYes"
+                                     process="@form"
+                                     update=":formDialog:formFuncionario :formListaFuncionarios"
+                                     action="#{funcionarioBean.processarFuncionario}"
+                                     value="Cadastrar"
+                                     style="width: 6rem" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

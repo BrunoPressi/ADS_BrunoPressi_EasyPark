@@ -1,11 +1,10 @@
 package ads.upf.presentation;
 
-import ads.upf.model.DTOs.VagaCreateDTO;
-import ads.upf.model.DTOs.VagaEditDTO;
-import ads.upf.model.DTOs.VagaResponseDTO;
+import ads.upf.model.DTOs.vaga.VagaCreateDTO;
+import ads.upf.model.DTOs.vaga.VagaEditDTO;
+import ads.upf.model.DTOs.vaga.VagaResponseDTO;
 import ads.upf.model.enums.VagaStatus;
 import ads.upf.services.VagaService;
-import io.quarkus.logging.Log;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -35,7 +34,7 @@ public class VagaBean implements Serializable {
     private List<VagaResponseDTO> vagasListFiltrado = new ArrayList<>();
 
     @PostConstruct
-    void postConstruct() {
+    protected void postConstruct() {
         vagaNova = new VagaCreateDTO();
         vagaSelecionada = new VagaEditDTO();
         vagasList = vagaService.listarVagas();

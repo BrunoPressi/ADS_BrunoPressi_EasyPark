@@ -1,6 +1,5 @@
-package ads.upf.model.DTOs;
+package ads.upf.model.DTOs.vaga;
 
-import ads.upf.model.enums.VagaStatus;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

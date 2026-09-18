@@ -1,8 +1,7 @@
 package ads.upf.model.mappers;
 
-import ads.upf.model.DTOs.VagaCreateDTO;
-import ads.upf.model.DTOs.VagaEditDTO;
-import ads.upf.model.DTOs.VagaResponseDTO;
+import ads.upf.model.DTOs.vaga.VagaCreateDTO;
+import ads.upf.model.DTOs.vaga.VagaResponseDTO;
 import ads.upf.model.entities.Vaga;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

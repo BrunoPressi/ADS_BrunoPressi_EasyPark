@@ -3,7 +3,6 @@ package ads.upf.presentation;
 import ads.upf.model.DTOs.funcionario.FuncionarioCreateDTO;
 import ads.upf.model.DTOs.funcionario.FuncionarioResponseDTO;
 import ads.upf.services.FuncionarioService;
-import ads.upf.services.VagaService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -36,20 +35,24 @@ public class FuncionarioBean {
         funcionarioResponseDTOList = funcionarioService.listarFuncionarios();
     }
 
+    public void selecionarFuncionario(FuncionarioResponseDTO funcionarioResponseDTO) {
+        funcionario.setId(funcionarioResponseDTO.getId());
+        funcionario.setNomeCompleto(funcionarioResponseDTO.getNomeCompleto());
+        funcionario.setEmail(funcionarioResponseDTO.getEmail());
+        funcionario.setTelefone(funcionarioResponseDTO.getTelefone());
+        funcionario.setDataNascimento(funcionarioResponseDTO.getDataNascimento());
+    }
+
     public void processarFuncionario() {
         try {
-            funcionarioService.createUsuario(funcionario);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Sucesso", "Funcionário cadastrado!"));
+            funcionarioService.salvarUsuario(funcionario);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Sucesso", "Funcionário salvo com sucesso!"));
             this.funcionarioResponseDTOList = funcionarioService.listarFuncionarios();
             this.funcionario = new FuncionarioCreateDTO();
             PrimeFaces.current().executeScript("PF('dialogFuncionario').hide()");
         }
         catch (Exception e) {
-            if (e instanceof ConstraintViolationException) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao cadastrar", "Funcionário já cadastrado"));
-            } else {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao cadastrar", e.getMessage()));
-            }
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao cadastrar", e.getMessage()));
         }
     }
 }

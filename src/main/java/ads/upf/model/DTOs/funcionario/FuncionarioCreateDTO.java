@@ -15,6 +15,8 @@ import java.time.LocalDate;
 @AllArgsConstructor @NoArgsConstructor
 public class FuncionarioCreateDTO {
 
+    private Long id;
+
     @NotBlank(message = "O nome é obrigatório.")
     private String nomeCompleto;
 

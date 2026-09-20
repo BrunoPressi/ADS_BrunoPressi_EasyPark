@@ -22,24 +22,49 @@ public class FuncionarioService {
     FuncionarioRepository funcionarioRepository;
 
     @Transactional
-    public void createUsuario(FuncionarioCreateDTO funcionarioCreateDTO) {
-        Usuario usuario = FuncionarioMapper.INSTANCE.toFuncionario(funcionarioCreateDTO);
-        Funcionario funcionario = new Funcionario();
+    public void salvarUsuario(FuncionarioCreateDTO funcionarioCreateDTO) {
 
-        funcionario.setNomeCompleto(usuario.getNomeCompleto());
-        funcionario.setEmail(usuario.getEmail());
-        funcionario.setTelefone(usuario.getTelefone());
-        funcionario.setDataNascimento(usuario.getDataNascimento());
+        if (funcionarioCreateDTO.getId() == null) {
+            checkFuncionarioExists(null, funcionarioCreateDTO.getNomeCompleto(), funcionarioCreateDTO.getEmail());
+            Usuario usuario = FuncionarioMapper.INSTANCE.toFuncionario(funcionarioCreateDTO);
+            Funcionario funcionario = new Funcionario();
 
-        funcionario.setSenha(gerarSenha());
+            funcionario.setNomeCompleto(usuario.getNomeCompleto());
+            funcionario.setEmail(usuario.getEmail());
+            funcionario.setTelefone(usuario.getTelefone());
+            funcionario.setDataNascimento(usuario.getDataNascimento());
 
-        funcionarioRepository.persist(funcionario);
+            funcionario.setSenha(gerarSenha());
+
+            funcionarioRepository.persist(funcionario);
+        } else {
+            checkFuncionarioExists(funcionarioCreateDTO.getId(), funcionarioCreateDTO.getNomeCompleto(), funcionarioCreateDTO.getEmail());
+            Funcionario funcionario = funcionarioRepository.findById(funcionarioCreateDTO.getId());
+
+            if (funcionario == null) {
+                throw new IllegalArgumentException("Funcionário não encontrado");
+            }
+
+            funcionario.setNomeCompleto(funcionarioCreateDTO.getNomeCompleto());
+            funcionario.setEmail(funcionarioCreateDTO.getEmail());
+            funcionario.setTelefone(funcionarioCreateDTO.getTelefone());
+            funcionario.setDataNascimento(funcionarioCreateDTO.getDataNascimento());
+        }
     }
 
     @Transactional
     public List<FuncionarioResponseDTO> listarFuncionarios() {
         List<Funcionario> funcionarioList = funcionarioRepository.listAll();
         return FuncionarioMapper.INSTANCE.toDtoList(funcionarioList);
+    }
+
+    private void checkFuncionarioExists(Long id, String nomeCompleto, String email) {
+        if (funcionarioRepository.existsByEmail(email, id)) {
+            throw new IllegalArgumentException("Já existe um funcionário com esse email.");
+        }
+        if (funcionarioRepository.existsByNome(nomeCompleto, id)) {
+            throw new IllegalArgumentException("Já existe um funcionário com esse nome.");
+        }
     }
 
 }

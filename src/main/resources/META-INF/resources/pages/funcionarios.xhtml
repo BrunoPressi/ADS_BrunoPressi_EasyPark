@@ -54,6 +54,13 @@
                 <p:column headerText="Data de Nascimento">
                     <h:outputText value="#{funcionario.dataNascimento}" />
                 </p:column>
+                <p:column>
+                    <p:commandButton icon="pi pi-pencil" styleClass="rounded-button ui-button-help"
+                                     action="#{funcionarioBean.selecionarFuncionario(funcionario)}"
+                                     onclick="PF('dialogFuncionario').show()"
+                                     update=":formDialog:formFuncionario"
+                                     value="Editar"/>
+                </p:column>
             </p:dataTable>
         </h:form>
 

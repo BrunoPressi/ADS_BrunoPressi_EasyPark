@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<!--
+  PÁGINA DE CONFIRMAÇÃO DE LOGOUT
+
+  Esta página é pública (listada em quarkus.http.auth.permission.public)
+  para que usuários autenticados possam acessá-la antes de confirmar o logout.
+
+  O botão "Confirmar logout" usa <h:form> + <p:commandButton ajax="false">,
+  que é o padrão JSF para submissão de formulário com navegação completa.
+  O ViewState gerado pelo JSF serve como proteção CSRF implícita —
+  apenas formulários renderizados por esta aplicação possuem um ViewState válido.
+
+  A ação "\#{logoutBean.logout}" é executada no servidor (LogoutBean.java),
+  que chama HttpServletRequest.logout() e invalida a sessão HTTP.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Logout</title>
+</h:head>
+<h:body>
+    <p:panel header="Encerrar sessão" style="max-width: 520px; margin: 2rem auto;">
+        <p>Deseja realmente sair da sessão atual?</p>
+        <h:form>
+            <h:panelGroup layout="block" style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+                <!-- ajax="false" garante ciclo completo de navegação JSF após o logout -->
+                <p:commandButton value="Confirmar logout" icon="pi pi-sign-out"
+                                 action="#{logoutBean.logout}" ajax="false"
+                                 styleClass="ui-button-sm"/>
+                <!--<p:button outcome="/private/home.xhtml" value="Cancelar"
+                          icon="pi pi-times" styleClass="ui-button-sm"/>-->
+            </h:panelGroup>
+        </h:form>
+    </p:panel>
+</h:body>
+</html>

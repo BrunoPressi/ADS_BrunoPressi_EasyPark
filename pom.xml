@@ -97,6 +97,11 @@
             <artifactId>bcprov-jdk18on</artifactId>
             <version>1.84</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-elytron-security-jdbc</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<!--
+  PÁGINA DE LOGIN — Form Authentication (Jakarta EE / Quarkus)
+
+  Esta página é carregada automaticamente pelo Quarkus quando um usuário
+  não autenticado tenta acessar uma rota protegida (configurado em
+  application.properties: quarkus.http.auth.form.login-page).
+
+  IMPORTANTE: o formulário usa <form> HTML nativo, NÃO <h:form> do JSF.
+  Isso é necessário porque o POST deve ir diretamente para /j_security_check
+  sem que o JSF adicione o ViewState ou processe a requisição como um
+  ciclo de vida Faces — o Quarkus precisa interceptar este POST antes do JSF.
+
+  Parâmetros esperados pelo Quarkus (configurados em application.properties):
+    j_username  →  quarkus.http.auth.form.username-parameter
+    j_password  →  quarkus.http.auth.form.password-parameter
+    POST para   →  quarkus.http.auth.form.post-location (/j_security_check)
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Login - Quarkus Security</title>
+</h:head>
+<h:body>
+    <!-- Componente Growl para notificações -->
+    <p:growl id="growl" widgetVar="loginGrowl" showDetail="true" life="3000" />
+
+    <!-- Dispara o growl automaticamente caso haja erro na URL (?error=true) -->
+    <h:panelGroup rendered="#{not empty param.error}">
+        <script>
+            $(function() {
+                PF('loginGrowl').renderMessage({
+                    summary: 'Falha de Autenticação',
+                    detail: 'E-mail ou senha inválidos. Tente novamente.',
+                    severity: 'error'
+                });
+            });
+        </script>
+    </h:panelGroup>
+
+    <p:panel header="Entre com suas credenciais" style="max-width: 420px; margin: 2rem auto;">
+        <!-- action aponta para /j_security_check — interceptado pelo Quarkus Form Auth -->
+        <form method="post" action="#{request.contextPath}/j_security_check">
+            <p:panelGrid columns="1" layout="grid" style="width:100%; gap: 0.75rem;">
+
+                <label for="j_username" style="display:block; margin-bottom:0.25rem;">Usuário</label>
+                <input id="j_username" name="j_username" type="text" autocomplete="username"
+                       class="ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all"
+                       style="width: 100%; padding: 0.75rem; margin-bottom: .9rem"/>
+
+                <label for="j_password" style="display:block; margin-bottom:0.25rem;">Senha</label>
+                <input id="j_password" name="j_password" type="password" autocomplete="current-password"
+                       class="ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all"
+                       style="width: 100%; padding: 0.75rem;"/>
+
+                <h:panelGroup>
+                    <button type="submit" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-success" style="width: 90px; height: 40px">
+                        <span class="ui-button-text ui-c">Entrar</span>
+                    </button>
+                </h:panelGroup>
+
+            </p:panelGrid>
+        </form>
+        <p:divider/>
+    </p:panel>
+</h:body>
+</html>

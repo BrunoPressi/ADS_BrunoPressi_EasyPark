@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Logout realizado</title>
+</h:head>
+<h:body>
+    <p:panel header="Sessao encerrada" style="max-width: 520px; margin: 2rem auto;">
+        <p>Logout realizado com sucesso.</p>
+        <h:panelGroup layout="block" style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+            <p:button outcome="/public/index.xhtml" value="Ir para pagina publica" icon="pi pi-home" styleClass="ui-button-sm"/>
+            <p:button outcome="/login.xhtml" value="Entrar novamente" icon="pi pi-sign-in" styleClass="ui-button-sm"/>
+        </h:panelGroup>
+    </p:panel>
+</h:body>
+</html>
+

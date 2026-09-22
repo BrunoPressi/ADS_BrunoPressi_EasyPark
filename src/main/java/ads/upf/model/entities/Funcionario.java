@@ -1,6 +1,6 @@
 package ads.upf.model.entities;
 
-import ads.upf.model.enums.FuncionarioRole;
+import ads.upf.model.enums.UsuarioRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,12 +18,12 @@ public class Funcionario extends Usuario{
     private String senha;
 
     @Enumerated(EnumType.STRING)
-    private FuncionarioRole role;
+    private UsuarioRole role;
 
     @Override
     protected void prePersist() {
         super.prePersist();
-        this.role = FuncionarioRole.atendente;
+        this.role = UsuarioRole.atendente;
     }
 
 }

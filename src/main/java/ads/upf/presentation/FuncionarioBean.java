@@ -11,7 +11,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.exception.ConstraintViolationException;
 import org.primefaces.PrimeFaces;
 
 import java.util.ArrayList;

@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class senhaGenerator {
+public class SenhaGenerator {
 
     public static String gerarSenha() {
 

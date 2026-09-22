@@ -2,7 +2,6 @@ package ads.upf.model.entities;
 
 import ads.upf.model.enums.VagaStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.time.LocalDateTime;

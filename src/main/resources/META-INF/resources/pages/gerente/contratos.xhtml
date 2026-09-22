@@ -1,0 +1,98 @@
+<ui:composition template="/templates/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="content">
+
+        <style>
+            .divsFormDialog {
+                margin-bottom: .5rem;
+            }
+        </style>
+
+        <p:commandButton value="Cadastrar Cliente"
+                         onclick="PF('dialogCliente').show()"/>
+
+        <!-- Formulário de cadastro de novo cliente -->
+        <h:form id="formDialog">
+            <p:dialog header="Preencha com os dados do cliente"
+                      widgetVar="dialogCliente"
+                      minHeight="40" width="630"
+                      modal="true"
+                      showEffect="fade"
+                      closeOnEscape="true">
+                <p:outputPanel id="formCliente">
+                    <div style="margin-left: .5rem;
+                                display: grid;
+                                grid-template-columns: auto auto;">
+                        <div class="divsFormDialog">
+                            <div class="outputs">
+                                <p:outputLabel for="nomeCompleto" value="Nome Completo"/>
+                            </div>
+                            <p:inputText style="width: 250px"
+                                         id="nomeCompleto"
+                                         value="#{contratoBean.cliente.nomeCompleto}"
+                                         placeholder="Ex: John Doe"/>
+                            <h:message for="nomeCompleto" style="color:red;" />
+                        </div>
+                        <div class="divsFormDialog">
+                            <div class="outputs">
+                                <p:outputLabel for="cpf" value="CPF"/>
+                            </div>
+                            <p:inputText style="width: 250px"
+                                         id="cpf"
+                                         value="#{contratoBean.cliente.cpf}"
+                                         placeholder="Ex: 123.456.789-01"/>
+                            <h:message for="cpf" style="color:red;" />
+                        </div>
+                        <div class="divsFormDialog">
+                            <div class="outputs">
+                                <p:outputLabel for="email" value="Email"/>
+                            </div>
+                            <p:inputText style="width: 250px"
+                                         id="email"
+                                         value="#{contratoBean.cliente.email}"
+                                         placeholder="Ex: johndoe@email.com"/>
+                            <h:message for="email" style="color:red;" />
+                        </div>
+                        <div class="divsFormDialog">
+                            <div class="outputs">
+                                <p:outputLabel for="telefone" value="Telefone"/>
+                            </div>
+                            <p:inputText style="width: 250px"
+                                         id="telefone"
+                                         value="#{contratoBean.cliente.telefone}"
+                                         placeholder="Ex: 54 9 96322831"/>
+                            <h:message for="telefone" style="color:red;" />
+                        </div>
+                        <div class="divsFormDialog" style="grid-column: span 2; justify-self: center;">
+                            <div class="outputs">
+                                <p:outputLabel for="dataNascimento" value="Data de Nascimento"/>
+                            </div>
+                            <p:inputText style="width: 250px"
+                                         id="dataNascimento"
+                                         value="#{contratoBean.cliente.dataNascimento}"
+                                         placeholder="Ex: 03/06/2005"/>
+                            <h:message for="dataNascimento" style="color:red;" />
+                        </div>
+                    </div>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton type="button"
+                                     value="Voltar"
+                                     onclick="PF('dialogCliente').hide()"
+                                     styleClass="ui-button-flat mr-2"
+                                     style="width: 6rem" />
+                    <p:commandButton id="btnYes"
+                                     process="@form"
+                                     update=":formDialog:formCliente"
+                                     action="#{contratoBean.processarCliente}"
+                                     value="Salvar"
+                                     style="width: 6rem" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

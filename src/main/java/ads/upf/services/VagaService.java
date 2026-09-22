@@ -19,7 +19,7 @@ import java.util.List;
 public class VagaService {
 
     @Inject
-    VagaRepository vagaRepository;
+    protected VagaRepository vagaRepository;
 
     @Transactional
     public void criarNovaVaga(VagaCreateDTO vagaDTO) {

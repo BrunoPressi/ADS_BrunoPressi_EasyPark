@@ -1,5 +1,6 @@
 package ads.upf.services;
 
+import ads.upf.exceptions.FuncionarioExistsException;
 import ads.upf.model.DTOs.funcionario.FuncionarioCreateDTO;
 import ads.upf.model.DTOs.funcionario.FuncionarioResponseDTO;
 import ads.upf.model.entities.Funcionario;
@@ -22,18 +23,11 @@ public class FuncionarioService {
     FuncionarioRepository funcionarioRepository;
 
     @Transactional
-    public void salvarUsuario(FuncionarioCreateDTO funcionarioCreateDTO) {
+    public void salvarFuncionario(FuncionarioCreateDTO funcionarioCreateDTO) {
 
         if (funcionarioCreateDTO.getId() == null) {
             checkFuncionarioExists(null, funcionarioCreateDTO.getNomeCompleto(), funcionarioCreateDTO.getEmail());
-            Usuario usuario = FuncionarioMapper.INSTANCE.toFuncionario(funcionarioCreateDTO);
-            Funcionario funcionario = new Funcionario();
-
-            funcionario.setNomeCompleto(usuario.getNomeCompleto());
-            funcionario.setEmail(usuario.getEmail());
-            funcionario.setTelefone(usuario.getTelefone());
-            funcionario.setDataNascimento(usuario.getDataNascimento());
-
+            Funcionario funcionario = FuncionarioMapper.INSTANCE.toFuncionario(funcionarioCreateDTO);
             funcionario.setSenha(gerarSenha());
 
             funcionarioRepository.persist(funcionario);
@@ -60,10 +54,10 @@ public class FuncionarioService {
 
     private void checkFuncionarioExists(Long id, String nomeCompleto, String email) {
         if (funcionarioRepository.existsByEmail(email, id)) {
-            throw new IllegalArgumentException("Já existe um funcionário com esse email.");
+            throw new FuncionarioExistsException("Já existe um funcionário com esse email.");
         }
         if (funcionarioRepository.existsByNome(nomeCompleto, id)) {
-            throw new IllegalArgumentException("Já existe um funcionário com esse nome.");
+            throw new FuncionarioExistsException("Já existe um funcionário com esse nome.");
         }
     }
 

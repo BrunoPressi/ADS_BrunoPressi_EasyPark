@@ -45,7 +45,7 @@ public class FuncionarioBean {
 
     public void processarFuncionario() {
         try {
-            funcionarioService.salvarUsuario(funcionario);
+            funcionarioService.salvarFuncionario(funcionario);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Sucesso", "Funcionário salvo com sucesso!"));
             this.funcionarioResponseDTOList = funcionarioService.listarFuncionarios();
             this.funcionario = new FuncionarioCreateDTO();

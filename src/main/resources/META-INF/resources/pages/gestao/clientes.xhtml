@@ -13,7 +13,67 @@
         </style>
 
         <p:commandButton value="Cadastrar Cliente"
+                         style="margin-bottom: .5rem"
                          onclick="PF('dialogCliente').show()"/>
+
+        <h:form id="formClientes">
+            <!-- Barra de Pesquisa por Chave Única -->
+            <p:toolbar style="margin-bottom: 1rem;">
+                <p:toolbarGroup>
+                        <span class="ui-input-icon-left" style="margin-right: .5rem;">
+                            <i class="pi pi-key" />
+                            <p:inputText id="inputChave"
+                                         value="#{clienteBean.chaveUnicaFiltro}"
+                                         placeholder="Buscar por ID ou CPF..." />
+                        </span>
+
+                    <p:commandButton value="Buscar"
+                                     icon="pi pi-search"
+                                     action="#{clienteBean.pesquisar}"
+                                     update="@form"
+                                     style="margin-right: .5rem"
+                                     styleClass="mr-2" />
+
+                    <p:commandButton value="Limpar"
+                                     icon="pi pi-times"
+                                     action="#{clienteBean.limparFiltro}"
+                                     update="@form"
+                                     styleClass="ui-button-secondary" />
+                </p:toolbarGroup>
+            </p:toolbar>
+
+            <!-- Tabela com Lazy Loading (Server-Side Pagination) -->
+            <p:dataTable id="tabelaClientes"
+                         widgetVar="dtClientes"
+                         var="cliente"
+                         value="#{clienteBean.lazyDataModel}"
+                         lazy="true"
+                         paginator="true"
+                         rows="10"
+                         rowsPerPageTemplate="5,10,20,50"
+                         paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="Exibindo {startRecord}-{endRecord} de {totalRecords} registros"
+                         rowKey="#{cliente.id}"
+                         emptyMessage="Nenhum cliente encontrado.">
+
+                <p:column headerText="ID" sortBy="#{cliente.id}" style="width: 80px; text-align: center;">
+                    <h:outputText value="#{cliente.id}" />
+                </p:column>
+
+                <p:column headerText="Nome Completo" sortBy="#{cliente.nomeCompleto}">
+                    <h:outputText value="#{cliente.nomeCompleto}" />
+                </p:column>
+
+                <p:column headerText="Email">
+                    <h:outputText value="#{cliente.email}" />
+                </p:column>
+
+                <p:column headerText="Telefone">
+                    <h:outputText value="#{cliente.telefone}" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
 
         <!-- Formulário de cadastro de novo cliente -->
         <h:form id="formDialog">
@@ -33,7 +93,7 @@
                             </div>
                             <p:inputText style="width: 250px"
                                          id="nomeCompleto"
-                                         value="#{contratoBean.cliente.nomeCompleto}"
+                                         value="#{clienteBean.cliente.nomeCompleto}"
                                          placeholder="Ex: John Doe"/>
                             <h:message for="nomeCompleto" style="color:red;" />
                         </div>
@@ -43,7 +103,7 @@
                             </div>
                             <p:inputText style="width: 250px"
                                          id="cpf"
-                                         value="#{contratoBean.cliente.cpf}"
+                                         value="#{clienteBean.cliente.cpf}"
                                          placeholder="Ex: 123.456.789-01"/>
                             <h:message for="cpf" style="color:red;" />
                         </div>
@@ -53,7 +113,7 @@
                             </div>
                             <p:inputText style="width: 250px"
                                          id="email"
-                                         value="#{contratoBean.cliente.email}"
+                                         value="#{clienteBean.cliente.email}"
                                          placeholder="Ex: johndoe@email.com"/>
                             <h:message for="email" style="color:red;" />
                         </div>
@@ -63,7 +123,7 @@
                             </div>
                             <p:inputText style="width: 250px"
                                          id="telefone"
-                                         value="#{contratoBean.cliente.telefone}"
+                                         value="#{clienteBean.cliente.telefone}"
                                          placeholder="Ex: 54 9 96322831"/>
                             <h:message for="telefone" style="color:red;" />
                         </div>
@@ -73,7 +133,7 @@
                             </div>
                             <p:inputText style="width: 250px"
                                          id="dataNascimento"
-                                         value="#{contratoBean.cliente.dataNascimento}"
+                                         value="#{clienteBean.cliente.dataNascimento}"
                                          placeholder="Ex: 03/06/2005"/>
                             <h:message for="dataNascimento" style="color:red;" />
                         </div>
@@ -87,8 +147,8 @@
                                      style="width: 6rem" />
                     <p:commandButton id="btnYes"
                                      process="@form"
-                                     update=":formDialog:formCliente"
-                                     action="#{contratoBean.processarCliente}"
+                                     update=":formDialog:formCliente :formClientes:tabelaClientes"
+                                     action="#{clienteBean.processarCliente}"
                                      value="Salvar"
                                      style="width: 6rem" />
                 </f:facet>

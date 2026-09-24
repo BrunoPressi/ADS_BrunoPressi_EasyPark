@@ -14,13 +14,14 @@ import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
 
 @Named
 @ViewScoped
 @Getter @Setter
-public class FuncionarioBean {
+public class FuncionarioBean implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Inject
     FuncionarioService funcionarioService;
@@ -41,18 +42,18 @@ public class FuncionarioBean {
     }
 
     public void selecionarFuncionario(FuncionarioResponseDTO funcionarioResponseDTO) {
+        limpar();
         funcionario.setId(funcionarioResponseDTO.getId());
         funcionario.setNomeCompleto(funcionarioResponseDTO.getNomeCompleto());
         funcionario.setEmail(funcionarioResponseDTO.getEmail());
         funcionario.setTelefone(funcionarioResponseDTO.getTelefone());
-        funcionario.setDataNascimento(funcionarioResponseDTO.getDataNascimento());
     }
 
     public void processarFuncionario() {
         try {
             funcionarioService.salvarFuncionario(funcionario);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Sucesso", "Funcionário salvo com sucesso!"));
-            this.funcionario = new FuncionarioCreateDTO();
+            limpar();
             PrimeFaces.current().executeScript("PF('dialogFuncionario').hide()");
         }
         catch (Exception e) {
@@ -67,5 +68,9 @@ public class FuncionarioBean {
     public void limparFiltro() {
         this.chaveUnicaFiltro = null;
         lazyDataModel.limpar();
+    }
+
+    public void limpar() {
+        this.funcionario = new FuncionarioCreateDTO();
     }
 }

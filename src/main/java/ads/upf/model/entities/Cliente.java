@@ -34,9 +34,8 @@ public class Cliente extends Usuario {
     // Método facilitador: atualiza o CPF e gera o hash automaticamente
     public void setCpf(String cpf) {
         if (cpf != null) {
-            String cleanCpf = cpf.replaceAll("\\D", "");
-            this.cpf = cleanCpf;
-            this.cpfHash = SecurityUtil.generateBlindIndex(cleanCpf);
+            this.cpf = cpf;
+            this.cpfHash = SecurityUtil.generateBlindIndex(cpf);
         } else {
             this.cpf = null;
             this.cpfHash = null;

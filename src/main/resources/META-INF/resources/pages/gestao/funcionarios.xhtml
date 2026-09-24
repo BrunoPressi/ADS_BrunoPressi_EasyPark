@@ -15,7 +15,9 @@
 
         <p:commandButton value="Cadastrar Funcionário"
                          style="margin-bottom: .8rem"
-                         onclick="PF('dialogFuncionario').show()"/>
+                         action="#{funcionarioBean.limpar}"
+                         update=":formDialog:formFuncionario"
+                         oncomplete="PF('dialogFuncionario').show()"/>
 
         <h:form id="formListaFuncionarios">
 
@@ -71,13 +73,10 @@
                 <p:column headerText="Telefone">
                     <h:outputText value="#{funcionario.telefone}" />
                 </p:column>
-                <p:column headerText="Data de Nascimento">
-                    <h:outputText value="#{funcionario.dataNascimento}" />
-                </p:column>
-                <p:column>
+                <p:column headerText="Editar">
                     <p:commandButton icon="pi pi-pencil" styleClass="rounded-button ui-button-help"
                                      action="#{funcionarioBean.selecionarFuncionario(funcionario)}"
-                                     onclick="PF('dialogFuncionario').show()"
+                                     oncomplete="PF('dialogFuncionario').show()"
                                      update=":formDialog:formFuncionario"
                                      value="Editar"/>
                 </p:column>
@@ -123,16 +122,6 @@
                                          value="#{funcionarioBean.funcionario.telefone}"
                                          placeholder="Ex: 54 9 96322831"/><br/>
                             <h:message for="telefone" style="color:red;" />
-                        </div>
-                        <div>
-                            <div class="outputs">
-                                <p:outputLabel for="dataNascimento" value="Data de Nascimento"/>
-                            </div>
-                            <p:inputText style="width: 250px"
-                                         id="dataNascimento"
-                                         value="#{funcionarioBean.funcionario.dataNascimento}"
-                                         placeholder="Ex: 03/06/2005"/><br/>
-                            <h:message for="dataNascimento" style="color:red;" />
                         </div>
                     </div>
                 </p:outputPanel>

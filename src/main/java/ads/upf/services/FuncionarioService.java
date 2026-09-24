@@ -1,13 +1,11 @@
 package ads.upf.services;
 
-import ads.upf.exceptions.FuncionarioExistsException;
+import ads.upf.exceptions.EntityExistsException;
+import ads.upf.exceptions.EntityNotFoundException;
 import ads.upf.model.DTOs.funcionario.FuncionarioCreateDTO;
 import ads.upf.model.DTOs.funcionario.FuncionarioResponseDTO;
-import ads.upf.model.DTOs.vaga.VagaResponseDTO;
 import ads.upf.model.entities.Funcionario;
-import ads.upf.model.entities.Vaga;
 import ads.upf.model.mappers.FuncionarioMapper;
-import ads.upf.model.mappers.VagaMapper;
 import ads.upf.repositories.FuncionarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -46,14 +44,13 @@ public class FuncionarioService {
             Funcionario funcionario = funcionarioRepository.findByIdOptional(
                     funcionarioCreateDTO.getId())
                     .orElseThrow(
-                            () -> new RuntimeException("Funcionário não encontrado.")
+                            () -> new EntityNotFoundException("Funcionário não encontrado.")
             );
 
 
             funcionario.setNomeCompleto(funcionarioCreateDTO.getNomeCompleto());
             funcionario.setEmail(funcionarioCreateDTO.getEmail());
             funcionario.setTelefone(funcionarioCreateDTO.getTelefone());
-            funcionario.setDataNascimento(funcionarioCreateDTO.getDataNascimento());
         }
     }
 
@@ -95,10 +92,10 @@ public class FuncionarioService {
 
     private void checkFuncionarioExists(Long id, String nomeCompleto, String email) {
         if (funcionarioRepository.existsByEmail(email, id)) {
-            throw new FuncionarioExistsException("Já existe um funcionário com esse email.");
+            throw new EntityExistsException("Já existe um funcionário com esse email.");
         }
         if (funcionarioRepository.existsByNome(nomeCompleto, id)) {
-            throw new FuncionarioExistsException("Já existe um funcionário com esse nome.");
+            throw new EntityExistsException("Já existe um funcionário com esse nome.");
         }
     }
 

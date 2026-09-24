@@ -1,5 +1,7 @@
 package ads.upf.services;
 
+import ads.upf.exceptions.EntityExistsException;
+import ads.upf.exceptions.EntityNotFoundException;
 import ads.upf.model.DTOs.cliente.ClienteCreateDTO;
 import ads.upf.model.DTOs.cliente.ClienteResponseDTO;
 import ads.upf.model.entities.Cliente;
@@ -20,12 +22,23 @@ public class ClienteService {
 
     @Transactional
     public void salvarCliente(ClienteCreateDTO clienteCreateDTO) {
-        try {
+        if (clienteCreateDTO.getId() == null) {
+            checkClienteExists(null, clienteCreateDTO.getCpf(), clienteCreateDTO.getEmail());
+
             Cliente cliente = ClienteMapper.INSTANCE.toCliente(clienteCreateDTO);
             clienteRepository.persist(cliente);
         }
-        catch (Exception e) {
-            throw new RuntimeException("Erro ao salvar cliente " + e.getMessage());
+        else {
+            checkClienteExists(clienteCreateDTO.getId(), clienteCreateDTO.getCpf(), clienteCreateDTO.getEmail());
+
+            Cliente cliente = clienteRepository
+                    .findByIdOptional(clienteCreateDTO.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado."));
+
+            cliente.setNomeCompleto(clienteCreateDTO.getNomeCompleto());
+            cliente.setCpf(clienteCreateDTO.getCpf());
+            cliente.setEmail(clienteCreateDTO.getEmail());
+            cliente.setTelefone(clienteCreateDTO.getTelefone());
         }
     }
 
@@ -62,6 +75,15 @@ public class ClienteService {
                 .range(first, first + pageSize - 1)
                 .list();
         return ClienteMapper.INSTANCE.toClienteDtoList(clientes);
+    }
+
+    private void checkClienteExists(Long id, String cpf, String email) {
+        if (clienteRepository.checkCpf(SecurityUtil.generateBlindIndex(cpf), id)) {
+            throw new EntityExistsException("Esse CPF já está cadastrado");
+        }
+        if (clienteRepository.checkEmail(email, id)) {
+            throw new EntityExistsException("Esse Email já está cadastrado");
+        }
     }
 
 }

@@ -13,8 +13,10 @@
         </style>
 
         <p:commandButton value="Cadastrar Cliente"
+                         action="#{clienteBean.limparCliente}"
+                         update=":formDialog:formCliente"
                          style="margin-bottom: .5rem"
-                         onclick="PF('dialogCliente').show()"/>
+                         oncomplete="PF('dialogCliente').show()"/>
 
         <h:form id="formClientes">
             <!-- Barra de Pesquisa por Chave Única -->
@@ -61,8 +63,12 @@
                     <h:outputText value="#{cliente.id}" />
                 </p:column>
 
-                <p:column headerText="Nome Completo" sortBy="#{cliente.nomeCompleto}">
+                <p:column headerText="Nome Completo">
                     <h:outputText value="#{cliente.nomeCompleto}" />
+                </p:column>
+
+                <p:column headerText="CPF">
+                    <h:outputText value="#{cliente.cpf}" />
                 </p:column>
 
                 <p:column headerText="Email">
@@ -72,6 +78,14 @@
                 <p:column headerText="Telefone">
                     <h:outputText value="#{cliente.telefone}" />
                 </p:column>
+
+                <p:column headerText="Editar">
+                    <p:commandButton value="Editar"
+                                     icon="pi pi-pencil" styleClass="rounded-button ui-button-help"
+                                     oncomplete="PF('dialogCliente').show()"
+                                     action="#{clienteBean.selecionarCliente(cliente)}"
+                                     update=":formDialog:formCliente"/>
+                </p:column>
             </p:dataTable>
         </h:form>
 
@@ -79,7 +93,7 @@
         <h:form id="formDialog">
             <p:dialog header="Preencha com os dados do cliente"
                       widgetVar="dialogCliente"
-                      minHeight="40" width="630"
+                      minHeight="40" width="730"
                       modal="true"
                       showEffect="fade"
                       closeOnEscape="true">
@@ -94,7 +108,7 @@
                             <p:inputText style="width: 250px"
                                          id="nomeCompleto"
                                          value="#{clienteBean.cliente.nomeCompleto}"
-                                         placeholder="Ex: John Doe"/>
+                                         placeholder="Ex: John Doe"/><br/>
                             <h:message for="nomeCompleto" style="color:red;" />
                         </div>
                         <div class="divsFormDialog">
@@ -104,7 +118,7 @@
                             <p:inputText style="width: 250px"
                                          id="cpf"
                                          value="#{clienteBean.cliente.cpf}"
-                                         placeholder="Ex: 123.456.789-01"/>
+                                         placeholder="Ex: 123.456.789-01"/><br/>
                             <h:message for="cpf" style="color:red;" />
                         </div>
                         <div class="divsFormDialog">
@@ -114,7 +128,7 @@
                             <p:inputText style="width: 250px"
                                          id="email"
                                          value="#{clienteBean.cliente.email}"
-                                         placeholder="Ex: johndoe@email.com"/>
+                                         placeholder="Ex: johndoe@email.com"/><br/>
                             <h:message for="email" style="color:red;" />
                         </div>
                         <div class="divsFormDialog">
@@ -124,18 +138,8 @@
                             <p:inputText style="width: 250px"
                                          id="telefone"
                                          value="#{clienteBean.cliente.telefone}"
-                                         placeholder="Ex: 54 9 96322831"/>
+                                         placeholder="Ex: 54 9 96322831"/><br/>
                             <h:message for="telefone" style="color:red;" />
-                        </div>
-                        <div class="divsFormDialog" style="grid-column: span 2; justify-self: center;">
-                            <div class="outputs">
-                                <p:outputLabel for="dataNascimento" value="Data de Nascimento"/>
-                            </div>
-                            <p:inputText style="width: 250px"
-                                         id="dataNascimento"
-                                         value="#{clienteBean.cliente.dataNascimento}"
-                                         placeholder="Ex: 03/06/2005"/>
-                            <h:message for="dataNascimento" style="color:red;" />
                         </div>
                     </div>
                 </p:outputPanel>

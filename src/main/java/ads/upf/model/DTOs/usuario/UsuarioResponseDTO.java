@@ -14,5 +14,4 @@ public class UsuarioResponseDTO {
     private String dataNascimento;
     private String telefone;
     private String email;
-
 }

@@ -1,5 +1,6 @@
 package ads.upf.model.DTOs.vaga;
 
+import ads.upf.model.enums.TipoVaga;
 import ads.upf.model.enums.VagaStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,4 +13,5 @@ public class VagaResponseDTO {
     private Long id;
     private String nome;
     private VagaStatus status;
+    private TipoVaga tipoVaga;
 }

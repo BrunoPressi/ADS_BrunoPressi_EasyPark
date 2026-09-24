@@ -28,11 +28,4 @@ public class UsuarioCreateDTO {
     )
     private String telefone;
 
-    @NotBlank(message = "A data de nascimento é obrigatória.")
-    @Pattern(
-            regexp = "^(?:(?:0[1-9]|[12][0-9]|30)/(?:0[13-9]|1[0-2])|31/(?:0[13578]|1[02])|(?:0[1-9]|1[0-9]|2[0-8])/02)/(?:19|20)\\d{2}$|^(?:29/02/(?:(?:19|20)(?:04|08|[2468][048]|[13579][26])))$",
-            message = "A data de nascimento informada é inválida."
-    )
-    private String dataNascimento;
-
 }

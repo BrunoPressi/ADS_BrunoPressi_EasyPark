@@ -1,17 +1,17 @@
 package ads.upf.services;
 
-import ads.upf.exceptions.VagaExistsException;
+import ads.upf.exceptions.EntityExistsException;
+import ads.upf.exceptions.InvalidEditException;
 import ads.upf.model.DTOs.vaga.VagaCreateDTO;
-import ads.upf.model.DTOs.vaga.VagaEditDTO;
 import ads.upf.model.DTOs.vaga.VagaResponseDTO;
 import ads.upf.model.entities.Vaga;
+import ads.upf.model.enums.TipoVaga;
 import ads.upf.model.enums.VagaStatus;
 import ads.upf.model.mappers.VagaMapper;
 import ads.upf.repositories.VagaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import org.hibernate.exception.ConstraintViolationException;
 
 import java.util.List;
 
@@ -22,37 +22,23 @@ public class VagaService {
     protected VagaRepository vagaRepository;
 
     @Transactional
-    public void criarNovaVaga(VagaCreateDTO vagaDTO) {
-        try {
+    public void salvarVaga(VagaCreateDTO vagaDTO) {
+        if (vagaDTO.getId() == null) {
             checkVagaExists(vagaDTO.getNome(), null);
             Vaga vaga = VagaMapper.INSTANCE.toVaga(vagaDTO);
             vagaRepository.persist(vaga);
         }
-        catch (ConstraintViolationException e) {
-            throw new RuntimeException("Essa vaga já está cadastrada");
-        }
-    }
+        else {
+            checkVagaExists(vagaDTO.getNome(), vagaDTO.getId());
+            Vaga vaga = vagaRepository.findByIdOptional(vagaDTO.getId())
+                    .orElseThrow( () -> new EntityExistsException("Vaga não encontrada."));
 
-    @Transactional
-    public void editarVaga(Long id, VagaEditDTO vagaDTO) {
-        try {
-            checkVagaExists(vagaDTO.getNome(), id);
-            Vaga vaga = vagaRepository.findById(id);
-
-            if (vaga == null) {
-                throw new IllegalArgumentException("Vaga não encontrada");
-            }
-
-            if (vaga.getStatus().equals(VagaStatus.ocupada)) {
-                throw new IllegalArgumentException("Vagas ocupadas não podem ser alteradas.");
-            }
+            if (vaga.getStatus() == VagaStatus.ocupada)
+                throw new InvalidEditException("Vagas ocupadas não podem ser editadas.");
 
             vaga.setNome(vagaDTO.getNome());
             vaga.setStatus(vagaDTO.getStatus());
-            vagaRepository.persist(vaga);
-        }
-        catch (ConstraintViolationException e) {
-            throw new VagaExistsException("Já existe uma vaga com esse nome");
+            vaga.setTipoVaga(TipoVaga.valueOf(vagaDTO.getTipoVaga()));
         }
     }
 
@@ -84,7 +70,7 @@ public class VagaService {
 
     private void checkVagaExists(String nome, Long id) {
         if (vagaRepository.existsByNome(nome, id)) {
-            throw new VagaExistsException("Já existe uma vaga com esse nome.");
+            throw new EntityExistsException("Já existe uma vaga com esse nome.");
         }
     }
 

@@ -41,13 +41,22 @@ public class ClienteBean implements Serializable {
                 ClienteResponseDTO::getId,
                 termo -> clienteService.buscarPorChaveUnica(termo)
         );
-        cliente = new ClienteCreateDTO();
+        this.cliente = new ClienteCreateDTO();
+    }
+
+    public void selecionarCliente(ClienteResponseDTO clienteResponseDTO) {
+        limparCliente();
+        this.cliente.setId(clienteResponseDTO.getId());
+        this.cliente.setNomeCompleto(clienteResponseDTO.getNomeCompleto());
+        this.cliente.setCpf(clienteResponseDTO.getCpfNormal());
+        this.cliente.setTelefone(clienteResponseDTO.getTelefone());
+        this.cliente.setEmail(clienteResponseDTO.getEmail());
     }
 
     public void processarCliente() {
         try {
             clienteService.salvarCliente(cliente);
-            this.cliente = new ClienteCreateDTO();
+            limparCliente();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Sucesso", "Cliente salvo com sucesso."));
             PrimeFaces.current().executeScript("PF('dialogCliente').hide()");
         }
@@ -63,5 +72,9 @@ public class ClienteBean implements Serializable {
     public void limparFiltro() {
         this.chaveUnicaFiltro = null;
         lazyDataModel.limpar();
+    }
+
+    public void limparCliente() {
+        this.cliente = new ClienteCreateDTO();
     }
 }

@@ -1,5 +1,6 @@
 package ads.upf.model.entities;
 
+import ads.upf.model.enums.TipoVaga;
 import ads.upf.model.enums.VagaStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,13 +24,15 @@ public class Vaga {
     @Enumerated(EnumType.STRING)
     private VagaStatus status;
 
+    @Enumerated(EnumType.STRING)
+    private TipoVaga tipoVaga;
+
     private LocalDateTime criadoEm;
 
     private LocalDateTime atualizadoEm;
 
     @PrePersist
     private void prePersist() {
-        this.status = VagaStatus.disponivel;
         this.criadoEm = LocalDateTime.now();
     }
 

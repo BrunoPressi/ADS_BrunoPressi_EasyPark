@@ -1,12 +1,11 @@
 package ads.upf.presentation;
 
 import ads.upf.model.DTOs.vaga.VagaCreateDTO;
-import ads.upf.model.DTOs.vaga.VagaEditDTO;
 import ads.upf.model.DTOs.vaga.VagaResponseDTO;
 import ads.upf.model.enums.VagaStatus;
 import ads.upf.presentation.lazy.GenericLazyDataModel;
-import ads.upf.services.ClienteService;
 import ads.upf.services.VagaService;
+import io.quarkus.logging.Log;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -31,14 +30,12 @@ public class VagaBean implements Serializable {
 
     private GenericLazyDataModel<VagaResponseDTO> lazyDataModel;
     private String chaveUnicaFiltro;
-    private VagaEditDTO vagaSelecionada;
-    private VagaCreateDTO vagaNova;
+    private VagaCreateDTO vaga;
     private boolean emManutencao;
 
     @PostConstruct
     protected void postConstruct() {
-        this.vagaNova = new VagaCreateDTO();
-        this.vagaSelecionada = new VagaEditDTO();
+        this.vaga = new VagaCreateDTO();
         this.lazyDataModel = new GenericLazyDataModel<>(
                 () -> vagaService.contar(),
                 (first, pageSize) -> vagaService.listarPaginado(first, pageSize),
@@ -48,33 +45,19 @@ public class VagaBean implements Serializable {
     }
 
     public void selecionarVaga(VagaResponseDTO vaga) {
-        vagaSelecionada.setId(vaga.getId());
-        vagaSelecionada.setNome(vaga.getNome());
-        vagaSelecionada.setStatus(vaga.getStatus());
-        this.emManutencao = (vagaSelecionada.getStatus()) == VagaStatus.em_manutencao;
-    }
-
-    public void editarVaga() {
-        try {
-            VagaStatus status = (emManutencao) ? VagaStatus.em_manutencao : VagaStatus.disponivel;
-            VagaEditDTO vaga = new VagaEditDTO(
-                    vagaSelecionada.getId(),
-                    vagaSelecionada.getNome(),
-                    status
-            );
-            vagaService.editarVaga(vagaSelecionada.getId(), vaga);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Sucesso", "Vaga editada com sucesso!"));
-            PrimeFaces.current().executeScript("PF('editarVagaDialog').hide()");
-       }
-        catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao salvar", e.getMessage()));
-        }
+        this.emManutencao = vaga.getStatus() == VagaStatus.em_manutencao ? true : false;
+        this.vaga.setId(vaga.getId());
+        this.vaga.setNome(vaga.getNome());
+        this.vaga.setTipoVaga(vaga.getTipoVaga());
     }
 
     public void processarVaga() {
         try {
-            VagaCreateDTO vaga = new VagaCreateDTO(vagaNova.getNome());
-            vagaService.criarNovaVaga(vaga);
+            this.vaga.setStatus(this.emManutencao ? VagaStatus.em_manutencao : VagaStatus.disponivel);
+            Log.info(this.vaga.getStatus());
+            vagaService.salvarVaga(vaga);
+            limparVaga();
+            PrimeFaces.current().executeScript("PF('dialogVaga').hide()");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Sucesso", "Vaga registrada!"));
         }
         catch (Exception e) {
@@ -89,6 +72,11 @@ public class VagaBean implements Serializable {
     public void limparFiltro() {
         this.chaveUnicaFiltro = null;
         lazyDataModel.limpar();
+    }
+
+    public void limparVaga() {
+        this.vaga = new VagaCreateDTO();
+        this.emManutencao = false;
     }
 
 }

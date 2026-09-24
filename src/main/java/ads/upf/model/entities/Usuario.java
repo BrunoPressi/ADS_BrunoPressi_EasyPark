@@ -17,7 +17,7 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String nomeCompleto;
 
     @Column(nullable = false, unique = true)
@@ -27,7 +27,7 @@ public class Usuario {
     private String telefone;
 
     @Column(nullable = false)
-    private String dataNascimento;
+    private Boolean ativo;
 
     @Column(nullable = true)
     private LocalDateTime criadoEm;
@@ -44,6 +44,7 @@ public class Usuario {
     @PrePersist
     protected void prePersist() {
         this.criadoEm = LocalDateTime.now();
+        this.ativo = true;
     }
 
     @PreUpdate

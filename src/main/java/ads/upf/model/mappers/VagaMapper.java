@@ -16,7 +16,6 @@ public interface VagaMapper {
     VagaMapper INSTANCE = Mappers.getMapper( VagaMapper.class );
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "status", ignore = true)
     @Mapping(target = "criadoEm", ignore = true)
     @Mapping(target = "atualizadoEm", ignore = true)
     Vaga toVaga(VagaCreateDTO vagaDTO);

@@ -2,6 +2,7 @@ package ads.upf.presentation;
 
 import ads.upf.model.DTOs.funcionario.FuncionarioCreateDTO;
 import ads.upf.model.DTOs.funcionario.FuncionarioResponseDTO;
+import ads.upf.presentation.lazy.GenericLazyDataModel;
 import ads.upf.services.FuncionarioService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
@@ -25,13 +26,18 @@ public class FuncionarioBean {
     FuncionarioService funcionarioService;
 
     private FuncionarioCreateDTO funcionario;
-    private List<FuncionarioResponseDTO> funcionarioResponseDTOList = new ArrayList<>();
-    private List<FuncionarioResponseDTO> funcionariosListFiltrado = new ArrayList<>();
+    private GenericLazyDataModel<FuncionarioResponseDTO> lazyDataModel;
+    private String chaveUnicaFiltro;
 
     @PostConstruct()
     protected void postConstruct() {
-        funcionario = new FuncionarioCreateDTO();
-        funcionarioResponseDTOList = funcionarioService.listarFuncionarios();
+        this.funcionario = new FuncionarioCreateDTO();
+        this.lazyDataModel = new GenericLazyDataModel<>(
+                () -> funcionarioService.contar(),
+                (first, pageSize) -> funcionarioService.listarPaginado(first, pageSize),
+                FuncionarioResponseDTO::getId,
+                (termo) -> funcionarioService.buscarPorTermo(termo)
+        );
     }
 
     public void selecionarFuncionario(FuncionarioResponseDTO funcionarioResponseDTO) {
@@ -46,12 +52,20 @@ public class FuncionarioBean {
         try {
             funcionarioService.salvarFuncionario(funcionario);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Sucesso", "Funcionário salvo com sucesso!"));
-            this.funcionarioResponseDTOList = funcionarioService.listarFuncionarios();
             this.funcionario = new FuncionarioCreateDTO();
             PrimeFaces.current().executeScript("PF('dialogFuncionario').hide()");
         }
         catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao cadastrar", e.getMessage()));
         }
+    }
+
+    public void pesquisar() {
+        lazyDataModel.buscar(chaveUnicaFiltro);
+    }
+
+    public void limparFiltro() {
+        this.chaveUnicaFiltro = null;
+        lazyDataModel.limpar();
     }
 }

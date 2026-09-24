@@ -1,6 +1,7 @@
 package ads.upf.repositories;
 
 import ads.upf.model.entities.Funcionario;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -21,4 +22,8 @@ public class FuncionarioRepository implements PanacheRepository<Funcionario> {
         return count("nomeCompleto = ?1 and id != ?2", nome, ignoreId) > 0;
     }
 
+    public PanacheQuery<Funcionario> findByNome(String nome) {
+        nome = nome.toLowerCase() + "%";
+        return find("lower(nomeCompleto) like ?1", nome);
+    }
 }

@@ -3,8 +3,11 @@ package ads.upf.services;
 import ads.upf.exceptions.FuncionarioExistsException;
 import ads.upf.model.DTOs.funcionario.FuncionarioCreateDTO;
 import ads.upf.model.DTOs.funcionario.FuncionarioResponseDTO;
+import ads.upf.model.DTOs.vaga.VagaResponseDTO;
 import ads.upf.model.entities.Funcionario;
+import ads.upf.model.entities.Vaga;
 import ads.upf.model.mappers.FuncionarioMapper;
+import ads.upf.model.mappers.VagaMapper;
 import ads.upf.repositories.FuncionarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -40,13 +43,12 @@ public class FuncionarioService {
                     funcionarioCreateDTO.getEmail()
             );
 
-            Funcionario funcionario = funcionarioRepository.findById(
-                    funcionarioCreateDTO.getId()
+            Funcionario funcionario = funcionarioRepository.findByIdOptional(
+                    funcionarioCreateDTO.getId())
+                    .orElseThrow(
+                            () -> new RuntimeException("Funcionário não encontrado.")
             );
 
-            if (funcionario == null) {
-                throw new IllegalArgumentException("Funcionário não encontrado");
-            }
 
             funcionario.setNomeCompleto(funcionarioCreateDTO.getNomeCompleto());
             funcionario.setEmail(funcionarioCreateDTO.getEmail());
@@ -55,10 +57,40 @@ public class FuncionarioService {
         }
     }
 
-    @Transactional
     public List<FuncionarioResponseDTO> listarFuncionarios() {
         List<Funcionario> funcionarioList = funcionarioRepository.listAll();
         return FuncionarioMapper.INSTANCE.toFuncionarioDtoList(funcionarioList);
+    }
+
+    public FuncionarioResponseDTO buscarPorTermo(String termo) {
+        if (termo.isEmpty() || termo.isBlank()) return null;
+
+        termo = termo.toLowerCase().trim();
+
+        if (termo.matches("^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+$")) {
+            return funcionarioRepository.findByNome(termo)
+                    .firstResultOptional()
+                    .map(FuncionarioMapper.INSTANCE::toFuncionarioDto)
+                    .orElse(null);
+        }
+
+        if (termo.matches("\\d+")) {
+            return funcionarioRepository.findByIdOptional(Long.valueOf(termo))
+                    .map(FuncionarioMapper.INSTANCE::toFuncionarioDto)
+                    .orElse(null);
+        }
+        return null;
+    }
+
+    public int contar() {
+        return (int) funcionarioRepository.count();
+    }
+
+    public List<FuncionarioResponseDTO> listarPaginado(int first, int pageSize) {
+        List<Funcionario> funcionarios = funcionarioRepository.findAll()
+                .range(first, first + pageSize - 1)
+                .list();
+        return FuncionarioMapper.INSTANCE.toFuncionarioDtoList(funcionarios);
     }
 
     private void checkFuncionarioExists(Long id, String nomeCompleto, String email) {

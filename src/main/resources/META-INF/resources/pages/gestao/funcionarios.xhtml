@@ -18,31 +18,51 @@
                          onclick="PF('dialogFuncionario').show()"/>
 
         <h:form id="formListaFuncionarios">
+
+            <!-- Barra de Pesquisa por Chave Única -->
+            <p:toolbar style="margin-bottom: 1rem;">
+                <p:toolbarGroup>
+                        <span class="ui-input-icon-left" style="margin-right: .5rem;">
+                            <i class="pi pi-key" />
+                            <p:inputText id="inputChave"
+                                         value="#{funcionarioBean.chaveUnicaFiltro}"
+                                         placeholder="Buscar por ID ou Nome..." />
+                        </span>
+
+                    <p:commandButton value="Buscar"
+                                     icon="pi pi-search"
+                                     action="#{funcionarioBean.pesquisar}"
+                                     update="@form"
+                                     style="margin-right: .5rem"
+                                     styleClass="mr-2" />
+
+                    <p:commandButton value="Limpar"
+                                     icon="pi pi-times"
+                                     action="#{funcionarioBean.limparFiltro}"
+                                     update="@form"
+                                     styleClass="ui-button-secondary" />
+                </p:toolbarGroup>
+            </p:toolbar>
+
+            <!-- Tabela com Lazy Loading (Server-Side Pagination) -->
             <p:dataTable id="dataTableFuncionarios"
-                         filteredValue="#{funcionarioBean.funcionariosListFiltrado}"
                          widgetVar="listaFuncionariosFiltro"
                          var="funcionario"
+                         value="#{funcionarioBean.lazyDataModel}"
+                         lazy="true"
                          paginator="true"
                          rows="10"
-                         rowKey="#{funcionario.usuario.id}"
+                         rowsPerPageTemplate="5,10,20,50"
                          paginatorPosition="bottom"
-                         globalFilterOnly="true"
-                         value="#{funcionarioBean.funcionarioResponseDTOList}">
-
-                <f:facet name="header">
-
-                    <span class="ui-input-icon-left">
-                        <i class="pi pi-search" />
-                        <p:inputText id="globalFilter"
-                                     onkeyup="PF('listaFuncionariosFiltro').filter()"
-                                     placeholder="Pesquisar pelo nome..." />
-                    </span>
-                </f:facet>
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="Exibindo {startRecord}-{endRecord} de {totalRecords} registros"
+                         rowKey="#{funcionario.id}"
+                         emptyMessage="Nenhum funcionario encontrado.">
 
                 <p:column headerText="ID" sortBy="#{funcionario.id}">
                     <h:outputText value="#{funcionario.id}" />
                 </p:column>
-                <p:column headerText="Nome Completo" sortBy="#{funcionario.nomeCompleto}" filterBy="#{funcionario.nomeCompleto}">
+                <p:column headerText="Nome Completo" sortBy="#{funcionario.nomeCompleto}">
                     <h:outputText value="#{funcionario.nomeCompleto}" />
                 </p:column>
                 <p:column headerText="Email">

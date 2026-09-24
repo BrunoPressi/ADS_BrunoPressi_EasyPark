@@ -21,7 +21,7 @@ public interface VagaMapper {
     @Mapping(target = "atualizadoEm", ignore = true)
     Vaga toVaga(VagaCreateDTO vagaDTO);
 
-    VagaCreateDTO toDto(Vaga vaga);
+    VagaResponseDTO toDto(Vaga vaga);
 
     List<VagaResponseDTO> toDtoList(List<Vaga> vagaList);
 }

@@ -34,32 +34,52 @@
         <!-- Formulário contendo uma data table para listagem das vagas -->
         <h:form id="dataTableForm" style="margin-top: .7rem">
 
+            <!-- Barra de Pesquisa por Chave Única -->
+            <p:toolbar style="margin-bottom: 1rem;">
+                <p:toolbarGroup>
+                        <span class="ui-input-icon-left" style="margin-right: .5rem;">
+                            <i class="pi pi-key" />
+                            <p:inputText id="inputChave"
+                                         style="width: 240px"
+                                         value="#{vagaBean.chaveUnicaFiltro}"
+                                         placeholder="Buscar por nome da vaga..." />
+                        </span>
+
+                    <p:commandButton value="Buscar"
+                                     icon="pi pi-search"
+                                     action="#{vagaBean.pesquisar}"
+                                     update="@form"
+                                     style="margin-right: .5rem"
+                                     styleClass="mr-2" />
+
+                    <p:commandButton value="Limpar"
+                                     icon="pi pi-times"
+                                     action="#{vagaBean.limparFiltro}"
+                                     update="@form"
+                                     styleClass="ui-button-secondary" />
+                </p:toolbarGroup>
+            </p:toolbar>
+
             <p:dataTable id="listaVagas"
-                         filteredValue="#{vagaBean.vagasListFiltrado}"
                          widgetVar="listaVagasFiltro"
                          var="vaga"
-                         value="#{vagaBean.vagasList}"
-                         rowKey="#{vaga.id}"
+                         value="#{vagaBean.lazyDataModel}"
+                         lazy="true"
                          paginator="true"
-                         rows="5"
+                         rows="10"
+                         rowsPerPageTemplate="5,10,20,50"
                          paginatorPosition="bottom"
-                         globalFilterOnly="true">
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="Exibindo {startRecord}-{endRecord} de {totalRecords} registros"
+                         rowKey="#{vaga.id}"
+                         emptyMessage="Nenhuma vaga encontrada.">
 
-                <f:facet name="header">
-
-                    <span class="ui-input-icon-left">
-                        <i class="pi pi-search" />
-                        <p:inputText id="globalFilter"
-                                     onkeyup="PF('listaVagasFiltro').filter()"
-                                     placeholder="Pesquisar pelo nome..." />
-                    </span>
-                </f:facet>
 
                 <p:column headerText="Id" sortBy="#{vaga.id}">
                     <h:outputText value="#{vaga.id}"/>
                 </p:column>
 
-                <p:column headerText="Nome" sortBy="#{vaga.nome}" filterBy="#{vaga.nome}">
+                <p:column headerText="Nome" sortBy="#{vaga.nome}">
                     <h:outputText value="#{vaga.nome}" />
                 </p:column>
 

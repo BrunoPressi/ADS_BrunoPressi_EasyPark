@@ -39,7 +39,7 @@ public class ClienteBean implements Serializable {
                 () -> clienteService.contar(),
                 (first, pageSize) -> clienteService.listarPaginado(first, pageSize),
                 ClienteResponseDTO::getId,
-                termo -> clienteService.buscarPorChaveUnica(String.valueOf(termo))
+                termo -> clienteService.buscarPorChaveUnica(termo)
         );
         cliente = new ClienteCreateDTO();
     }

@@ -1,6 +1,7 @@
 package ads.upf.repositories;
 
 import ads.upf.model.entities.Vaga;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -12,6 +13,10 @@ public class VagaRepository implements PanacheRepository<Vaga> {
             return count("nome = ?1", nome) > 0;
         }
         return count("nome = ?1 and id != ?2", nome, ignoreId) > 0;
+    }
+
+    public PanacheQuery<Vaga> findByNome(String nome) {
+        return find("nome = ?1", nome);
     }
 
 }

@@ -56,10 +56,30 @@ public class VagaService {
         }
     }
 
-    @Transactional
     public List<VagaResponseDTO> listarVagas() {
         List<Vaga> vagaList = vagaRepository.listAll();
         return VagaMapper.INSTANCE.toDtoList(vagaList);
+    }
+
+    public VagaResponseDTO buscarPeloNome(String nome) {
+        if (!nome.isBlank() && !nome.isEmpty()) {
+           return vagaRepository.findByNome(nome)
+                   .firstResultOptional()
+                   .map(VagaMapper.INSTANCE::toDto)
+                   .orElse(null);
+        }
+        return null;
+    }
+
+    public int contar() {
+        return (int) vagaRepository.count();
+    }
+
+    public List<VagaResponseDTO> listarPaginado(int first, int pageSize) {
+        List<Vaga> vagas = vagaRepository.findAll()
+                .range(first, first + pageSize - 1)
+                .list();
+        return VagaMapper.INSTANCE.toDtoList(vagas);
     }
 
     private void checkVagaExists(String nome, Long id) {

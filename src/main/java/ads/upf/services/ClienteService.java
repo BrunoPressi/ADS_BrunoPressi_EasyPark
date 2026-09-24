@@ -36,8 +36,8 @@ public class ClienteService {
 
         // Se tem 11 dígitos, é CPF
         if (clean.length() == 11) {
-            String hash = SecurityUtil.generateBlindIndex(clean);
-            return clienteRepository.find("cpfHash", hash)
+            String cpfHash = SecurityUtil.generateBlindIndex(clean);
+            return clienteRepository.findByCpf(cpfHash)
                     .firstResultOptional()
                     .map(ClienteMapper.INSTANCE::toClienteDto)
                     .orElse(null);

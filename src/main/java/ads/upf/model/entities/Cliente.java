@@ -9,6 +9,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity()
 @Table(name = "clientes")
 @PrimaryKeyJoinColumn(name = "usuarioId")
@@ -25,6 +28,9 @@ public class Cliente extends Usuario {
 
     @Enumerated(EnumType.STRING)
     private UsuarioRole role;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cliente")
+    private List<Contrato> contratoList = new ArrayList<>();
 
     @Override
     protected void prePersist() {

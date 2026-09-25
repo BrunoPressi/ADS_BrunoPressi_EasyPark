@@ -6,7 +6,8 @@
                 xmlns:p="http://primefaces.org/ui">
     <ui:define name="content">
 
-        <p:commandButton value="Cadastrar Vaga"
+        <p:commandButton value="Nova Vaga"
+                         icon="pi pi-plus"
                          action="#{vagaBean.limparVaga}"
                          update=":formVaga:panelVaga"
                          oncomplete="PF('dialogVaga').show()"/>

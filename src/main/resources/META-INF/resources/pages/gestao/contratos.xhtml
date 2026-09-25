@@ -1,0 +1,218 @@
+<ui:composition template="/templates/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="content">
+
+        <p:commandButton value="Novo Contrato"
+                         icon="pi pi-plus"
+                         style="margin-bottom: .8rem"
+                         action="#{contratoBean.limpar}"
+                         update=":formDialogContrato:formContrato"
+                         oncomplete="PF('dialogContrato').show()"/>
+
+        <h:form id="formContratos">
+            <!-- Tabela com Lazy Loading (Server-Side Pagination) -->
+            <p:dataTable id="tabelaContratos"
+                         widgetVar="dtContratos"
+                         var="contrato"
+                         value="#{contratoBean.lazyDataModel}"
+                         lazy="true"
+                         paginator="true"
+                         rows="10"
+                         rowsPerPageTemplate="5,10,20,50"
+                         paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="Exibindo {startRecord}-{endRecord} de {totalRecords} registros"
+                         rowKey="#{contrato.id}"
+                         emptyMessage="Nenhum contrato encontrado.">
+
+                <p:column headerText="ID" sortBy="#{contrato.id}" style="width: 80px; text-align: center;">
+                    <h:outputText value="#{contrato.id}" />
+                </p:column>
+
+                <p:column headerText="Data de Início">
+                    <h:outputText value="#{contrato.dataInicio}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Data de Término">
+                    <h:outputText value="#{contrato.dataTermino}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Valor Contratado">
+                    <h:outputText value="R$#{contrato.valorContratado}" />
+                </p:column>
+
+                <p:column headerText="Status">
+                    <p:tag severity="#{ (contrato.status) == 'ativo' ? 'success'
+                            : (contrato.status) == 'encerrado' ? 'warning'
+                            : (contrato.status) == 'inadimplente' ? 'danger'
+                            : (contrato.status) == 'cancelado' ? 'secondary'
+                            : 'info'}"
+                           value="#{ (contrato.status) == 'ativo' ? 'Ativo'
+                            : (contrato.status) == 'encerrado' ? 'Encerrado'
+                            : (contrato.status) == 'inadimplente' ? 'Inadimplente'
+                            : (contrato.status) == 'cancelado' ? 'Cancelado'
+                            : 'Não definido' }"  />
+                </p:column>
+
+                <!--<p:column headerText="Editar">
+                    <p:commandButton value="Editar"
+                                     icon="pi pi-pencil" styleClass="rounded-button ui-button-help"
+                                     oncomplete="PF('dialogCliente').show()"
+                                     action="#{clienteBean.selecionarCliente(cliente)}"
+                                     update=":formDialog:formCliente"/>
+                </p:column>-->
+            </p:dataTable>
+        </h:form>
+
+        <h:form id="formDialogContrato">
+            <p:dialog header="Preencha com os dados do contrato"
+                      widgetVar="dialogContrato"
+                      minHeight="35" width="470"
+                      modal="true"
+                      showEffect="fade"
+                      closeOnEscape="true">
+                <p:outputPanel id="formContrato">
+                    <div style="margin-left: .5rem;">
+                        <div>
+                            <div>
+                                <p:outputLabel for="cliente" value="Cliente (CPF):" />
+                            </div>
+                            <p:autoComplete id="cliente"
+                                            value="#{contratoBean.clienteSelecionado}"
+                                            converter="#{clienteConverter}"
+                                            inputStyle="width: 197px"
+                                            completeMethod="#{contratoBean.buscarClientePorCpf}"
+                                            var="cliente"
+                                            itemLabel="#{cliente.nomeCompleto}"
+                                            itemValue="#{cliente}"
+                                            minQueryLength="11"
+                                            maxResults="1"
+                                            emptyMessage="Nenhum cliente encontrado com esse CPF."
+                                            placeholder="Digite o CPF do cliente..."
+                                            forceSelection="true" />
+
+                            <p:commandButton icon="pi pi-plus"
+                                             action="#{contratoBean.limpar}"
+                                             update=":formDialogCliente:formCliente"
+                                             oncomplete="PF('dialogCliente').show()"
+                                             styleClass="button ui-button" />
+
+                        </div>
+                        <h:message for="cliente" style="color:red;" />
+                        <div style="margin-top: .7rem">
+                            <div class="outputs">
+                                <p:outputLabel for="dataInicio" value="Data de Início"/>
+                            </div>
+                            <div class="field col-12 md:col-4">
+                                <p:datePicker id="dataInicio"
+                                              value="#{contratoBean.contrato.dataInicio}"
+                                              showIcon="true" showOnFocus="false"  />
+                            </div>
+                            <h:message for="dataInicio" style="color:red;" />
+                        </div>
+                        <div style="margin-top: .7rem">
+                            <div class="outputs">
+                                <p:outputLabel for="dataTermino" value="Data de Término"/>
+                            </div>
+                            <div class="field col-12 md:col-4">
+                                <p:datePicker id="dataTermino"
+                                              value="#{contratoBean.contrato.dataTermino}"
+                                              showIcon="true" showOnFocus="false"  />
+                            </div>
+                            <h:message for="dataTermino" style="color:red;" />
+                        </div>
+                    </div>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton type="button"
+                                     value="Voltar"
+                                     onclick="PF('dialogContrato').hide()"
+                                     styleClass="ui-button-flat mr-2"
+                                     style="width: 6rem" />
+                    <p:commandButton process="@form"
+                                     update=":formDialogContrato:formContrato :formContratos"
+                                     action="#{contratoBean.processarContrato}"
+                                     value="Salvar"
+                                     style="width: 6rem" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="formDialogCliente">
+            <p:dialog header="Preencha com os dados do cliente"
+                      widgetVar="dialogCliente"
+                      minHeight="40" width="730"
+                      modal="true"
+                      showEffect="fade"
+                      closeOnEscape="true">
+                <p:outputPanel id="formCliente">
+                    <div style="margin-left: .5rem;
+                                display: grid;
+                                grid-template-columns: auto auto;">
+                        <div class="divsFormDialog">
+                            <div class="outputs">
+                                <p:outputLabel for="nomeCompleto" value="Nome Completo"/>
+                            </div>
+                            <p:inputText style="width: 250px"
+                                         id="nomeCompleto"
+                                         value="#{clienteBean.cliente.nomeCompleto}"
+                                         placeholder="Ex: John Doe"/><br/>
+                            <h:message for="nomeCompleto" style="color:red;" />
+                        </div>
+                        <div class="divsFormDialog">
+                            <div class="outputs">
+                                <p:outputLabel for="cpf" value="CPF"/>
+                            </div>
+                            <p:inputText style="width: 250px"
+                                         id="cpf"
+                                         value="#{clienteBean.cliente.cpf}"
+                                         placeholder="Ex: 123.456.789-01"/><br/>
+                            <h:message for="cpf" style="color:red;" />
+                        </div>
+                        <div class="divsFormDialog">
+                            <div class="outputs">
+                                <p:outputLabel for="email" value="Email"/>
+                            </div>
+                            <p:inputText style="width: 250px"
+                                         id="email"
+                                         value="#{clienteBean.cliente.email}"
+                                         placeholder="Ex: johndoe@email.com"/><br/>
+                            <h:message for="email" style="color:red;" />
+                        </div>
+                        <div class="divsFormDialog">
+                            <div class="outputs">
+                                <p:outputLabel for="telefone" value="Telefone"/>
+                            </div>
+                            <p:inputText style="width: 250px"
+                                         id="telefone"
+                                         value="#{clienteBean.cliente.telefone}"
+                                         placeholder="Ex: 54 9 96322831"/><br/>
+                            <h:message for="telefone" style="color:red;" />
+                        </div>
+                    </div>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton type="button"
+                                     value="Voltar"
+                                     onclick="PF('dialogCliente').hide()"
+                                     styleClass="ui-button-flat mr-2"
+                                     style="width: 6rem" />
+                    <p:commandButton process="@form"
+                                     update=":formDialogCliente:formCliente"
+                                     action="#{clienteBean.processarCliente}"
+                                     value="Salvar"
+                                     style="width: 6rem" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

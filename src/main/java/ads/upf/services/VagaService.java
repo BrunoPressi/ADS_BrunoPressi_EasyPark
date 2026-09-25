@@ -5,7 +5,6 @@ import ads.upf.exceptions.InvalidEditException;
 import ads.upf.model.DTOs.vaga.VagaCreateDTO;
 import ads.upf.model.DTOs.vaga.VagaResponseDTO;
 import ads.upf.model.entities.Vaga;
-import ads.upf.model.enums.TipoVaga;
 import ads.upf.model.enums.VagaStatus;
 import ads.upf.model.mappers.VagaMapper;
 import ads.upf.repositories.VagaRepository;

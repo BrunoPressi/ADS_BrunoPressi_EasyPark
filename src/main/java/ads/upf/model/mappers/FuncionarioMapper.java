@@ -21,7 +21,7 @@ public interface FuncionarioMapper {
     @Mapping(target = "atualizadoPor", ignore = true)
     @Mapping(target = "senha", ignore = true)
     @Mapping(target = "role", ignore = true)
-    Funcionario toFuncionario(FuncionarioCreateDTO usuarioCreateDTO);
+    Funcionario toFuncionario(FuncionarioCreateDTO funcionarioCreateDTO);
     FuncionarioResponseDTO toFuncionarioDto(Funcionario funcionario);
     List<FuncionarioResponseDTO> toFuncionarioDtoList(List<Funcionario> funcionarioList);
 }

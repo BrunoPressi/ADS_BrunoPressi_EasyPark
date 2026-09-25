@@ -26,9 +26,6 @@ public class Usuario {
     @Column(nullable = false)
     private String telefone;
 
-    @Column(nullable = false)
-    private Boolean ativo;
-
     @Column(nullable = true)
     private LocalDateTime criadoEm;
 
@@ -44,7 +41,6 @@ public class Usuario {
     @PrePersist
     protected void prePersist() {
         this.criadoEm = LocalDateTime.now();
-        this.ativo = true;
     }
 
     @PreUpdate

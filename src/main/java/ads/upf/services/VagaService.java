@@ -38,7 +38,7 @@ public class VagaService {
 
             vaga.setNome(vagaDTO.getNome());
             vaga.setStatus(vagaDTO.getStatus());
-            vaga.setTipoVaga(TipoVaga.valueOf(vagaDTO.getTipoVaga()));
+            vaga.setTipoVaga(vagaDTO.getTipoVaga());
         }
     }
 

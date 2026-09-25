@@ -117,13 +117,20 @@
                 </p:column>
 
                 <p:column headerText="Tipo da Vaga">
-                    <h:outputText value="#{vaga.tipoVaga}" />
+                    <h:outputText
+                            value="#{ (vaga.tipoVaga) == 'comum' ? 'Comum'
+                            : (vaga.tipoVaga) == 'idoso' ? 'Idoso'
+                            : (vaga.tipoVaga) == 'moto' ? 'Moto'
+                            : (vaga.tipoVaga) == 'pne' ? 'PNE'
+                            : 'Indefinido'}" />
                 </p:column>
 
                 <p:column headerText="Status">
                     <p:tag severity="#{vaga.status == 'disponivel' ? 'success' : (vaga.status == 'ocupada' ? 'danger' : 'warning')}"
-                           value="#{vaga.status == 'disponivel' ? 'Disponível' : (vaga.status == 'ocupada' ? 'Ocupada' : (vaga.status == 'em_manutencao' ? 'Em
-                                    Manutenção' : 'Não Definido'))}"/>
+                           value="#{ (vaga.status) == 'disponivel' ? 'Disponível'
+                           : (vaga.status == 'ocupada' ? 'Ocupada'
+                           : (vaga.status == 'em_manutencao' ? 'EmManutenção'
+                           : 'Não Definido'))}"/>
                 </p:column>
 
                 <p:column headerText="Editar">

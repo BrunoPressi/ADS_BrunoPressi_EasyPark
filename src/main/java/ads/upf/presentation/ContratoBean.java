@@ -30,13 +30,17 @@ public class ContratoBean implements Serializable {
 
     @Inject
     protected ContratoService contratoService;
+
     @Inject
     protected ClienteService clienteService;
 
     private GenericLazyDataModel<ContratoResponseDTO> lazyDataModel;
     private ContratoCreateDTO contrato;
+
     @NotNull(message = "O cliente é obrigatório")
     private ClienteResponseDTO clienteSelecionado;
+
+    private String chaveUnicaFiltro;
 
     @PostConstruct
     protected void postConstruct() {
@@ -46,8 +50,12 @@ public class ContratoBean implements Serializable {
                 () -> contratoService.contar(),
                 (first, pageSize) -> contratoService.listarPaginado(first, pageSize),
                 ContratoResponseDTO::getId,
-                (termo) -> null
+                (termo) -> contratoService.buscarPorCliente(termo)
         );
+    }
+
+    public void selecionarCliente(ContratoResponseDTO contratoResponseDTO) {
+        this.clienteSelecionado = contratoResponseDTO.getCliente();
     }
 
     public void processarContrato() {
@@ -83,9 +91,15 @@ public class ContratoBean implements Serializable {
         return cliente != null ? List.of(cliente) : Collections.emptyList();
     }
 
+    public void pesquisar() {
+        lazyDataModel.buscar(chaveUnicaFiltro);
+    }
+
     public void limpar() {
         this.contrato = new ContratoCreateDTO();
         this.clienteSelecionado = new ClienteResponseDTO();
+        this.chaveUnicaFiltro = null;
+        lazyDataModel.limpar();
     }
 
 }

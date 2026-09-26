@@ -13,8 +13,35 @@
                          update=":formDialogContrato:formContrato"
                          oncomplete="PF('dialogContrato').show()"/>
 
+        <!-- BARRA DE PESQUISA POR CHAVE ÚNICA (CPF) -->
+        <!-- TABELA COM LAZY LOADING (SERVER-SIDE PAGINATION) -->
         <h:form id="formContratos">
-            <!-- Tabela com Lazy Loading (Server-Side Pagination) -->
+            <p:toolbar style="margin-bottom: 1rem;">
+                <p:toolbarGroup>
+                        <span class="ui-input-icon-left" style="margin-right: .5rem;">
+                            <i class="pi pi-key" />
+                            <p:inputText id="inputChave"
+                                         style="width: 300px"
+                                         value="#{contratoBean.chaveUnicaFiltro}"
+                                         placeholder="Buscar contrato por CPF do cliente..." />
+                        </span>
+
+                    <p:commandButton value="Buscar"
+                                     icon="pi pi-search"
+                                     action="#{contratoBean.pesquisar}"
+                                     update="@form"
+                                     style="margin-right: .5rem"
+                                     styleClass="mr-2" />
+
+                    <p:commandButton value="Limpar"
+                                     icon="pi pi-times"
+                                     action="#{contratoBean.limpar}"
+                                     update="@form"
+                                     styleClass="ui-button-secondary" />
+                </p:toolbarGroup>
+            </p:toolbar>
+
+            <!-- TABELA COM LAZY LOADING (SERVER-SIDE PAGINATION) -->
             <p:dataTable id="tabelaContratos"
                          widgetVar="dtContratos"
                          var="contrato"
@@ -30,7 +57,7 @@
                          rowKey="#{contrato.id}"
                          emptyMessage="Nenhum contrato encontrado.">
 
-                <p:column headerText="ID" sortBy="#{contrato.id}" style="width: 80px; text-align: center;">
+                <p:column headerText="ID" style="width: 80px; text-align: center;">
                     <h:outputText value="#{contrato.id}" />
                 </p:column>
 
@@ -48,6 +75,15 @@
 
                 <p:column headerText="Valor Contratado">
                     <h:outputText value="R$#{contrato.valorContratado}" />
+                </p:column>
+
+                <p:column headerText="Cliente">
+                    <p:commandButton icon="pi pi-eye"
+                                     value="Ver Cliente"
+                                     action="#{contratoBean.selecionarCliente(contrato)}"
+                                     oncomplete="PF('dialogClienteContrato').show()"
+                                     update=":formDialogClienteContrato:tabelaClientes"
+                                     styleClass="rounded-button"/>
                 </p:column>
 
                 <p:column headerText="Status">
@@ -73,6 +109,7 @@
             </p:dataTable>
         </h:form>
 
+        <!-- FORM PARA CADASTRAR UM NOVO CONTRATO -->
         <h:form id="formDialogContrato">
             <p:dialog header="Preencha com os dados do contrato"
                       widgetVar="dialogContrato"
@@ -99,13 +136,11 @@
                                             emptyMessage="Nenhum cliente encontrado com esse CPF."
                                             placeholder="Digite o CPF do cliente..."
                                             forceSelection="true" />
-
                             <p:commandButton icon="pi pi-plus"
                                              action="#{contratoBean.limpar}"
                                              update=":formDialogCliente:formCliente"
                                              oncomplete="PF('dialogCliente').show()"
                                              styleClass="button ui-button" />
-
                         </div>
                         <h:message for="cliente" style="color:red;" />
                         <div style="margin-top: .7rem">
@@ -114,6 +149,8 @@
                             </div>
                             <div class="field col-12 md:col-4">
                                 <p:datePicker id="dataInicio"
+                                              focusOnSelect="true"
+                                              placeholder="DD/MM/YYYY"
                                               value="#{contratoBean.contrato.dataInicio}"
                                               showIcon="true" showOnFocus="false"  />
                             </div>
@@ -125,6 +162,8 @@
                             </div>
                             <div class="field col-12 md:col-4">
                                 <p:datePicker id="dataTermino"
+                                              focusOnSelect="true"
+                                              placeholder="DD/MM/YYYY"
                                               value="#{contratoBean.contrato.dataTermino}"
                                               showIcon="true" showOnFocus="false"  />
                             </div>
@@ -147,6 +186,7 @@
             </p:dialog>
         </h:form>
 
+        <!-- FORM PARA CADASTRAR UM NOVO CLIENTE (SE NECESSÁRIO) -->
         <h:form id="formDialogCliente">
             <p:dialog header="Preencha com os dados do cliente"
                       widgetVar="dialogCliente"
@@ -214,5 +254,43 @@
                 </f:facet>
             </p:dialog>
         </h:form>
+
+        <!-- DATA TABLE PARA LISTAGEM DO CLIENTE ASSOCIADO AO CONTRATO -->
+        <h:form id="formDialogClienteContrato">
+            <p:dialog header="Exibindo cliente associado ao contrato"
+                      widgetVar="dialogClienteContrato"
+                      minHeight="40" width="730"
+                      modal="true"
+                      showEffect="fade"
+                      closeOnEscape="true">
+
+                <p:dataTable id="tabelaClientes"
+                             value="#{contratoBean.clienteSelecionado}"
+                             lazy="false">
+
+                    <p:column headerText="ID" style="width: 80px; text-align: center;">
+                        <h:outputText value="#{contratoBean.clienteSelecionado.id}" />
+                    </p:column>
+
+                    <p:column headerText="Nome Completo">
+                        <h:outputText value="#{contratoBean.clienteSelecionado.nomeCompleto}" />
+                    </p:column>
+
+                    <p:column headerText="CPF">
+                        <h:outputText value="#{contratoBean.clienteSelecionado.cpf}" />
+                    </p:column>
+
+                    <p:column headerText="Email">
+                        <h:outputText value="#{contratoBean.clienteSelecionado.email}" />
+                    </p:column>
+
+                    <p:column headerText="Telefone">
+                        <h:outputText value="#{contratoBean.clienteSelecionado.telefone}" />
+                    </p:column>
+                </p:dataTable>
+
+            </p:dialog>
+        </h:form>
+
     </ui:define>
 </ui:composition>

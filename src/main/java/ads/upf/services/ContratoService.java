@@ -8,6 +8,7 @@ import ads.upf.model.entities.Contrato;
 import ads.upf.model.mappers.ContratoMapper;
 import ads.upf.repositories.ClienteRepository;
 import ads.upf.repositories.ContratoRepository;
+import ads.upf.utils.SecurityUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -41,6 +42,14 @@ public class ContratoService {
             contrato.setDataInicio(contratoCreateDTO.getDataInicio());
             contrato.setDataTermino(contratoCreateDTO.getDataTermino());
         }
+    }
+
+    public ContratoResponseDTO buscarPorCliente(String cpf) {
+        cpf = SecurityUtil.generateBlindIndex(cpf);
+        return contratoRepository.buscarPorCliente(cpf)
+                .firstResultOptional()
+                .map(ContratoMapper.INSTANCE::toContratoDto)
+                .orElse(null);
     }
 
     public int contar() {

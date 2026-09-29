@@ -26,15 +26,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-// AssertJ Core: Importação estática das asserções fluentes.
-// Permite ler os testes de forma natural: assertThat(resultado).isEqualTo(...)
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-// Mockito: Importação estática dos métodos utilitários de simulação e verificação de mocks.
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
+
+// AssertJ Core: Importação estática das asserções fluentes.
+// Permite ler os testes de forma natural: assertThat(resultado).isEqualTo(...)
+// Mockito: Importação estática dos métodos utilitários de simulação e verificação de mocks.
 
 /**
  * =========================================================================================

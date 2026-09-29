@@ -102,6 +102,22 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-elytron-security-jdbc</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit-mockito</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Asserções fluentes recomendadas para QA -->
+        <!-- Source: https://mvnrepository.com/artifact/org.assertj/assertj-core -->
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.27.7</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>

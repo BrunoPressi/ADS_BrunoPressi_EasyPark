@@ -8,59 +8,97 @@ import ads.upf.model.entities.Cliente;
 import ads.upf.model.mappers.ClienteMapper;
 import ads.upf.repositories.ClienteRepository;
 import ads.upf.utils.SecurityUtil;
+import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @ApplicationScoped
 public class ClienteService {
 
+    private final ClienteRepository clienteRepository;
+
     @Inject
-    protected ClienteRepository clienteRepository;
+    public ClienteService(ClienteRepository clienteRepository) {
+        this.clienteRepository = clienteRepository;
+    }
 
     @Transactional
     public void salvarCliente(ClienteCreateDTO clienteCreateDTO) {
+        Objects.requireNonNull(clienteCreateDTO, "Os dados do cliente não podem ser nulos.");
+        Objects.requireNonNull(clienteCreateDTO.getNomeCompleto(), "O nome é obrigatório.");
+        Objects.requireNonNull(clienteCreateDTO.getEmail(), "O email é obrigatório");
+        Objects.requireNonNull(clienteCreateDTO.getTelefone(), "O telefone é obrigatório.");
+        Objects.requireNonNull(clienteCreateDTO.getCpf(), "O CPF é obrigatório.");
+
+        String nomeNormalizado = clienteCreateDTO.getNomeCompleto().trim();
+        String emailNormalizado = clienteCreateDTO.getEmail().trim().toLowerCase();
+        String telefoneNormalizado = clienteCreateDTO.getTelefone().trim();
+        String cpfNormalizado = clienteCreateDTO.getCpf().replaceAll("\\D", "");
+
         if (clienteCreateDTO.getId() == null) {
-            checkClienteExists(null, clienteCreateDTO.getCpf(), clienteCreateDTO.getEmail());
+            checkClienteExists(null, cpfNormalizado, emailNormalizado);
 
             Cliente cliente = ClienteMapper.INSTANCE.toCliente(clienteCreateDTO);
+            cliente.setNomeCompleto(nomeNormalizado);
+            cliente.setEmail(emailNormalizado);
+            cliente.setTelefone(telefoneNormalizado);
+            cliente.setCpf(cpfNormalizado);
             clienteRepository.persist(cliente);
         }
         else {
-            checkClienteExists(clienteCreateDTO.getId(), clienteCreateDTO.getCpf(), clienteCreateDTO.getEmail());
+            checkClienteExists(clienteCreateDTO.getId(), cpfNormalizado, emailNormalizado);
 
             Cliente cliente = clienteRepository
                     .findByIdOptional(clienteCreateDTO.getId())
                     .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado."));
 
-            cliente.setNomeCompleto(clienteCreateDTO.getNomeCompleto());
-            cliente.setCpf(clienteCreateDTO.getCpf());
-            cliente.setEmail(clienteCreateDTO.getEmail());
-            cliente.setTelefone(clienteCreateDTO.getTelefone());
+            cliente.setNomeCompleto(nomeNormalizado);
+            cliente.setCpf(cpfNormalizado);
+            cliente.setEmail(emailNormalizado);
+            cliente.setTelefone(telefoneNormalizado);
         }
     }
 
     public ClienteResponseDTO buscarPorChaveUnica(String termo) {
-        if (termo == null || termo.isBlank()) return null;
+        if (termo == null || termo.isBlank()) {
+            return null;
+        }
+        String termoTratado = termo.trim();
 
-        String clean = termo.replaceAll("\\D", "");
-
-        // Se tem 11 dígitos, é CPF
-        if (clean.length() == 11) {
-            String cpfHash = SecurityUtil.generateBlindIndex(clean);
-            return clienteRepository.findByCpf(cpfHash)
+        // 1. Busca por E-mail (Chave Única textual)
+        if (termoTratado.contains("@")) {
+            return clienteRepository.find("email = ?1", termoTratado.toLowerCase())
                     .firstResultOptional()
                     .map(ClienteMapper.INSTANCE::toClienteDto)
                     .orElse(null);
         }
 
-        // Se for numérico menor, pode ser ID
-        if (clean.matches("\\d+")) {
-            return clienteRepository.findByIdOptional(Long.parseLong(clean))
+        String digitos = termoTratado.replaceAll("\\D", "");
+
+        // 2. Se possuir exatamente 11 dígitos, busca por CPF via Blind Index
+        if (digitos.length() == 11) {
+            String cpfHash = SecurityUtil.generateBlindIndex(digitos);
+            return clienteRepository.find("cpfHash = ?1", cpfHash)
+                    .firstResultOptional()
                     .map(ClienteMapper.INSTANCE::toClienteDto)
                     .orElse(null);
+        }
+
+        // 3. Se for puramente numérico e de tamanho compatível com ID (1 a 18 dígitos)
+        if (termoTratado.matches("^\\d{1,18}$")) {
+            try {
+                Long id = Long.valueOf(termoTratado);
+                return clienteRepository.findByIdOptional(id)
+                        .map(ClienteMapper.INSTANCE::toClienteDto)
+                        .orElse(null);
+            } catch (NumberFormatException ignored) {
+                // Proteção defensiva adicional
+            }
         }
 
         return null;
@@ -71,9 +109,14 @@ public class ClienteService {
     }
 
     public List<ClienteResponseDTO> listarPaginado(int first, int pageSize) {
-        List<Cliente> clientes = clienteRepository.findAll()
+        if (first < 0 || pageSize <= 0) {
+            return Collections.emptyList();
+        }
+
+        List<Cliente> clientes = clienteRepository.findAll(Sort.by("nomeCompleto"))
                 .range(first, first + pageSize - 1)
                 .list();
+
         return ClienteMapper.INSTANCE.toClienteDtoList(clientes);
     }
 

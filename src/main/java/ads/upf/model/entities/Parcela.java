@@ -1,0 +1,75 @@
+package ads.upf.model.entities;
+
+import ads.upf.model.enums.ParcelaMeiosPagamento;
+import ads.upf.model.enums.StatusParcela;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "Parcelas")
+@Getter @Setter
+@AllArgsConstructor @NoArgsConstructor
+@EqualsAndHashCode(of = "id")
+public class Parcela {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private LocalDate dataVencimento;
+
+    @Column(nullable = true)
+    private LocalDate dataPagamento;
+
+    @Column(nullable = false)
+    private Integer numeroParcela;
+
+    @Column(nullable = false)
+    private BigDecimal valor;
+
+    @Enumerated(EnumType.STRING)
+    private ParcelaMeiosPagamento meioPagamento;
+
+    @Column(nullable = false)
+    private Boolean cobrancaEnviada;
+
+    @Enumerated(EnumType.STRING)
+    private StatusParcela status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contrato_id")
+    private Contrato contrato;
+
+    @Column(nullable = true)
+    private LocalDateTime criadoEm;
+
+    @Column(nullable = true)
+    private LocalDateTime atualizadoEm;
+
+    @Column(nullable = true)
+    private String criadoPor;
+
+    @Column(nullable = true)
+    private String atualizadoPor;
+
+    @PrePersist
+    protected void prePersist() {
+        this.criadoEm = LocalDateTime.now();
+        this.dataPagamento = null;
+        this.valor = BigDecimal.valueOf(180.00);
+        this.meioPagamento = null;
+        this.cobrancaEnviada = false;
+    }
+
+    @PreUpdate
+    protected void preUpdateUsuario() {
+        this.atualizadoEm = LocalDateTime.now();
+    }
+
+}
+

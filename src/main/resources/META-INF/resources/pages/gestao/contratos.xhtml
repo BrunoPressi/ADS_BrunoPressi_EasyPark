@@ -74,7 +74,7 @@
                 </p:column>
 
                 <p:column headerText="Valor Contratado">
-                    <h:outputText value="R$#{contrato.valorContratado}" />
+                    <h:outputText value="R$#{contrato.valorContratado}/mês" />
                 </p:column>
 
                 <p:column headerText="Cliente">
@@ -84,6 +84,15 @@
                                      oncomplete="PF('dialogClienteContrato').show()"
                                      update=":formDialogClienteContrato:tabelaClientes"
                                      styleClass="rounded-button"/>
+                </p:column>
+
+                <p:column headerText="Parcelas">
+                    <p:commandButton icon="pi pi-eye"
+                                     value="Ver Parcelas"
+                                     action="#{contratoBean.selecionarParcelas(contrato)}"
+                                     oncomplete="PF('dialogParcelas').show()"
+                                     update=":formDialogParcelasContrato:tabelaParcelas"
+                                     styleClass="rounded-button ui-button-help"/>
                 </p:column>
 
                 <p:column headerText="Status">
@@ -259,7 +268,7 @@
         <h:form id="formDialogClienteContrato">
             <p:dialog header="Exibindo cliente associado ao contrato"
                       widgetVar="dialogClienteContrato"
-                      minHeight="40" width="730"
+                      minHeight="40" width="895"
                       modal="true"
                       showEffect="fade"
                       closeOnEscape="true">
@@ -292,5 +301,81 @@
             </p:dialog>
         </h:form>
 
+        <!-- DATA TABLE PARA LISTAGEM DAS PARCELAS DO CONTRATO COM PAGINAÇÃO CLIENT SIDE -->
+        <h:form id="formDialogParcelasContrato">
+            <p:dialog header="Exibindo parcelas do contrato"
+                      widgetVar="dialogParcelas"
+                      minHeight="40"
+                      width="950"
+                      modal="true"
+                      showEffect="fade"
+                      closeOnEscape="true">
+                <p:dataTable id="tabelaParcelas"
+                             value="#{contratoBean.parcelas}"
+                             lazy="false"
+                             var="parcela"
+                             widgetVar="dtContratos"
+                             paginator="true"
+                             rows="5"
+                             rowsPerPageTemplate="5,10"
+                             paginatorPosition="bottom"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             currentPageReportTemplate="Exibindo {startRecord}-{endRecord} de {totalRecords} registros"
+                             rowKey="#{parcela.id}"
+                             emptyMessage="Nenhuma parcela encontrada.">
+
+                    <p:column headerText="ID" style="width: 80px; text-align: center;">
+                        <h:outputText value="#{parcela.id}" />
+                    </p:column>
+
+                    <p:column headerText="Data de Vencimento" style="width: 80px; text-align: center;">
+                        <h:outputText value="#{parcela.dataVencimento}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Data de Pagamento" style="width: 80px; text-align: center;">
+                        <h:outputText value="#{ (parcela.dataPagamento) == null
+                        ? 'Pagamento Pendente'
+                        : (parcela.dataPagamento)}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Número da Parcela" style="width: 80px; text-align: center;">
+                        <h:outputText value="#{parcela.numeroParcela}ª" />
+                    </p:column>
+
+                    <p:column headerText="Valor" style="width: 80px; text-align: center;">
+                        <h:outputText value="R$#{parcela.valor}" />
+                    </p:column>
+
+                    <p:column headerText="Meio de Pagamento" style="width: 80px; text-align: center;">
+                        <h:outputText value="#{ (parcela.status) == 'pendente'
+                                ? 'Pagamento Pendente'
+                                : (parcela.meioPagamento)}" />
+                    </p:column>
+
+                    <p:column headerText="Cobrança Enviada?" style="width: 80px; text-align: center;">
+                        <h:outputText  />
+                        <p:tag severity="#{ (parcela.cobrancaEnviada ? 'success' : 'warning') }"
+                               value="#{ (parcela.cobrancaEnviada) ? 'Sim' : 'Não'}"/>
+                    </p:column>
+
+                    <p:column headerText="Status" style="width: 80px; text-align: center;">
+                        <p:tag severity="#{ (parcela.status) == 'pendente' ? 'warning'
+                                : (parcela.status) == 'atrasada' ? 'danger'
+                                : (parcela.status) == 'paga' ? 'success'
+                                : 'Secondary'}"
+                               value="#{ (parcela.status) == 'pendente' ? 'Pendente'
+                                :(parcela.status) == 'atrasada' ? 'Atrasada'
+                                : (parcela.status) == 'paga' ? 'Paga'
+                                : 'Não definido'}"  />
+                    </p:column>
+
+                </p:dataTable>
+            </p:dialog>
+        </h:form>
     </ui:define>
 </ui:composition>

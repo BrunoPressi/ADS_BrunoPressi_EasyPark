@@ -30,7 +30,7 @@ public class Cliente extends Usuario {
     private UsuarioRole role;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "cliente")
-    private List<Contrato> contratoList = new ArrayList<>();
+    private List<Contrato> contratos = new ArrayList<>();
 
     @Override
     protected void prePersist() {

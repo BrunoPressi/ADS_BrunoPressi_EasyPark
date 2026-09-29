@@ -8,6 +8,8 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "contratos")
@@ -32,6 +34,12 @@ public class Contrato {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
+
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "contrato",
+            cascade = CascadeType.PERSIST,
+            orphanRemoval = true)
+    private List<Parcela> parcelas = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private ContratoStatus status;
@@ -60,8 +68,20 @@ public class Contrato {
     }
 
     @PreUpdate
-    protected void preUpdateUsuario() {
+    protected void preUpdate() {
         this.atualizadoEm = LocalDateTime.now();
+    }
+
+    // Método auxiliar (helper) para adicionar
+    public void adicionarParcela(Parcela parcela) {
+        parcelas.add(parcela);
+        parcela.setContrato(this); // Sincroniza o lado dono
+    }
+
+    // Método auxiliar para remover (ativa o orphanRemoval)
+    public void removerParcela(Parcela parcela) {
+        parcelas.remove(parcela);
+        parcela.setContrato(null); // Desvincula
     }
 
 }

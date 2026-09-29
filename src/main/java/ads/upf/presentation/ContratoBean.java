@@ -3,6 +3,7 @@ package ads.upf.presentation;
 import ads.upf.model.DTOs.cliente.ClienteResponseDTO;
 import ads.upf.model.DTOs.contrato.ContratoCreateDTO;
 import ads.upf.model.DTOs.contrato.ContratoResponseDTO;
+import ads.upf.model.DTOs.parcela.ParcelaResponseDTO;
 import ads.upf.presentation.lazy.GenericLazyDataModel;
 import ads.upf.services.ClienteService;
 import ads.upf.services.ContratoService;
@@ -40,6 +41,8 @@ public class ContratoBean implements Serializable {
     @NotNull(message = "O cliente é obrigatório")
     private ClienteResponseDTO clienteSelecionado;
 
+    private List<ParcelaResponseDTO> parcelas;
+
     private String chaveUnicaFiltro;
 
     @PostConstruct
@@ -56,6 +59,10 @@ public class ContratoBean implements Serializable {
 
     public void selecionarCliente(ContratoResponseDTO contratoResponseDTO) {
         this.clienteSelecionado = contratoResponseDTO.getCliente();
+    }
+
+    public void selecionarParcelas(ContratoResponseDTO contratoResponseDTO) {
+        this.parcelas = contratoService.buscarParcelasDoContrato(contratoResponseDTO.getId());
     }
 
     public void processarContrato() {

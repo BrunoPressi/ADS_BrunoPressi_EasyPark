@@ -21,6 +21,7 @@ public interface ClienteMapper {
     @Mapping(target = "atualizadoPor", ignore = true)
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "cpfHash", ignore = true)
+    @Mapping(target = "contratos", ignore = true)
     Cliente toCliente(ClienteCreateDTO clienteCreateDTO);
     ClienteResponseDTO toClienteDto(Cliente cliente);
     List<ClienteResponseDTO> toClienteDtoList(List<Cliente> clienteList);

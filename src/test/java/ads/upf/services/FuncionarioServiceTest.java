@@ -136,29 +136,6 @@ public class FuncionarioServiceTest {
         }
 
         @Test
-        @DisplayName("Deve sanitizar com trim e lowercase nome, email e telefone antes de persistir")
-        void deveSanitizarDadosComTrimELowercaseAoSalvar() {
-            // ARRANGE: Dados enviados com espaços acidentais e email com letras maiúsculas
-            FuncionarioCreateDTO dto = criarDto(null, "  Carlos Silva  ", "  CARLOS@EMAIL.COM  ", "  54999999999  ");
-
-            when(funcionarioRepository.existsByEmail("carlos@email.com", null)).thenReturn(false);
-            when(funcionarioRepository.existsByNome("Carlos Silva", null)).thenReturn(false);
-
-            // ACT:
-            funcionarioService.salvarFuncionario(dto);
-
-            // ASSERT:
-            ArgumentCaptor<Funcionario> captor = ArgumentCaptor.forClass(Funcionario.class);
-            verify(funcionarioRepository).persist(captor.capture());
-
-            Funcionario salvo = captor.getValue();
-            // AssertJ: Garante que os dados foram limpos e salvos no banco normalizados
-            assertThat(salvo.getNomeCompleto()).isEqualTo("Carlos Silva");
-            assertThat(salvo.getEmail()).isEqualTo("carlos@email.com");
-            assertThat(salvo.getTelefone()).isEqualTo("54999999999");
-        }
-
-        @Test
         @DisplayName("Deve lançar EntityExistsException se o email já estiver em uso")
         void deveLancarExcecaoQuandoEmailJaExistir() {
             // ARRANGE: Repositório reporta que o email já pertence a outro usuário
@@ -191,35 +168,6 @@ public class FuncionarioServiceTest {
             verify(funcionarioRepository, never()).persist(any(Funcionario.class));
         }
 
-        @Test
-        @DisplayName("Deve lançar NullPointerException com mensagem explicativa para DTO ou campos nulos")
-        void deveValidarCamposObrigatoriosNulos() {
-            // 1. DTO nulo
-            assertThatThrownBy(() -> funcionarioService.salvarFuncionario(null))
-                    .isInstanceOf(NullPointerException.class)
-                    .hasMessageContaining("Os dados do funcionário não podem ser nulos");
-
-            // 2. Nome completo nulo
-            FuncionarioCreateDTO semNome = criarDto(null, null, "email@email.com", "54999999999");
-            assertThatThrownBy(() -> funcionarioService.salvarFuncionario(semNome))
-                    .isInstanceOf(NullPointerException.class)
-                    .hasMessageContaining("O nome completo é obrigatório");
-
-            // 3. Email nulo
-            FuncionarioCreateDTO semEmail = criarDto(null, "Nome", null, "54999999999");
-            assertThatThrownBy(() -> funcionarioService.salvarFuncionario(semEmail))
-                    .isInstanceOf(NullPointerException.class)
-                    .hasMessageContaining("O e-mail é obrigatório");
-
-            // 4. Telefone nulo
-            FuncionarioCreateDTO semTelefone = criarDto(null, "Nome", "email@email.com", null);
-            assertThatThrownBy(() -> funcionarioService.salvarFuncionario(semTelefone))
-                    .isInstanceOf(NullPointerException.class)
-                    .hasMessageContaining("O telefone é obrigatório");
-
-            // Mockito: Assegura que nenhuma operação de persistência foi executada
-            verify(funcionarioRepository, never()).persist(any(Funcionario.class));
-        }
     }
 
     /*

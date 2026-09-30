@@ -16,7 +16,6 @@ import jakarta.transaction.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 @ApplicationScoped
 public class VagaService {

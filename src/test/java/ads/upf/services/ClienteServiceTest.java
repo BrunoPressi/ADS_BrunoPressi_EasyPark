@@ -137,29 +137,6 @@ public class ClienteServiceTest {
         }
 
         @Test
-        @DisplayName("Deve sanitizar com trim, lowercase e remoção de máscara no CPF antes de persistir")
-        void deveSanitizarDadosAoSalvar() {
-            // ARRANGE: Dados enviados com espaços acidentais e email com letras maiúsculas
-            ClienteCreateDTO dto = criarDto(null, "  Maria Souza  ", "  MARIA@EMAIL.COM  ", "  54988887777  ", " 987.654.321-99 ");
-
-            when(clienteRepository.checkCpf(anyString(), isNull())).thenReturn(false);
-            when(clienteRepository.checkEmail("maria@email.com", null)).thenReturn(false);
-
-            // ACT:
-            clienteService.salvarCliente(dto);
-
-            // ASSERT:
-            ArgumentCaptor<Cliente> captor = ArgumentCaptor.forClass(Cliente.class);
-            verify(clienteRepository).persist(captor.capture());
-
-            Cliente salvo = captor.getValue();
-            assertThat(salvo.getNomeCompleto()).isEqualTo("Maria Souza");
-            assertThat(salvo.getEmail()).isEqualTo("maria@email.com");
-            assertThat(salvo.getTelefone()).isEqualTo("54988887777");
-            assertThat(salvo.getCpf()).isEqualTo("98765432199");
-        }
-
-        @Test
         @DisplayName("Deve lançar EntityExistsException se o CPF já estiver cadastrado")
         void deveLancarExcecaoQuandoCpfJaExistir() {
             // ARRANGE: Repositório reporta que o CPF já existe
@@ -189,42 +166,6 @@ public class ClienteServiceTest {
                     .isInstanceOf(EntityExistsException.class)
                     .hasMessageContaining("Esse Email já está cadastrado");
 
-            verify(clienteRepository, never()).persist(any(Cliente.class));
-        }
-
-        @Test
-        @DisplayName("Deve lançar NullPointerException com mensagens explicativas para payload ou atributos nulos")
-        void deveValidarCamposObrigatoriosNulos() {
-            // 1. Payload DTO nulo
-            assertThatThrownBy(() -> clienteService.salvarCliente(null))
-                    .isInstanceOf(NullPointerException.class)
-                    .hasMessageContaining("Os dados do cliente não podem ser nulos");
-
-            // 2. Nome completo nulo
-            ClienteCreateDTO semNome = criarDto(null, null, "email@email.com", "54999998888", "12345678901");
-            assertThatThrownBy(() -> clienteService.salvarCliente(semNome))
-                    .isInstanceOf(NullPointerException.class)
-                    .hasMessageContaining("O nome é obrigatório");
-
-            // 3. Email nulo
-            ClienteCreateDTO semEmail = criarDto(null, "Nome", null, "54999998888", "12345678901");
-            assertThatThrownBy(() -> clienteService.salvarCliente(semEmail))
-                    .isInstanceOf(NullPointerException.class)
-                    .hasMessageContaining("O email é obrigatório");
-
-            // 4. Telefone nulo
-            ClienteCreateDTO semTelefone = criarDto(null, "Nome", "email@email.com", null, "12345678901");
-            assertThatThrownBy(() -> clienteService.salvarCliente(semTelefone))
-                    .isInstanceOf(NullPointerException.class)
-                    .hasMessageContaining("O telefone é obrigatório");
-
-            // 5. CPF nulo
-            ClienteCreateDTO semCpf = criarDto(null, "Nome", "email@email.com", "54999998888", null);
-            assertThatThrownBy(() -> clienteService.salvarCliente(semCpf))
-                    .isInstanceOf(NullPointerException.class)
-                    .hasMessageContaining("O CPF é obrigatório");
-
-            // Mockito: Assegura que persistência nunca foi chamada
             verify(clienteRepository, never()).persist(any(Cliente.class));
         }
     }

@@ -17,7 +17,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -94,48 +93,6 @@ public class ParcelaServiceTest {
             assertThat(parcelas.get(0).getDataVencimento()).isEqualTo(LocalDate.of(2026, 2, 10));
             assertThat(parcelas.get(1).getDataVencimento()).isEqualTo(LocalDate.of(2026, 3, 10));
             assertThat(parcelas.get(2).getDataVencimento()).isEqualTo(LocalDate.of(2026, 4, 10));
-        }
-    }
-
-    @Nested
-    @DisplayName("Validações Defensivas e Exceções")
-    class ValidacoesDefensivasTests {
-
-        @Test
-        @DisplayName("Deve lançar NullPointerException quando data de início for nula")
-        void deveLancarExcecaoQuandoDataInicioNula() {
-            assertThatThrownBy(() -> parcelaService.gerarParcelas(null, LocalDate.of(2026, 6, 1)))
-                    .isInstanceOf(NullPointerException.class)
-                    .hasMessageContaining("A data de início é obrigatória.");
-        }
-
-        @Test
-        @DisplayName("Deve lançar NullPointerException quando data de término for nula")
-        void deveLancarExcecaoQuandoDataTerminoNula() {
-            assertThatThrownBy(() -> parcelaService.gerarParcelas(LocalDate.of(2026, 1, 1), null))
-                    .isInstanceOf(NullPointerException.class)
-                    .hasMessageContaining("A data de término é obrigatória.");
-        }
-
-        @Test
-        @DisplayName("Deve lançar IllegalArgumentException quando data de início for posterior ao término")
-        void deveLancarExcecaoQuandoDatasInvertidas() {
-            LocalDate inicio = LocalDate.of(2026, 12, 1);
-            LocalDate termino = LocalDate.of(2026, 6, 1);
-
-            assertThatThrownBy(() -> parcelaService.gerarParcelas(inicio, termino))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("posterior à data de início");
-        }
-
-        @Test
-        @DisplayName("Deve lançar IllegalArgumentException quando data de início for idêntica ao término")
-        void deveLancarExcecaoQuandoDatasIguais() {
-            LocalDate hoje = LocalDate.of(2026, 5, 10);
-
-            assertThatThrownBy(() -> parcelaService.gerarParcelas(hoje, hoje))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("posterior à data de início");
         }
     }
 

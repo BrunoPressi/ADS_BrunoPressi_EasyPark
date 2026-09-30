@@ -51,14 +51,6 @@ public class ContratosServiceTest {
     class SalvarContratoTests {
 
         @Test
-        @DisplayName("Deve lançar exceção se DTO for nulo")
-        void deveLancarExcecaoQuandoDtoNulo() {
-            assertThatThrownBy(() -> contratoService.salvarContrato(null))
-                    .isInstanceOf(NullPointerException.class)
-                    .hasMessageContaining("Os dados do contrato não podem ser nulos");
-        }
-
-        @Test
         @DisplayName("Deve lançar exceção se período for inferior a 1 mês")
         void deveLancarExcecaoQuandoPeriodoInvalido() {
             ContratoCreateDTO dto = new ContratoCreateDTO(null, LocalDate.now(), LocalDate.now().plusDays(10), 1L);

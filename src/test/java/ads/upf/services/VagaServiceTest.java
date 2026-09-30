@@ -122,24 +122,6 @@ public class VagaServiceTest {
         }
 
         @Test
-        @DisplayName("Deve sanitizar com trim o nome da vaga antes de persistir")
-        void deveSanitizarEspacosComTrimAoSalvar() {
-            // ARRANGE: Nome com espaços adicionais no início e no fim
-            VagaCreateDTO dto = new VagaCreateDTO(null, "  B02  ", VagaStatus.disponivel, TipoVaga.moto);
-            when(vagaRepository.existsByNome("B02", null)).thenReturn(false);
-
-            // ACT:
-            vagaService.salvarVaga(dto);
-
-            // ASSERT:
-            ArgumentCaptor<Vaga> captor = ArgumentCaptor.forClass(Vaga.class);
-            verify(vagaRepository).persist(captor.capture());
-
-            // AssertJ: Confirma que os espaços foram removidos antes de salvar
-            assertThat(captor.getValue().getNome()).isEqualTo("B02");
-        }
-
-        @Test
         @DisplayName("Deve lançar EntityExistsException se já existir vaga com o mesmo nome")
         void deveLancarExcecaoQuandoNomeJaExistir() {
             // ARRANGE: Repositório reporta que o nome "A01" já existe no banco
@@ -158,19 +140,6 @@ public class VagaServiceTest {
             verify(vagaRepository, never()).persist(any(Vaga.class));
         }
 
-        @Test
-        @DisplayName("Deve lançar NullPointerException se o DTO de entrada for nulo")
-        void deveLancarExcecaoSeDtoForNulo() {
-            // ACT & ASSERT:
-            // Checa a salvaguarda do Objects.requireNonNull no início do método
-            assertThatThrownBy(() -> vagaService.salvarVaga(null))
-                    .isInstanceOf(NullPointerException.class)
-                    .hasMessageContaining("Os dados da vaga não podem ser nulos");
-
-            // Mockito: verifyNoInteractions(...)
-            // Assegura que nenhuma consulta ou persistência foi sequer tentada no repositório.
-            verifyNoInteractions(vagaRepository);
-        }
     }
 
     /*

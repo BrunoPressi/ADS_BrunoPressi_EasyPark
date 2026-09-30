@@ -3,9 +3,7 @@ package ads.upf.model.mappers;
 import ads.upf.model.DTOs.vaga.VagaCreateDTO;
 import ads.upf.model.DTOs.vaga.VagaResponseDTO;
 import ads.upf.model.entities.Vaga;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
@@ -15,12 +13,16 @@ public interface VagaMapper {
 
     VagaMapper INSTANCE = Mappers.getMapper( VagaMapper.class );
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "criadoEm", ignore = true)
-    @Mapping(target = "atualizadoEm", ignore = true)
     Vaga toVaga(VagaCreateDTO vagaDTO);
-
+    void toUpdateFromVagaDto(VagaCreateDTO vagaCreateDTO, @MappingTarget Vaga vaga);
     VagaResponseDTO toDto(Vaga vaga);
-
     List<VagaResponseDTO> toDtoList(List<Vaga> vagaList);
+
+    @AfterMapping
+    default void normalizarDados(Vaga vaga) {
+        if (vaga.getNome() != null) {
+            vaga.setNome(vaga.getNome().toLowerCase().trim());
+        }
+    }
+
 }

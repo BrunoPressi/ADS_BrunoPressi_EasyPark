@@ -14,13 +14,10 @@ import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.logging.Logger;
 
 @ApplicationScoped
 public class ParcelaService {
@@ -39,12 +36,6 @@ public class ParcelaService {
      * Operação pura em memória (sem abertura de transação de banco).
      */
     public List<Parcela> gerarParcelas(LocalDate dataInicio, LocalDate dataTermino) {
-        Objects.requireNonNull(dataInicio, "A data de início é obrigatória.");
-        Objects.requireNonNull(dataTermino, "A data de término é obrigatória.");
-
-        if (!dataTermino.isAfter(dataInicio)) {
-            throw new IllegalArgumentException("A data de término deve ser posterior à data de início.");
-        }
 
         // Calcula a quantidade de meses considerando início e fim de calendário
         int totalMeses = calcularTotalMeses(dataInicio, dataTermino);

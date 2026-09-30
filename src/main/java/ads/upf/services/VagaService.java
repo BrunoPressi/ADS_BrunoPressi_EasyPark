@@ -30,27 +30,21 @@ public class VagaService {
 
     @Transactional
     public void salvarVaga(VagaCreateDTO vagaDTO) {
-        Objects.requireNonNull(vagaDTO, "Os dados da vaga não podem ser nulos");
-
-        String nomeNormalizado = vagaDTO.getNome() != null ? vagaDTO.getNome().trim() : null;
 
         if (vagaDTO.getId() == null) {
-            checkVagaExists(nomeNormalizado, null);
+            checkVagaExists(vagaDTO.getNome(), null);
             Vaga vaga = VagaMapper.INSTANCE.toVaga(vagaDTO);
-            vaga.setNome(nomeNormalizado);
             vagaRepository.persist(vaga);
         }
         else {
-            checkVagaExists(nomeNormalizado, vagaDTO.getId());
+            checkVagaExists(vagaDTO.getNome(), vagaDTO.getId());
             Vaga vaga = vagaRepository.findByIdOptional(vagaDTO.getId())
                     .orElseThrow( () -> new EntityNotFoundException("Vaga não encontrada."));
 
             if (vaga.getStatus() == VagaStatus.ocupada)
                 throw new InvalidEditException("Vagas ocupadas não podem ser alteradas.");
 
-            vaga.setNome(vagaDTO.getNome());
-            vaga.setStatus(vagaDTO.getStatus());
-            vaga.setTipoVaga(vagaDTO.getTipoVaga());
+            VagaMapper.INSTANCE.toUpdateFromVagaDto(vagaDTO, vaga);
         }
     }
 

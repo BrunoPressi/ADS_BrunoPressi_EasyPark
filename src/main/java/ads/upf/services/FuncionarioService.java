@@ -14,7 +14,6 @@ import jakarta.transaction.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import static ads.upf.utils.SenhaGenerator.gerarSenha;
 
@@ -30,33 +29,21 @@ public class FuncionarioService {
 
     @Transactional
     public void salvarFuncionario(FuncionarioCreateDTO funcionarioCreateDTO) {
-        Objects.requireNonNull(funcionarioCreateDTO, "Os dados do funcionário não podem ser nulos.");
-        Objects.requireNonNull(funcionarioCreateDTO.getNomeCompleto(), "O nome completo é obrigatório.");
-        Objects.requireNonNull(funcionarioCreateDTO.getEmail(), "O e-mail é obrigatório.");
-        Objects.requireNonNull(funcionarioCreateDTO.getTelefone(), "O telefone é obrigatório");
-
-        String nomeCompletoNormalizado = funcionarioCreateDTO.getNomeCompleto().trim();
-        String emailNormalizado = funcionarioCreateDTO.getEmail().trim().toLowerCase();
-        String telefoneNormalizado = funcionarioCreateDTO.getTelefone().trim();
 
         if (funcionarioCreateDTO.getId() == null) {
 
             checkFuncionarioExists(null,
-                    nomeCompletoNormalizado,
-                    emailNormalizado
+                    funcionarioCreateDTO.getNomeCompleto(),
+                    funcionarioCreateDTO.getEmail()
             );
 
             Funcionario funcionario = FuncionarioMapper.INSTANCE.toFuncionario(funcionarioCreateDTO);
-            funcionario.setNomeCompleto(nomeCompletoNormalizado);
-            funcionario.setEmail(emailNormalizado);
-            funcionario.setTelefone(telefoneNormalizado);
             funcionario.setSenha(gerarSenha());
-
             funcionarioRepository.persist(funcionario);
         } else {
             checkFuncionarioExists(funcionarioCreateDTO.getId(),
-                   nomeCompletoNormalizado,
-                    emailNormalizado
+                    funcionarioCreateDTO.getNomeCompleto(),
+                    funcionarioCreateDTO.getEmail()
             );
 
             Funcionario funcionario = funcionarioRepository.findByIdOptional(
@@ -65,9 +52,7 @@ public class FuncionarioService {
                             () -> new EntityNotFoundException("Funcionário não encontrado.")
             );
 
-            funcionario.setNomeCompleto(nomeCompletoNormalizado);
-            funcionario.setEmail(emailNormalizado);
-            funcionario.setTelefone(telefoneNormalizado);
+            FuncionarioMapper.INSTANCE.updateFuncionarioFromDto(funcionarioCreateDTO, funcionario);
         }
     }
 

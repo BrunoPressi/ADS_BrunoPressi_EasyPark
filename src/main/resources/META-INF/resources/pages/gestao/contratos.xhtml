@@ -354,6 +354,8 @@
                     <p:column headerText="Meio de Pagamento" style="width: 80px; text-align: center;">
                         <h:outputText value="#{ (parcela.status) == 'pendente'
                                 ? 'Pagamento Pendente'
+                                : (parcela.status) == 'atrasada'
+                                ? 'Pagamento Pendente'
                                 : (parcela.meioPagamento)}" />
                     </p:column>
 

@@ -15,7 +15,6 @@ import jakarta.transaction.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 @ApplicationScoped
 public class ClienteService {
@@ -29,38 +28,20 @@ public class ClienteService {
 
     @Transactional
     public void salvarCliente(ClienteCreateDTO clienteCreateDTO) {
-        Objects.requireNonNull(clienteCreateDTO, "Os dados do cliente não podem ser nulos.");
-        Objects.requireNonNull(clienteCreateDTO.getNomeCompleto(), "O nome é obrigatório.");
-        Objects.requireNonNull(clienteCreateDTO.getEmail(), "O email é obrigatório");
-        Objects.requireNonNull(clienteCreateDTO.getTelefone(), "O telefone é obrigatório.");
-        Objects.requireNonNull(clienteCreateDTO.getCpf(), "O CPF é obrigatório.");
-
-        String nomeNormalizado = clienteCreateDTO.getNomeCompleto().trim();
-        String emailNormalizado = clienteCreateDTO.getEmail().trim().toLowerCase();
-        String telefoneNormalizado = clienteCreateDTO.getTelefone().trim();
-        String cpfNormalizado = clienteCreateDTO.getCpf().replaceAll("\\D", "");
 
         if (clienteCreateDTO.getId() == null) {
-            checkClienteExists(null, cpfNormalizado, emailNormalizado);
-
+            checkClienteExists(null, clienteCreateDTO.getCpf(), clienteCreateDTO.getEmail());
             Cliente cliente = ClienteMapper.INSTANCE.toCliente(clienteCreateDTO);
-            cliente.setNomeCompleto(nomeNormalizado);
-            cliente.setEmail(emailNormalizado);
-            cliente.setTelefone(telefoneNormalizado);
-            cliente.setCpf(cpfNormalizado);
             clienteRepository.persist(cliente);
         }
         else {
-            checkClienteExists(clienteCreateDTO.getId(), cpfNormalizado, emailNormalizado);
+            checkClienteExists(clienteCreateDTO.getId(), clienteCreateDTO.getCpf(), clienteCreateDTO.getEmail());
 
             Cliente cliente = clienteRepository
                     .findByIdOptional(clienteCreateDTO.getId())
                     .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado."));
 
-            cliente.setNomeCompleto(nomeNormalizado);
-            cliente.setCpf(cpfNormalizado);
-            cliente.setEmail(emailNormalizado);
-            cliente.setTelefone(telefoneNormalizado);
+            ClienteMapper.INSTANCE.updateClienteFromDto(clienteCreateDTO, cliente);
         }
     }
 

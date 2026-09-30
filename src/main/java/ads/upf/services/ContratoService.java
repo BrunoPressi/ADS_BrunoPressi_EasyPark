@@ -24,7 +24,6 @@ import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 @ApplicationScoped
 public class ContratoService {
@@ -50,10 +49,6 @@ public class ContratoService {
 
     @Transactional
     public void salvarContrato(ContratoCreateDTO contratoCreateDTO) {
-        Objects.requireNonNull(contratoCreateDTO, "Os dados do contrato não podem ser nulos");
-        Objects.requireNonNull(contratoCreateDTO.getClienteId(), "O ID do cliente não pode ser nulo");
-        Objects.requireNonNull(contratoCreateDTO.getDataInicio(), "A data de início não pode ser nula");
-        Objects.requireNonNull(contratoCreateDTO.getDataTermino(), "A data de término não pode ser nula");
 
         if (contratoCreateDTO.getDataTermino().isBefore(contratoCreateDTO.getDataInicio().plusMonths(1))) {
             throw new IllegalArgumentException("O contrato deve ter a duração mínima de 1 mês.");
@@ -97,8 +92,8 @@ public class ContratoService {
             contrato.setDataTermino(contratoCreateDTO.getDataTermino());
 
             List<Parcela> parcelasAtuais = new ArrayList<>(contrato.getParcelas());
-            parcelasAtuais.forEach(contrato::removerParcela);
 
+            parcelasAtuais.forEach(contrato::removerParcela);
             parcelas.forEach(contrato::adicionarParcela);
         }
     }

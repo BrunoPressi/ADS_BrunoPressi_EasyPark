@@ -38,5 +38,4 @@ public class ContratoCreateDTO {
         return !dataTermino.isBefore(dataInicio.plusMonths(1));
     }
 
-
 }

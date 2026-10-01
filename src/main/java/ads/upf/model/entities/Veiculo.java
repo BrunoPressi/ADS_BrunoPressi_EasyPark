@@ -1,31 +1,36 @@
 package ads.upf.model.entities;
 
-import ads.upf.model.enums.VagaStatus;
-import ads.upf.model.enums.VagaTipo;
+import ads.upf.model.enums.VeiculoTipo;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Entity()
-@Table(name = "vagas")
-@Getter @Setter
+@Entity
+@Table(name = "veiculos")
 @AllArgsConstructor @NoArgsConstructor
-@EqualsAndHashCode (of = "id")
-public class Vaga {
+@Getter @Setter
+@EqualsAndHashCode(of = "id")
+public class Veiculo {
 
-    @Id()
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
-    @Column(nullable = false, unique = true, length = 3)
-    private String nome;
+    @Column(unique = true, nullable = false)
+    private String placa;
+
+    @Column()
+    private String marca;
+
+    @Column()
+    private String modelo;
+
+    @Column()
+    private String cor;
 
     @Enumerated(EnumType.STRING)
-    private VagaStatus status;
-
-    @Enumerated(EnumType.STRING)
-    private VagaTipo tipoVaga;
+    private VeiculoTipo tipo;
 
     @Column(nullable = true)
     private LocalDateTime criadoEm;

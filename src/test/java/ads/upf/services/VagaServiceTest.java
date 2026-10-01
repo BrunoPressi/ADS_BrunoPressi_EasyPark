@@ -6,8 +6,8 @@ import ads.upf.exceptions.InvalidEditException;
 import ads.upf.model.DTOs.vaga.VagaCreateDTO;
 import ads.upf.model.DTOs.vaga.VagaResponseDTO;
 import ads.upf.model.entities.Vaga;
-import ads.upf.model.enums.TipoVaga;
 import ads.upf.model.enums.VagaStatus;
+import ads.upf.model.enums.VagaTipo;
 import ads.upf.repositories.VagaRepository;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Sort;
@@ -95,7 +95,7 @@ public class VagaServiceTest {
         @DisplayName("Deve persistir com sucesso uma nova vaga quando os dados forem válidos e o nome for único")
         void deveSalvarNovaVagaComSucesso() {
             // ARRANGE (Preparação dos dados e comportamento dos mocks):
-            VagaCreateDTO dto = new VagaCreateDTO(null, "A01", VagaStatus.disponivel, TipoVaga.comum);
+            VagaCreateDTO dto = new VagaCreateDTO(null, "A01", VagaStatus.disponivel, VagaTipo.comum);
 
             // Mockito: when(...).thenReturn(...)
             // Ensina ao mock: "Quando chamarem existsByNome('A01', null), retorne false (não existe duplicada)"
@@ -118,14 +118,14 @@ public class VagaServiceTest {
             Vaga vagaSalva = captor.getValue();
             assertThat(vagaSalva.getNome()).isEqualTo("A01");
             assertThat(vagaSalva.getStatus()).isEqualTo(VagaStatus.disponivel);
-            assertThat(vagaSalva.getTipoVaga()).isEqualTo(TipoVaga.comum);
+            assertThat(vagaSalva.getTipoVaga()).isEqualTo(VagaTipo.comum);
         }
 
         @Test
         @DisplayName("Deve lançar EntityExistsException se já existir vaga com o mesmo nome")
         void deveLancarExcecaoQuandoNomeJaExistir() {
             // ARRANGE: Repositório reporta que o nome "A01" já existe no banco
-            VagaCreateDTO dto = new VagaCreateDTO(null, "A01", VagaStatus.disponivel, TipoVaga.comum);
+            VagaCreateDTO dto = new VagaCreateDTO(null, "A01", VagaStatus.disponivel, VagaTipo.comum);
             when(vagaRepository.existsByNome("A01", null)).thenReturn(true);
 
             // ACT & ASSERT:
@@ -155,8 +155,8 @@ public class VagaServiceTest {
         @DisplayName("Deve atualizar com sucesso os dados de uma vaga existente mantendo o mesmo nome")
         void deveAtualizarVagaComSucessoMantendoMesmoNome() {
             // ARRANGE:
-            Vaga vagaExistente = new Vaga(10L, "A01", VagaStatus.disponivel, TipoVaga.comum, null, null);
-            VagaCreateDTO dto = new VagaCreateDTO(10L, "A01", VagaStatus.em_manutencao, TipoVaga.comum);
+            Vaga vagaExistente = new Vaga(10L, "A01", VagaStatus.disponivel, VagaTipo.comum, null, null);
+            VagaCreateDTO dto = new VagaCreateDTO(10L, "A01", VagaStatus.em_manutencao, VagaTipo.comum);
 
             // Simula que o nome "A01" pertence a este mesmo ID (ignora o id 10 na contagem)
             when(vagaRepository.existsByNome("A01", 10L)).thenReturn(false);
@@ -180,7 +180,7 @@ public class VagaServiceTest {
         @DisplayName("Deve lançar EntityNotFoundException ao tentar editar vaga com ID inexistente")
         void deveLancarExcecaoQuandoIdNaoForEncontrado() {
             // ARRANGE:
-            VagaCreateDTO dto = new VagaCreateDTO(999L, "A01", VagaStatus.disponivel, TipoVaga.comum);
+            VagaCreateDTO dto = new VagaCreateDTO(999L, "A01", VagaStatus.disponivel, VagaTipo.comum);
             when(vagaRepository.existsByNome("A01", 999L)).thenReturn(false);
             when(vagaRepository.findByIdOptional(999L)).thenReturn(Optional.empty());
 
@@ -196,9 +196,9 @@ public class VagaServiceTest {
         void deveBloquearEdicaoDeVagaOcupada() {
             // ARRANGE:
             // Vaga existente está ocupada
-            Vaga vagaOcupada = new Vaga(5L, "C01", VagaStatus.ocupada, TipoVaga.comum, null, null);
+            Vaga vagaOcupada = new Vaga(5L, "C01", VagaStatus.ocupada, VagaTipo.comum, null, null);
             // DTO tenta mudar o nome para "C02" enquanto mantém status ocupada
-            VagaCreateDTO dtoEditado = new VagaCreateDTO(5L, "C02", VagaStatus.disponivel, TipoVaga.comum);
+            VagaCreateDTO dtoEditado = new VagaCreateDTO(5L, "C02", VagaStatus.disponivel, VagaTipo.comum);
 
             when(vagaRepository.existsByNome("C02", 5L)).thenReturn(false);
             when(vagaRepository.findByIdOptional(5L)).thenReturn(Optional.of(vagaOcupada));
@@ -223,7 +223,7 @@ public class VagaServiceTest {
         @DisplayName("Deve retornar VagaResponseDTO quando encontrar a vaga correspondente")
         void deveRetornarDtoAoBuscarNomeExistente() {
             // ARRANGE:
-            Vaga vaga = new Vaga(1L, "A01", VagaStatus.disponivel, TipoVaga.comum, null, null);
+            Vaga vaga = new Vaga(1L, "A01", VagaStatus.disponivel, VagaTipo.comum, null, null);
 
             // Mockito: Stubbing encadeado (fluent API)
             // 1. repository.findByNome("A01") -> retorna o mock da PanacheQuery
@@ -239,7 +239,7 @@ public class VagaServiceTest {
             assertThat(resultado.getId()).isEqualTo(1L);
             assertThat(resultado.getNome()).isEqualTo("A01");
             assertThat(resultado.getStatus()).isEqualTo(VagaStatus.disponivel);
-            assertThat(resultado.getTipoVaga()).isEqualTo(TipoVaga.comum);
+            assertThat(resultado.getTipoVaga()).isEqualTo(VagaTipo.comum);
         }
 
         @Test
@@ -297,8 +297,8 @@ public class VagaServiceTest {
         void deveListarTodasAsVagasOrdenadas() {
             // ARRANGE:
             List<Vaga> listaDoBanco = List.of(
-                    new Vaga(1L, "A01", VagaStatus.disponivel, TipoVaga.comum, null, null),
-                    new Vaga(2L, "A02", VagaStatus.ocupada, TipoVaga.moto, null, null)
+                    new Vaga(1L, "A01", VagaStatus.disponivel, VagaTipo.comum, null, null),
+                    new Vaga(2L, "A02", VagaStatus.ocupada, VagaTipo.moto, null, null)
             );
 
             // Mockito: when com Sort.by("nome")
@@ -334,7 +334,7 @@ public class VagaServiceTest {
         void deveListarPaginadoComSucesso() {
             // ARRANGE:
             List<Vaga> paginaMock = List.of(
-                    new Vaga(1L, "A01", VagaStatus.disponivel, TipoVaga.comum, null, null)
+                    new Vaga(1L, "A01", VagaStatus.disponivel, VagaTipo.comum, null, null)
             );
 
             when(vagaRepository.findAll(any(Sort.class))).thenReturn(panacheQuery);

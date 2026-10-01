@@ -1,7 +1,7 @@
 package ads.upf.model.DTOs.vaga;
 
-import ads.upf.model.enums.TipoVaga;
 import ads.upf.model.enums.VagaStatus;
+import ads.upf.model.enums.VagaTipo;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -22,6 +22,6 @@ public class VagaCreateDTO {
         private VagaStatus status;
 
         @NotNull(message = "O tipo da vaga é obrigatório.")
-        private TipoVaga tipoVaga;
+        private VagaTipo tipoVaga;
 
 }

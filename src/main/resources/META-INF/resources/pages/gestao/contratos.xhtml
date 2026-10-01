@@ -80,16 +80,25 @@
 
                 <p:column headerText="Cliente">
                     <p:commandButton icon="pi pi-eye"
-                                     value="Ver Cliente"
+                                     value="Cliente"
                                      action="#{contratoBean.selecionarCliente(contrato)}"
                                      oncomplete="PF('dialogClienteContrato').show()"
                                      update=":formDialogClienteContrato:tabelaClientes"
                                      styleClass="rounded-button"/>
                 </p:column>
 
+                <p:column headerText="Veículo">
+                    <p:commandButton icon="pi pi-eye"
+                                     value="Veículo"
+                                     action="#{contratoBean.selecionarVeiculo(contrato)}"
+                                     oncomplete="PF('dialogVeiculoContrato').show()"
+                                     update=":formDialogVeiculoContrato:tabelaVeiculo"
+                                     styleClass="rounded-button ui-button-warning"/>
+                </p:column>
+
                 <p:column headerText="Parcelas">
                     <p:commandButton icon="pi pi-eye"
-                                     value="Ver Parcelas"
+                                     value="Parcelas"
                                      action="#{contratoBean.selecionarParcelas(contrato)}"
                                      oncomplete="PF('dialogParcelas').show()"
                                      update=":formDialogParcelasContrato:tabelaParcelas"
@@ -113,7 +122,7 @@
                     <p:commandButton value="Cancelar"
                                      action="#{contratoBean.cancelarContrato(contrato)}"
                                      update="@this"
-                                     styleClass="mr-2 ui-button-danger"
+                                     styleClass="mr-2 ui-button-danger rounded-button"
                                      icon="pi pi-trash">
                         <p:confirm header="Confirme" message="Tem certeza que deseja cancelar o contrato?"
                                    icon="pi pi-exclamation-triangle"/>
@@ -158,12 +167,34 @@
                                             placeholder="Digite o CPF do cliente..."
                                             forceSelection="true" />
                             <p:commandButton icon="pi pi-plus"
-                                             action="#{contratoBean.limpar}"
                                              update=":formDialogCliente:formCliente"
                                              oncomplete="PF('dialogCliente').show()"
                                              styleClass="button ui-button" />
                         </div>
                         <h:message for="cliente" style="color:red;" />
+                        <div style="margin-top: .7rem">
+                            <div>
+                                <p:outputLabel for="veiculo" value="Placa do veículo"/>
+                            </div>
+                            <p:autoComplete id="veiculo"
+                                            value="#{contratoBean.contrato.veiculo}"
+                                            converter="#{veiculoConverter}"
+                                            inputStyle="width: 197px"
+                                            completeMethod="#{contratoBean.buscarVeiculoPelaPlaca}"
+                                            var="veiculo"
+                                            itemLabel="#{veiculo.placa}"
+                                            itemValue="#{veiculo}"
+                                            minQueryLength="7"
+                                            maxResults="1"
+                                            emptyMessage="Nenhum veículo encontrado com essa placa."
+                                            placeholder="Digite a placa do veículo..."
+                                            forceSelection="true" />
+                            <p:commandButton icon="pi pi-plus"
+                                             update=":formDialogVeiculo:formVeiculo"
+                                             oncomplete="PF('dialogVeiculo').show()"
+                                             styleClass="button ui-button" />
+                        </div>
+                        <h:message for="veiculo" style="color:red;" />
                         <div style="margin-top: .7rem">
                             <div class="outputs">
                                 <p:outputLabel for="dataInicio" value="Data de Início"/>
@@ -313,6 +344,43 @@
             </p:dialog>
         </h:form>
 
+        <!-- DATA TABLE PARA LISTAGEM DO VEÍCULO ASSOCIADO AO CONTRATO -->
+        <h:form id="formDialogVeiculoContrato">
+            <p:dialog header="Exibindo veículo associado ao contrato"
+                      widgetVar="dialogVeiculoContrato"
+                      minHeight="40" width="895"
+                      modal="true"
+                      showEffect="fade"
+                      closeOnEscape="true">
+
+                <p:dataTable id="tabelaVeiculo"
+                             value="#{contratoBean.veiculo}"
+                             lazy="false">
+
+                    <p:column headerText="ID" style="width: 80px; text-align: center;">
+                        <h:outputText value="#{contratoBean.veiculo.id}" />
+                    </p:column>
+
+                    <p:column headerText="Placa">
+                        <h:outputText value="#{contratoBean.veiculo.placa}" />
+                    </p:column>
+
+                    <p:column headerText="Marca">
+                        <h:outputText value="#{contratoBean.veiculo.marca}" />
+                    </p:column>
+
+                    <p:column headerText="Modelo">
+                        <h:outputText value="#{contratoBean.veiculo.modelo}" />
+                    </p:column>
+
+                    <p:column headerText="Cor">
+                        <h:outputText value="#{contratoBean.veiculo.cor}" />
+                    </p:column>
+                </p:dataTable>
+
+            </p:dialog>
+        </h:form>
+
         <!-- DATA TABLE PARA LISTAGEM DAS PARCELAS DO CONTRATO COM PAGINAÇÃO CLIENT SIDE -->
         <h:form id="formDialogParcelasContrato">
             <p:dialog header="Exibindo parcelas do contrato"
@@ -389,6 +457,69 @@
                     </p:column>
 
                 </p:dataTable>
+            </p:dialog>
+        </h:form>
+
+        <!-- FORM PARA CADASTRAR UM NOVO VEÍCULO (SE NECESSÁRIO) -->
+        <h:form id="formDialogVeiculo">
+            <p:dialog header="Preencha com os dados do veículo"
+                      widgetVar="dialogVeiculo"
+                      minHeight="40" width="530"
+                      modal="true"
+                      showEffect="fade"
+                      closeOnEscape="true">
+                <p:outputPanel id="formVeiculo">
+                    <div>
+                        <p:outputLabel for="placa" value="Placa"/>
+                    </div>
+                    <div>
+                        <p:inputText id="placa" value="#{veiculoBean.veiculo.placa}" placeholder="Ex: ABC-1D23 / ABC-1234"/>
+                    </div>
+                    <h:message for="placa" style="color: red"/>
+                    <div style="margin-top: .7rem">
+                        <p:outputLabel for="@next" value="Tipo do Veículo"/>
+                    </div>
+                    <div>
+                        <p:selectOneMenu id="tipoVeiculo" value="#{veiculoBean.veiculo.tipo}">
+                            <f:selectItem itemLabel="Selecione o tipo do veículo" itemValue=""/>
+                            <f:selectItem itemLabel="Carro" itemValue="carro"/>
+                            <f:selectItem itemLabel="Moto" itemValue="moto"/>
+                            <f:selectItem itemLabel="Van" itemValue="van"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <h:message for="tipoVeiculo" style="color: red"/>
+                    <div style="margin-top: .7rem">
+                        <p:outputLabel for="marca" value="Digite a placa marca do veículo (opcional)"/>
+                    </div>
+                    <div>
+                        <p:inputText id="marca" value="#{veiculoBean.veiculo.marca}" placeholder="Ex: Chevrolet"/>
+                    </div>
+                    <div style="margin-top: .7rem">
+                        <p:outputLabel for="modelo" value="Digite o modelo do veículo (opcional)"/>
+                    </div>
+                    <div>
+                        <p:inputText id="modelo" value="#{veiculoBean.veiculo.modelo}" placeholder="Ex: Vectra"/>
+                    </div>
+                    <div style="margin-top: .7rem">
+                        <p:outputLabel for="cor" value="Digite a cor do veículo (opcional)"/>
+                    </div>
+                    <div>
+                        <p:inputText id="cor" value="#{veiculoBean.veiculo.cor}" placeholder="Ex: Preta"/>
+                    </div>
+
+                </p:outputPanel>
+
+                <f:facet name="footer">
+                    <p:commandButton type="button"
+                                     value="Voltar"
+                                     onclick="PF('dialogVeiculo').hide()"
+                                     styleClass="ui-button-flat mr-2"
+                                     style="width: 6rem"/>
+                    <p:commandButton process="@form"
+                                     value="Salvar"
+                                     action="#{veiculoBean.processarVeiculo}"
+                                     update=":formDialogVeiculo:formVeiculo"/>
+                </f:facet>
             </p:dialog>
         </h:form>
     </ui:define>

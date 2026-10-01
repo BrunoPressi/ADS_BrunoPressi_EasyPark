@@ -4,7 +4,6 @@ import ads.upf.model.DTOs.cliente.ClienteCreateDTO;
 import ads.upf.model.DTOs.cliente.ClienteResponseDTO;
 import ads.upf.presentation.lazy.GenericLazyDataModel;
 import ads.upf.services.ClienteService;
-import ads.upf.services.VagaService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -26,8 +25,6 @@ public class ClienteBean implements Serializable {
 
     @Inject
     ClienteService clienteService;
-    @Inject
-    VagaService vagaService;
 
     private GenericLazyDataModel<ClienteResponseDTO> lazyDataModel;
     private String chaveUnicaFiltro;
@@ -45,7 +42,6 @@ public class ClienteBean implements Serializable {
     }
 
     public void selecionarCliente(ClienteResponseDTO clienteResponseDTO) {
-        limparCliente();
         this.cliente.setId(clienteResponseDTO.getId());
         this.cliente.setNomeCompleto(clienteResponseDTO.getNomeCompleto());
         this.cliente.setCpf(clienteResponseDTO.getCpfNormal());
@@ -56,9 +52,9 @@ public class ClienteBean implements Serializable {
     public void processarCliente() {
         try {
             clienteService.salvarCliente(cliente);
-            limparCliente();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Sucesso", "Cliente salvo com sucesso."));
             PrimeFaces.current().executeScript("PF('dialogCliente').hide()");
+            this.cliente = new ClienteCreateDTO();
         }
         catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Erro ao salvar cliente.", e.getMessage()));
@@ -74,7 +70,4 @@ public class ClienteBean implements Serializable {
         lazyDataModel.limpar();
     }
 
-    public void limparCliente() {
-        this.cliente = new ClienteCreateDTO();
-    }
 }

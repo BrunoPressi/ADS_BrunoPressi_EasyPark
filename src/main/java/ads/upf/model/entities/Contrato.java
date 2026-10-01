@@ -35,6 +35,10 @@ public class Contrato {
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "veiculo_id")
+    private Veiculo veiculo;
+
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "contrato",
             cascade = CascadeType.PERSIST,

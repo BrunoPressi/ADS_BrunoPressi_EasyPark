@@ -8,6 +8,7 @@ import ads.upf.model.DTOs.parcela.ParcelaResponseDTO;
 import ads.upf.model.entities.Cliente;
 import ads.upf.model.entities.Contrato;
 import ads.upf.model.entities.Parcela;
+import ads.upf.model.entities.Veiculo;
 import ads.upf.model.enums.ContratoStatus;
 import ads.upf.model.enums.ParcelaStatus;
 import ads.upf.model.mappers.ContratoMapper;
@@ -15,6 +16,7 @@ import ads.upf.model.mappers.ParcelaMapper;
 import ads.upf.repositories.ClienteRepository;
 import ads.upf.repositories.ContratoRepository;
 import ads.upf.repositories.ParcelaRepository;
+import ads.upf.repositories.VeiculoRepository;
 import ads.upf.utils.SecurityUtil;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -32,19 +34,23 @@ public class ContratoService {
 
     private final ClienteRepository clienteRepository;
 
-    private final ParcelaService parcelaService;
-
     private final ParcelaRepository parcelaRepository;
+
+    private final VeiculoRepository veiculoRepository;
+
+    private final ParcelaService parcelaService;
 
     @Inject
     public ContratoService(ContratoRepository contratoRepository,
                            ClienteRepository clienteRepository,
                            ParcelaService parcelaService,
-                           ParcelaRepository parcelaRepository) {
+                           ParcelaRepository parcelaRepository,
+                           VeiculoRepository veiculoRepository) {
         this.contratoRepository = contratoRepository;
         this.clienteRepository = clienteRepository;
         this.parcelaService = parcelaService;
         this.parcelaRepository = parcelaRepository;
+        this.veiculoRepository = veiculoRepository;
     }
 
     @Transactional
@@ -55,6 +61,12 @@ public class ContratoService {
                         () -> new EntityNotFoundException("Cliente não encontrado.")
                 );
 
+        Veiculo veiculo = veiculoRepository.find("placa = ?1", contratoCreateDTO.getVeiculo().getPlaca())
+                .firstResultOptional()
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Veículo não encontrado.")
+                );
+
         List<Parcela> parcelas = parcelaService.gerarParcelas(
                 contratoCreateDTO.getDataInicio(),
                 contratoCreateDTO.getDataTermino()
@@ -63,6 +75,7 @@ public class ContratoService {
         if (contratoCreateDTO.getContratoId() == null) {
             Contrato contrato = ContratoMapper.INSTANCE.toContrato(contratoCreateDTO);
             contrato.setCliente(cliente);
+            contrato.setVeiculo(veiculo);
             parcelas.forEach(parcela -> contrato.adicionarParcela(parcela));
             contratoRepository.persist(contrato);
         }
@@ -84,6 +97,7 @@ public class ContratoService {
             }
 
             contrato.setCliente(cliente);
+            contrato.setVeiculo(veiculo);
             contrato.setDataInicio(contratoCreateDTO.getDataInicio());
             contrato.setDataTermino(contratoCreateDTO.getDataTermino());
 

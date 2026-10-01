@@ -2,6 +2,7 @@ package ads.upf.model.DTOs.contrato;
 
 import ads.upf.model.DTOs.cliente.ClienteResponseDTO;
 import ads.upf.model.DTOs.parcela.ParcelaResponseDTO;
+import ads.upf.model.DTOs.veiculo.VeiculoResponseDTO;
 import ads.upf.model.enums.ContratoStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public class ContratoResponseDTO {
     private BigDecimal valorContratado;
     private ContratoStatus status;
     private ClienteResponseDTO cliente;
+    private VeiculoResponseDTO veiculo;
     private List<ParcelaResponseDTO> parcelas;
 
 }

@@ -1,7 +1,7 @@
 package ads.upf.model.entities;
 
 import ads.upf.model.enums.ParcelaMeiosPagamento;
-import ads.upf.model.enums.StatusParcela;
+import ads.upf.model.enums.ParcelaStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,7 +39,7 @@ public class Parcela {
     private Boolean cobrancaEnviada;
 
     @Enumerated(EnumType.STRING)
-    private StatusParcela status;
+    private ParcelaStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contrato_id")

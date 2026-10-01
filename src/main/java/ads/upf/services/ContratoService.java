@@ -9,7 +9,7 @@ import ads.upf.model.entities.Cliente;
 import ads.upf.model.entities.Contrato;
 import ads.upf.model.entities.Parcela;
 import ads.upf.model.enums.ContratoStatus;
-import ads.upf.model.enums.StatusParcela;
+import ads.upf.model.enums.ParcelaStatus;
 import ads.upf.model.mappers.ContratoMapper;
 import ads.upf.model.mappers.ParcelaMapper;
 import ads.upf.repositories.ClienteRepository;
@@ -50,11 +50,7 @@ public class ContratoService {
     @Transactional
     public void salvarContrato(ContratoCreateDTO contratoCreateDTO) {
 
-        if (contratoCreateDTO.getDataTermino().isBefore(contratoCreateDTO.getDataInicio().plusMonths(1))) {
-            throw new IllegalArgumentException("O contrato deve ter a duração mínima de 1 mês.");
-        }
-
-        Cliente cliente = clienteRepository.findByIdOptional(contratoCreateDTO.getClienteId())
+        Cliente cliente = clienteRepository.findByIdOptional(contratoCreateDTO.getCliente().getId())
                 .orElseThrow(
                         () -> new EntityNotFoundException("Cliente não encontrado.")
                 );
@@ -82,7 +78,7 @@ public class ContratoService {
 
             // Impede corrupção de parcelas pagas
             boolean possuiParcelaPaga = contrato.getParcelas().stream()
-                    .anyMatch(p -> p.getStatus() == StatusParcela.paga || p.getDataPagamento() != null);
+                    .anyMatch(p -> p.getStatus() == ParcelaStatus.paga || p.getDataPagamento() != null);
             if (possuiParcelaPaga) {
                 throw new InvalidEditException("Não é possível alterar as datas de um contrato com parcelas já pagas.");
             }
@@ -96,6 +92,29 @@ public class ContratoService {
             parcelasAtuais.forEach(contrato::removerParcela);
             parcelas.forEach(contrato::adicionarParcela);
         }
+    }
+
+    @Transactional
+    public void cancelarContrato(ContratoResponseDTO contratoResponseDTO) {
+
+        Contrato contrato = contratoRepository.findByIdOptional(contratoResponseDTO.getId())
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Contrato não encontrado")
+                );
+
+        List<Parcela> parcelas = contrato.getParcelas();
+
+        if (contrato.getStatus().equals(ContratoStatus.cancelado) || contrato.getStatus().equals(ContratoStatus.encerrado)) {
+           throw new InvalidEditException("Contratos encerrados ou cancelados não podem ser cancelados!");
+        }
+
+        boolean possuiParcelaAtrasada = contrato.getParcelas().stream()
+                .anyMatch(p -> p.getStatus() == ParcelaStatus.atrasada);
+        if (possuiParcelaAtrasada) {
+            throw new InvalidEditException("Não é possível cancelar um contrato com parcelas atrasadas!");
+        }
+
+       contrato.setStatus(ContratoStatus.cancelado);
     }
 
     @Transactional

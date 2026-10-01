@@ -13,7 +13,6 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
@@ -38,17 +37,15 @@ public class ContratoBean implements Serializable {
     private GenericLazyDataModel<ContratoResponseDTO> lazyDataModel;
     private ContratoCreateDTO contrato;
 
-    @NotNull(message = "O cliente é obrigatório")
-    private ClienteResponseDTO clienteSelecionado;
-
     private List<ParcelaResponseDTO> parcelas;
+    private ClienteResponseDTO cliente;
 
     private String chaveUnicaFiltro;
 
     @PostConstruct
     protected void postConstruct() {
         this.contrato = new ContratoCreateDTO();
-        this.clienteSelecionado = new ClienteResponseDTO();
+        this.cliente = new ClienteResponseDTO();
         this.lazyDataModel = new GenericLazyDataModel<>(
                 () -> contratoService.contar(),
                 (first, pageSize) -> contratoService.listarPaginado(first, pageSize),
@@ -57,12 +54,31 @@ public class ContratoBean implements Serializable {
         );
     }
 
-    public void selecionarCliente(ContratoResponseDTO contratoResponseDTO) {
-        this.clienteSelecionado = contratoResponseDTO.getCliente();
+    public void cancelarContrato(ContratoResponseDTO contratoResponseDTO) {
+        try {
+            contratoService.cancelarContrato(contratoResponseDTO);
+            FacesContext.getCurrentInstance()
+                    .addMessage(null, new FacesMessage( "Sucesso", "O contrato foi cancelado!"));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance()
+                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao Cancelar Contrato",
+                            e.getMessage()));
+        }
     }
 
     public void selecionarParcelas(ContratoResponseDTO contratoResponseDTO) {
         this.parcelas = contratoService.buscarParcelasDoContrato(contratoResponseDTO.getId());
+    }
+
+    public void selecionarCliente(ContratoResponseDTO contratoResponseDTO) {
+        this.cliente = contratoResponseDTO.getCliente();
+    }
+
+    public void selecionarContrato(ContratoResponseDTO contratoResponseDTO) {
+        this.contrato.setContratoId(contratoResponseDTO.getId());
+        this.contrato.setDataInicio(contratoResponseDTO.getDataInicio());
+        this.contrato.setDataTermino(contratoResponseDTO.getDataTermino());
+        this.contrato.setCliente(contratoResponseDTO.getCliente());
     }
 
     public void processarContrato() {
@@ -76,10 +92,9 @@ public class ContratoBean implements Serializable {
                 return;
             }
 
-            contrato.setClienteId(clienteSelecionado.getId());
             contratoService.salvarContrato(contrato);
             FacesContext.getCurrentInstance()
-                    .addMessage(null, new FacesMessage( "Contrato criado com sucesso!"));
+                    .addMessage(null, new FacesMessage( "Contrato salvo com sucesso!"));
             limpar();
             PrimeFaces.current().executeScript("PF('dialogContrato').hide()");
         }
@@ -104,8 +119,8 @@ public class ContratoBean implements Serializable {
 
     public void limpar() {
         this.contrato = new ContratoCreateDTO();
-        this.clienteSelecionado = new ClienteResponseDTO();
         this.chaveUnicaFiltro = null;
+        this.cliente = new ClienteResponseDTO();
         lazyDataModel.limpar();
     }
 

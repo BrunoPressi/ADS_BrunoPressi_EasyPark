@@ -26,6 +26,16 @@
         <p:autoUpdate/>
     </p:growl>
 
+    <!-- Diálogo global obrigatório para capturar o p:confirm -->
+    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+        <p:commandButton value="Não" type="button"
+                         styleClass="ui-confirmdialog-no ui-button-secondary"
+                         icon="pi pi-times" />
+        <p:commandButton value="Sim" type="button"
+                         styleClass="ui-confirmdialog-yes"
+                         icon="pi pi-check" />
+    </p:confirmDialog>
+
     <div class="layout-wrapper">
         <div class="layout-topbar" style="margin-bottom: 20px;">
             <h:form id="menuForm">

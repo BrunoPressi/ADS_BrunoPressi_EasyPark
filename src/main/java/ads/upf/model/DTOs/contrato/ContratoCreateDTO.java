@@ -1,5 +1,6 @@
 package ads.upf.model.DTOs.contrato;
 
+import ads.upf.model.DTOs.cliente.ClienteResponseDTO;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -26,7 +27,7 @@ public class ContratoCreateDTO {
     private LocalDate dataTermino;
 
     @NotNull(message = "O cliente é obrigatório.")
-    private Long clienteId;
+    private ClienteResponseDTO cliente;
 
     @AssertTrue(message = "O contrato deve ter a duração mínima de 1 mês.")
     public boolean isPeriodoMinimoValido() {

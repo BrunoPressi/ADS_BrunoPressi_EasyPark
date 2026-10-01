@@ -1,6 +1,6 @@
 package ads.upf.model.enums;
 
-public enum StatusParcela {
+public enum ParcelaStatus {
 
     pendente,
     paga,

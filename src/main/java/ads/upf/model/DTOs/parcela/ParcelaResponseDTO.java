@@ -1,7 +1,7 @@
 package ads.upf.model.DTOs.parcela;
 
 import ads.upf.model.enums.ParcelaMeiosPagamento;
-import ads.upf.model.enums.StatusParcela;
+import ads.upf.model.enums.ParcelaStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +21,6 @@ public class ParcelaResponseDTO {
     private BigDecimal valor;
     private ParcelaMeiosPagamento meioPagamento;
     private Boolean cobrancaEnviada;
-    private StatusParcela status;
+    private ParcelaStatus status;
 
 }

@@ -1,7 +1,7 @@
 package ads.upf.services;
 
 import ads.upf.model.entities.Parcela;
-import ads.upf.model.enums.StatusParcela;
+import ads.upf.model.enums.ParcelaStatus;
 import ads.upf.repositories.ParcelaRepository;
 import io.quarkus.logging.Log;
 import io.quarkus.runtime.StartupEvent;
@@ -53,7 +53,7 @@ public class ParcelaService {
 
             parcela.setDataVencimento(dataVencimento);
             parcela.setNumeroParcela(i);
-            parcela.setStatus(StatusParcela.pendente);
+            parcela.setStatus(ParcelaStatus.pendente);
             parcela.setValor(VALOR_PADRAO);
             parcela.setCobrancaEnviada(false);
 
@@ -74,9 +74,9 @@ public class ParcelaService {
 
         int totalAtualizadas = parcelaRepository.update(
                 "status = ?1, atualizadoEm = ?2 where status = ?3 and dataVencimento < ?4 and dataPagamento is null",
-                StatusParcela.atrasada,
+                ParcelaStatus.atrasada,
                 LocalDateTime.now(),
-                StatusParcela.pendente,
+                ParcelaStatus.pendente,
                 LocalDate.now()
         );
 
@@ -92,9 +92,9 @@ public class ParcelaService {
 
         int totalAtualizadas = parcelaRepository.update(
                 "status = ?1, atualizadoEm = ?2 where status = ?3 and dataVencimento < ?4 and dataPagamento is null",
-                StatusParcela.atrasada,
+                ParcelaStatus.atrasada,
                 LocalDateTime.now(),
-                StatusParcela.pendente,
+                ParcelaStatus.pendente,
                 LocalDate.now()
         );
 

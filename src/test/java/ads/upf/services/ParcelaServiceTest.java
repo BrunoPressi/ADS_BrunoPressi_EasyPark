@@ -1,7 +1,7 @@
 package ads.upf.services;
 
 import ads.upf.model.entities.Parcela;
-import ads.upf.model.enums.StatusParcela;
+import ads.upf.model.enums.ParcelaStatus;
 import ads.upf.repositories.ParcelaRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -83,7 +83,7 @@ public class ParcelaServiceTest {
             for (int i = 0; i < parcelas.size(); i++) {
                 Parcela p = parcelas.get(i);
                 assertThat(p.getNumeroParcela()).isEqualTo(i + 1);
-                assertThat(p.getStatus()).isEqualTo(StatusParcela.pendente);
+                assertThat(p.getStatus()).isEqualTo(ParcelaStatus.pendente);
                 assertThat(p.getValor()).isEqualByComparingTo(BigDecimal.valueOf(180.00));
                 assertThat(p.getCobrancaEnviada()).isFalse();
                 assertThat(p.getDataPagamento()).isNull();
@@ -111,9 +111,9 @@ public class ParcelaServiceTest {
 
             verify(parcelaRepository).update(
                     any(),
-                    eq(StatusParcela.atrasada),
+                    eq(ParcelaStatus.atrasada),
                     any(),
-                    eq(StatusParcela.pendente),
+                    eq(ParcelaStatus.pendente),
                     eq(LocalDate.now())
             );
         }

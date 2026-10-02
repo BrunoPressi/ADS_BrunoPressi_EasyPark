@@ -5,68 +5,17 @@
                 xmlns:ui="jakarta.faces.facelets"
                 xmlns:p="http://primefaces.org/ui">
     <ui:define name="content">
-
-        <p:commandButton value="Nova Vaga"
-                         icon="pi pi-plus"
-                         action="#{vagaBean.limparVaga}"
-                         update=":formVaga:panelVaga"
-                         oncomplete="PF('dialogVaga').show()"/>
-
-        <!-- Formulário para cadastrar uma nova vaga -->
-        <h:form id="formVaga" style="margin-left: .9rem">
-            <p:dialog header="Preencha com os dados da vaga"
-                      widgetVar="dialogVaga"
-                      minHeight="40" width="390"
-                      modal="true"
-                      showEffect="fade"
-                      closeOnEscape="true">
-                    <p:outputPanel id="panelVaga">
-                        <p:outputLabel for="nomeVaga" value="Nome da Vaga"/>
-                        <div>
-                            <p:inputText id="nomeVaga" value="#{vagaBean.vaga.nome}" placeholder="Ex: V01"/>
-                        </div>
-                        <div>
-                            <h:message for="nomeVaga" style="color:red;" />
-                        </div>
-
-                        <div style="margin-top: .7rem">
-                            <p:outputLabel for="@next" value="Tipo da Vaga"/>
-                        </div>
-                        <div>
-                            <p:selectOneMenu id="tipoVaga" value="#{vagaBean.vaga.tipoVaga}">
-                                <f:selectItem itemLabel="Selecione o tipo da vaga" itemValue=""/>
-                                <f:selectItem itemLabel="Comum" itemValue="comum"/>
-                                <f:selectItem itemLabel="Moto" itemValue="moto"/>
-                                <f:selectItem itemLabel="PNE" itemValue="pne"/>
-                                <f:selectItem itemLabel="Idoso" itemValue="idoso"/>
-                            </p:selectOneMenu>
-                        </div>
-                        <div>
-                            <h:message for="tipoVaga" style="color:red;" />
-                        </div>
-                        <p>Em manutenção?</p>
-                        <p:selectBooleanCheckbox id="booleanCheckBox"
-                                                 value="#{vagaBean.emManutencao}"
-                                                 itemLabel="#{vagaBean.emManutencao == false ? 'Não' : 'Sim'}">
-                            <p:ajax update="@this"/>
-                        </p:selectBooleanCheckbox>
-                    </p:outputPanel>
-
-                <f:facet name="footer">
-                    <p:commandButton type="button"
-                                     value="Voltar"
-                                     styleClass="ui-button-flat mr-2"
-                                     onclick="PF('dialogVaga').hide()"/>
-                    <p:commandButton action="#{vagaBean.processarVaga}"
-                                     value="Salvar Vaga"
-                                     update=":formVaga:panelVaga :dataTableForm"/>
-                </f:facet>
-            </p:dialog>
-
-        </h:form>
-
         <!-- Formulário contendo uma data table para listagem das vagas -->
         <h:form id="dataTableForm" style="margin-top: .7rem">
+
+            <p:commandButton value="Nova Vaga"
+                             icon="pi pi-plus"
+                             actionListener="#{vagaBean.novaVaga}"
+                             process="@this"
+                             resetValues="true"
+                             update=":dialogVaga"
+                             oncomplete="PF('dialogVaga').show()"
+                             style="margin-bottom: .5rem"/>
 
             <!-- Barra de Pesquisa por Chave Única -->
             <p:toolbar style="margin-bottom: 1rem;">
@@ -135,14 +84,64 @@
                 </p:column>
 
                 <p:column headerText="Editar">
-                        <p:commandButton oncomplete="PF('dialogVaga').show()"
-                                         action="#{vagaBean.selecionarVaga(vaga)}"
-                                         update=":formVaga:panelVaga"
-                                         value="Editar"
-                                         icon="pi pi-pencil" styleClass="rounded-button ui-button-help">
+                    <p:commandButton oncomplete="PF('dialogVaga').show()"
+                                     action="#{vagaBean.selecionarVaga(vaga)}"
+                                     update=":dialogVaga"
+                                     value="Editar"
+                                     icon="pi pi-pencil" styleClass="rounded-button ui-button-help">
                     </p:commandButton>
                 </p:column>
             </p:dataTable>
         </h:form>
+
+        <!-- Formulário para cadastrar uma nova vaga -->
+        <p:dialog id="dialogVaga"
+                  header="Preencha com os dados da vaga"
+                  widgetVar="dialogVaga"
+                  modal="true"
+                  width="370"
+                  showEffect="fade"
+                  closable="false"
+                  closeOnEscape="true">
+
+            <h:form id="formDialog">
+                <div class="ui-fluid">
+                    <div>
+                        <p:outputLabel for="nomeVaga" value="Nome da Vaga"/>
+                        <p:inputText id="nomeVaga" value="#{vagaBean.vaga.nome}" placeholder="Ex: V01"/>
+                        <h:message for="nomeVaga" style="color:red;" />
+                    </div>
+                    <div style="margin-top: .5rem">
+                        <p:outputLabel for="@next" value="Tipo da Vaga"/>
+                        <p:selectOneMenu id="tipoVaga" value="#{vagaBean.vaga.tipoVaga}">
+                            <f:selectItem itemLabel="Selecione o tipo da vaga" itemValue=""/>
+                            <f:selectItem itemLabel="Comum" itemValue="comum"/>
+                            <f:selectItem itemLabel="Moto" itemValue="moto"/>
+                            <f:selectItem itemLabel="PNE" itemValue="pne"/>
+                            <f:selectItem itemLabel="Idoso" itemValue="idoso"/>
+                        </p:selectOneMenu>
+                        <h:message for="tipoVaga" style="color:red;" />
+                    </div>
+                    <div>
+                        <p>Em manutenção?</p>
+                        <p:selectBooleanCheckbox id="booleanCheckBox"
+                                                 value="#{vagaBean.emManutencao}"
+                                                 itemLabel="#{vagaBean.emManutencao == false ? 'Não' : 'Sim'}">
+                            <p:ajax update="@this"/>
+                        </p:selectBooleanCheckbox>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.5rem;">
+                    <p:commandButton type="button"
+                                     value="Voltar"
+                                     styleClass="ui-button-flat mr-2"
+                                     onclick="PF('dialogVaga').hide()"/>
+                    <p:commandButton value="Salvar Vaga"
+                                     actionListener="#{vagaBean.processarVaga}"
+                                     process="@form"
+                                     update="@form :dataTableForm"/>
+                </div>
+            </h:form>
+        </p:dialog>
     </ui:define>
 </ui:composition>

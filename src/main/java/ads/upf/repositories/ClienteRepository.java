@@ -13,12 +13,4 @@ public class ClienteRepository implements PanacheRepository<Cliente> {
         }
         return count("cpfHash = ?1 and id != ?2", cpfHash, id) > 0;
     }
-
-    public boolean checkEmail(String email, Long id) {
-        if (id == null) {
-            return count("email = ?1", email) > 0;
-        }
-        return count("email = ?1 and id != ?2", email, id) > 0;
-    }
-
 }

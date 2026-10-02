@@ -5,21 +5,18 @@
                 xmlns:ui="jakarta.faces.facelets"
                 xmlns:p="http://primefaces.org/ui">
     <ui:define name="content">
+        <!-- Formulário contendo uma data table para listagem dos clientes -->
+        <h:form id="dataTableForm">
 
-        <style>
-            .divsFormDialog {
-                margin-bottom: .5rem;
-            }
-        </style>
+            <p:commandButton value="Novo Cliente"
+                             icon="pi pi-plus"
+                             actionListener="#{clienteBean.novoCliente}"
+                             process="@this"
+                             resetValues="true"
+                             update=":dialogCliente"
+                             oncomplete="PF('dialogCliente').show()"
+                             style="margin-bottom: .8rem"/>
 
-        <p:commandButton value="Novo Cliente"
-                         icon="pi pi-plus"
-                         action="#{clienteBean.limparCliente}"
-                         update=":formDialog:formCliente"
-                         style="margin-bottom: .5rem"
-                         oncomplete="PF('dialogCliente').show()"/>
-
-        <h:form id="formClientes">
             <!-- Barra de Pesquisa por Chave Única -->
             <p:toolbar style="margin-bottom: 1rem;">
                 <p:toolbarGroup>
@@ -84,80 +81,14 @@
                     <p:commandButton value="Editar"
                                      icon="pi pi-pencil" styleClass="rounded-button ui-button-help"
                                      oncomplete="PF('dialogCliente').show()"
-                                     action="#{clienteBean.selecionarCliente(cliente)}"
-                                     update=":formDialog:formCliente"/>
+                                     actionListener="#{clienteBean.selecionarCliente(cliente)}"
+                                     update=":dialogCliente"/>
                 </p:column>
             </p:dataTable>
         </h:form>
 
         <!-- Formulário de cadastro de novo cliente -->
-        <h:form id="formDialog">
-            <p:dialog header="Preencha com os dados do cliente"
-                      widgetVar="dialogCliente"
-                      minHeight="40" width="730"
-                      modal="true"
-                      showEffect="fade"
-                      closeOnEscape="true">
-                <p:outputPanel id="formCliente">
-                    <div style="margin-left: .5rem;
-                                display: grid;
-                                grid-template-columns: auto auto;">
-                        <div class="divsFormDialog">
-                            <div class="outputs">
-                                <p:outputLabel for="nomeCompleto" value="Nome Completo"/>
-                            </div>
-                            <p:inputText style="width: 250px"
-                                         id="nomeCompleto"
-                                         value="#{clienteBean.cliente.nomeCompleto}"
-                                         placeholder="Ex: John Doe"/><br/>
-                            <h:message for="nomeCompleto" style="color:red;" />
-                        </div>
-                        <div class="divsFormDialog">
-                            <div class="outputs">
-                                <p:outputLabel for="cpf" value="CPF"/>
-                            </div>
-                            <p:inputText style="width: 250px"
-                                         id="cpf"
-                                         value="#{clienteBean.cliente.cpf}"
-                                         placeholder="Ex: 123.456.789-01"/><br/>
-                            <h:message for="cpf" style="color:red;" />
-                        </div>
-                        <div class="divsFormDialog">
-                            <div class="outputs">
-                                <p:outputLabel for="email" value="Email"/>
-                            </div>
-                            <p:inputText style="width: 250px"
-                                         id="email"
-                                         value="#{clienteBean.cliente.email}"
-                                         placeholder="Ex: johndoe@email.com"/><br/>
-                            <h:message for="email" style="color:red;" />
-                        </div>
-                        <div class="divsFormDialog">
-                            <div class="outputs">
-                                <p:outputLabel for="telefone" value="Telefone"/>
-                            </div>
-                            <p:inputText style="width: 250px"
-                                         id="telefone"
-                                         value="#{clienteBean.cliente.telefone}"
-                                         placeholder="Ex: 54 9 96322831"/><br/>
-                            <h:message for="telefone" style="color:red;" />
-                        </div>
-                    </div>
-                </p:outputPanel>
-                <f:facet name="footer">
-                    <p:commandButton type="button"
-                                     value="Voltar"
-                                     onclick="PF('dialogCliente').hide()"
-                                     styleClass="ui-button-flat mr-2"
-                                     style="width: 6rem" />
-                    <p:commandButton id="btnYes"
-                                     process="@form"
-                                     update=":formDialog:formCliente :formClientes:tabelaClientes"
-                                     action="#{clienteBean.processarCliente}"
-                                     value="Salvar"
-                                     style="width: 6rem" />
-                </f:facet>
-            </p:dialog>
-        </h:form>
+        <ui:include src="/pages/gestao/dialogs/dialog-cliente.xhtml"/>
+
     </ui:define>
 </ui:composition>

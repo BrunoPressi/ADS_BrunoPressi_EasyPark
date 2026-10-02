@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:p="http://primefaces.org/ui">
+<h:body>
+    <!-- Data table para listagem do veículo associado ao contrato -->
+    <p:dialog id="dialogVeiculoList"
+              header="Exibindo veículo associado ao contrato"
+              widgetVar="dialogVeiculoContrato"
+              minHeight="40" width="895"
+              modal="true"
+              showEffect="fade"
+              closeOnEscape="true">
+        <h:form id="formDialogVeiculoList">
+            <p:dataTable id="tabelaVeiculo"
+                         value="#{contratoBean.veiculo}"
+                         lazy="false">
+
+                <p:column headerText="ID" style="width: 80px; text-align: center;">
+                    <h:outputText value="#{contratoBean.veiculo.id}" />
+                </p:column>
+
+                <p:column headerText="Placa">
+                    <h:outputText value="#{contratoBean.veiculo.placa}" />
+                </p:column>
+
+                <p:column headerText="Marca">
+                    <h:outputText value="#{contratoBean.veiculo.marca}" />
+                </p:column>
+
+                <p:column headerText="Modelo">
+                    <h:outputText value="#{contratoBean.veiculo.modelo}" />
+                </p:column>
+
+                <p:column headerText="Cor">
+                    <h:outputText value="#{contratoBean.veiculo.cor}" />
+                </p:column>
+            </p:dataTable>
+
+        </h:form>
+    </p:dialog>
+</h:body>
+</html>

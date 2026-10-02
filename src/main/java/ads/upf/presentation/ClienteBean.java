@@ -54,11 +54,14 @@ public class ClienteBean implements Serializable {
             clienteService.salvarCliente(cliente);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Sucesso", "Cliente salvo com sucesso."));
             PrimeFaces.current().executeScript("PF('dialogCliente').hide()");
-            this.cliente = new ClienteCreateDTO();
         }
         catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Erro ao salvar cliente.", e.getMessage()));
         }
+    }
+
+    public void novoCliente() {
+        this.cliente = new ClienteCreateDTO();
     }
 
     public void pesquisar() {

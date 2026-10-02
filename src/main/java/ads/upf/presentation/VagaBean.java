@@ -69,6 +69,10 @@ public class VagaBean implements Serializable {
         lazyDataModel.buscar(chaveUnicaFiltro);
     }
 
+    public void novaVaga() {
+        this.vaga = new VagaCreateDTO();
+    }
+
     public void limparFiltro() {
         this.chaveUnicaFiltro = null;
         lazyDataModel.limpar();

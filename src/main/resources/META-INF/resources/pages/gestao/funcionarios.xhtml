@@ -5,25 +5,21 @@
                 xmlns:ui="jakarta.faces.facelets"
                 xmlns:p="http://primefaces.org/ui">
     <ui:define name="content">
+        <!-- Formulário contendo uma data table para listagem dos funcionários -->
+        <h:form id="dataTableForm">
 
-        <style>
-            .outputs {
-                margin-bottom: .3rem;
-                margin-top: .5rem;
-            }
-        </style>
-
-        <p:commandButton value="Novo Funcionário"
-                         icon="pi pi-plus"
-                         style="margin-bottom: .8rem"
-                         action="#{funcionarioBean.limpar}"
-                         update=":formDialog:formFuncionario"
-                         oncomplete="PF('dialogFuncionario').show()"/>
-
-        <h:form id="formListaFuncionarios">
+            <p:commandButton value="Novo Funcionário"
+                             icon="pi pi-plus"
+                             actionListener="#{funcionarioBean.novoFuncionario}"
+                             process="@this"
+                             resetValues="true"
+                             update=":dialogFuncionario"
+                             oncomplete="PF('dialogFuncionario').show()"
+                             style="margin-bottom: .8rem"/>
 
             <!-- Barra de Pesquisa por Chave Única -->
             <p:toolbar style="margin-bottom: 1rem;">
+
                 <p:toolbarGroup>
                         <span class="ui-input-icon-left" style="margin-right: .5rem;">
                             <i class="pi pi-key" />
@@ -78,68 +74,57 @@
                     <p:commandButton icon="pi pi-pencil" styleClass="rounded-button ui-button-help"
                                      action="#{funcionarioBean.selecionarFuncionario(funcionario)}"
                                      oncomplete="PF('dialogFuncionario').show()"
-                                     update=":formDialog:formFuncionario"
+                                     update=":dialogFuncionario"
                                      value="Editar"/>
                 </p:column>
             </p:dataTable>
         </h:form>
 
         <!-- Formulário de cadastro de novo funcionário -->
-        <h:form id="formDialog">
-            <p:dialog header="Preencha com os dados do funcionário"
-                      widgetVar="dialogFuncionario"
-                      minHeight="40" width="470"
-                      modal="true"
-                      showEffect="fade"
-                      closeOnEscape="true">
-                <p:outputPanel id="formFuncionario">
-                    <div style="margin-left: .5rem">
-                        <div>
-                            <div class="outputs">
-                                <p:outputLabel for="nomeCompleto" value="Nome Completo"/>
-                            </div>
-                            <p:inputText style="width: 250px"
-                                         id="nomeCompleto"
-                                         value="#{funcionarioBean.funcionario.nomeCompleto}"
-                                         placeholder="Ex: John Doe"/><br/>
-                            <h:message for="nomeCompleto" style="color:red;" />
-                        </div>
-                        <div>
-                            <div class="outputs">
-                                <p:outputLabel for="email" value="Email"/>
-                            </div>
-                            <p:inputText style="width: 250px"
-                                         id="email"
-                                         value="#{funcionarioBean.funcionario.email}"
-                                         placeholder="Ex: johndoe@email.com"/><br/>
-                            <h:message for="email" style="color:red;" />
-                        </div>
-                        <div>
-                            <div class="outputs">
-                                <p:outputLabel for="telefone" value="Telefone"/>
-                            </div>
-                            <p:inputText style="width: 250px"
-                                         id="telefone"
-                                         value="#{funcionarioBean.funcionario.telefone}"
-                                         placeholder="Ex: 54 9 96322831"/><br/>
-                            <h:message for="telefone" style="color:red;" />
-                        </div>
+        <p:dialog id="dialogFuncionario"
+                  header="Preencha com os dados do funcionário"
+                  widgetVar="dialogFuncionario"
+                  width="370"
+                  modal="true"
+                  showEffect="fade"
+                  closable="false"
+                  closeOnEscape="true">
+
+            <h:form id="formDialog">
+                <div class="ui-fluid">
+                    <div>
+                        <p:outputLabel for="nomeCompleto" value="Nome Completo"/>
+                        <p:inputText id="nomeCompleto"
+                                     value="#{funcionarioBean.funcionario.nomeCompleto}"
+                                     placeholder="Ex: John Doe"/><br/>
+                        <h:message for="nomeCompleto" style="color:red;" />
                     </div>
-                </p:outputPanel>
-                <f:facet name="footer">
+                    <div style="margin-top: .5rem">
+                        <p:outputLabel for="email" value="Email"/>
+                        <p:inputText id="email"
+                                     value="#{funcionarioBean.funcionario.email}"
+                                     placeholder="Ex: johndoe@email.com"/><br/>
+                        <h:message for="email" style="color:red;" />
+                    </div>
+                    <div style="margin-top: .5rem">
+                        <p:outputLabel for="telefone" value="Telefone"/>
+                        <p:inputText id="telefone"
+                                     value="#{funcionarioBean.funcionario.telefone}"
+                                     placeholder="Ex: 54 9 96322831"/><br/>
+                        <h:message for="telefone" style="color:red;" />
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.5rem;">
                     <p:commandButton type="button"
                                      value="Voltar"
                                      onclick="PF('dialogFuncionario').hide()"
-                                     styleClass="ui-button-flat mr-2"
-                                     style="width: 6rem" />
-                    <p:commandButton id="btnYes"
+                                     styleClass="ui-button-flat mr-2"/>
+                    <p:commandButton value="Salvar Funcionário"
+                                     actionListener="#{funcionarioBean.processarFuncionario}"
                                      process="@form"
-                                     update=":formDialog:formFuncionario :formListaFuncionarios"
-                                     action="#{funcionarioBean.processarFuncionario}"
-                                     value="Cadastrar"
-                                     style="width: 6rem" />
-                </f:facet>
-            </p:dialog>
-        </h:form>
+                                     update="@form :dataTableForm"/>
+                </div>
+            </h:form>
+        </p:dialog>
     </ui:define>
 </ui:composition>

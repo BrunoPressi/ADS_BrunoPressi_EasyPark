@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:p="http://primefaces.org/ui">
+<h:body>
+        <!-- Formulário de cadastro de novo cliente -->
+        <p:dialog id="dialogCliente"
+                  header="Preencha com os dados do cliente"
+                  widgetVar="dialogCliente"
+                  modal="true"
+                  width="370"
+                  showEffect="fade"
+                  closable="false"
+                  closeOnEscape="true">
+
+            <p:ajax event="close" resetValues="true" update="formDialogCliente" />
+
+            <h:form id="formDialogCliente">
+                <div class="ui-fluid">
+                    <div>
+                        <p:outputLabel for="nomeCompleto" value="Nome Completo"/>
+                        <p:inputText id="nomeCompleto"
+                                     value="#{clienteBean.cliente.nomeCompleto}"
+                                     placeholder="Ex: John Doe"/>
+                        <h:message for="nomeCompleto" style="color:red;" />
+                    </div>
+                    <div style="margin-top: .5rem">
+                        <p:outputLabel for="cpf" value="CPF"/>
+                        <p:inputText id="cpf"
+                                     value="#{clienteBean.cliente.cpf}"
+                                     placeholder="Ex: 123.456.789-01"/><br/>
+                        <h:message for="cpf" style="color:red;" />
+                    </div>
+                    <div style="margin-top: .5rem">
+                        <p:outputLabel for="email" value="Email"/>
+                        <p:inputText id="email"
+                                     value="#{clienteBean.cliente.email}"
+                                     placeholder="Ex: johndoe@email.com"/><br/>
+                        <h:message for="email" style="color:red;" />
+                    </div>
+                    <div style="margin-top: .5rem">
+                        <p:outputLabel for="telefone" value="Telefone"/>
+                        <p:inputText id="telefone"
+                                     value="#{clienteBean.cliente.telefone}"
+                                     placeholder="Ex: 54 9 96322831"/><br/>
+                        <h:message for="telefone" style="color:red;" />
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.5rem;">
+                    <p:commandButton type="button"
+                                     value="Voltar"
+                                     onclick="PF('dialogCliente').hide()"
+                                     styleClass="ui-button-flat mr-2"
+                                     style="width: 6rem" />
+                    <p:commandButton value="Salvar Cliente"
+                                     actionListener="#{clienteBean.processarCliente}"
+                                     process="@form"
+                                     update="@form :dataTableForm"/>
+                </div>
+            </h:form>
+        </p:dialog>
+</h:body>
+</html>

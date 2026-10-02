@@ -5,8 +5,10 @@ import ads.upf.exceptions.EntityNotFoundException;
 import ads.upf.model.DTOs.cliente.ClienteCreateDTO;
 import ads.upf.model.DTOs.cliente.ClienteResponseDTO;
 import ads.upf.model.entities.Cliente;
+import ads.upf.model.entities.Usuario;
 import ads.upf.model.mappers.ClienteMapper;
 import ads.upf.repositories.ClienteRepository;
+import ads.upf.repositories.UsuarioRepository;
 import ads.upf.utils.SecurityUtil;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -20,22 +22,34 @@ import java.util.List;
 public class ClienteService {
 
     private final ClienteRepository clienteRepository;
+    private final UsuarioRepository usuarioRepository;
 
     @Inject
-    public ClienteService(ClienteRepository clienteRepository) {
+    public ClienteService(ClienteRepository clienteRepository, UsuarioRepository usuarioRepository) {
         this.clienteRepository = clienteRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @Transactional
     public void salvarCliente(ClienteCreateDTO clienteCreateDTO) {
 
         if (clienteCreateDTO.getId() == null) {
-            checkClienteExists(null, clienteCreateDTO.getCpf(), clienteCreateDTO.getEmail());
+            checkClienteExists(
+                    null,
+                    clienteCreateDTO.getCpf(),
+                    clienteCreateDTO.getEmail(),
+                    clienteCreateDTO.getNomeCompleto()
+            );
             Cliente cliente = ClienteMapper.INSTANCE.toCliente(clienteCreateDTO);
             clienteRepository.persist(cliente);
         }
         else {
-            checkClienteExists(clienteCreateDTO.getId(), clienteCreateDTO.getCpf(), clienteCreateDTO.getEmail());
+            checkClienteExists(
+                    clienteCreateDTO.getId(),
+                    clienteCreateDTO.getCpf(),
+                    clienteCreateDTO.getEmail(),
+                    clienteCreateDTO.getNomeCompleto()
+            );
 
             Cliente cliente = clienteRepository
                     .findByIdOptional(clienteCreateDTO.getId())
@@ -101,12 +115,15 @@ public class ClienteService {
         return ClienteMapper.INSTANCE.toClienteDtoList(clientes);
     }
 
-    private void checkClienteExists(Long id, String cpf, String email) {
+    private void checkClienteExists(Long id, String cpf, String email, String nomeCompleto) {
         if (clienteRepository.checkCpf(SecurityUtil.generateBlindIndex(cpf), id)) {
             throw new EntityExistsException("Esse CPF já está cadastrado");
         }
-        if (clienteRepository.checkEmail(email, id)) {
+        if (usuarioRepository.checkEmail(email, id)) {
             throw new EntityExistsException("Esse Email já está cadastrado");
+        }
+        if (usuarioRepository.checkNomeCompleto(nomeCompleto, id)) {
+            throw new EntityExistsException("Já existe um usuário com este nome.");
         }
     }
 

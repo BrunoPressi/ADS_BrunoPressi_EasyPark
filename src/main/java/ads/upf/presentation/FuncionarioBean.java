@@ -61,6 +61,10 @@ public class FuncionarioBean implements Serializable {
         }
     }
 
+    public void novoFuncionario() {
+        this.funcionario = new FuncionarioCreateDTO();
+    }
+
     public void pesquisar() {
         lazyDataModel.buscar(chaveUnicaFiltro);
     }

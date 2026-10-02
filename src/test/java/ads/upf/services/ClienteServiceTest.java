@@ -6,6 +6,7 @@ import ads.upf.model.DTOs.cliente.ClienteCreateDTO;
 import ads.upf.model.DTOs.cliente.ClienteResponseDTO;
 import ads.upf.model.entities.Cliente;
 import ads.upf.repositories.ClienteRepository;
+import ads.upf.repositories.UsuarioRepository;
 import ads.upf.utils.SecurityUtil;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Sort;
@@ -51,6 +52,9 @@ public class ClienteServiceTest {
     @Mock
     private ClienteRepository clienteRepository;
 
+    @Mock
+    private UsuarioRepository usuarioRepository;
+
     /**
      * @Mock - Mockito:
      * Dublê do PanacheQuery para simular consultas fluentes e paginação do Hibernate Panache.
@@ -70,7 +74,7 @@ public class ClienteServiceTest {
      */
     @BeforeEach
     void setUp() {
-        clienteService = new ClienteService(clienteRepository);
+        clienteService = new ClienteService(clienteRepository, usuarioRepository);
     }
 
     // -------------------------------------------------------------------------------------
@@ -114,7 +118,7 @@ public class ClienteServiceTest {
             // Mockito: when(...).thenReturn(...)
             // Ensina ao mock que não existe duplicidade de CPF nem de E-mail
             when(clienteRepository.checkCpf(anyString(), isNull())).thenReturn(false);
-            when(clienteRepository.checkEmail("joao@email.com", null)).thenReturn(false);
+            when(usuarioRepository.checkEmail("joao@email.com", null)).thenReturn(false);
 
             // ACT:
             clienteService.salvarCliente(dto);
@@ -159,7 +163,7 @@ public class ClienteServiceTest {
             // ARRANGE: CPF livre, mas e-mail duplicado
             ClienteCreateDTO dto = criarDto(null, "João da Silva", "joao@email.com", "54999998888", "12345678901");
             when(clienteRepository.checkCpf(anyString(), isNull())).thenReturn(false);
-            when(clienteRepository.checkEmail("joao@email.com", null)).thenReturn(true);
+            when(usuarioRepository.checkEmail("joao@email.com", null)).thenReturn(true);
 
             // ACT & ASSERT:
             assertThatThrownBy(() -> clienteService.salvarCliente(dto))
@@ -187,7 +191,7 @@ public class ClienteServiceTest {
             ClienteCreateDTO dtoEdicao = criarDto(10L, "João Novo", "novo@email.com", "54222222222", "98765432100");
 
             when(clienteRepository.checkCpf(anyString(), eq(10L))).thenReturn(false);
-            when(clienteRepository.checkEmail("novo@email.com", 10L)).thenReturn(false);
+            when(usuarioRepository.checkEmail("novo@email.com", 10L)).thenReturn(false);
             when(clienteRepository.findByIdOptional(10L)).thenReturn(Optional.of(clienteExistente));
 
             // ACT:
@@ -213,7 +217,7 @@ public class ClienteServiceTest {
             ClienteCreateDTO dtoEdicao = criarDto(10L, "João Silva", "joao@email.com", "54999998888", "12345678901");
 
             when(clienteRepository.checkCpf(anyString(), eq(10L))).thenReturn(false);
-            when(clienteRepository.checkEmail("joao@email.com", 10L)).thenReturn(false);
+            when(usuarioRepository.checkEmail("joao@email.com", 10L)).thenReturn(false);
             when(clienteRepository.findByIdOptional(10L)).thenReturn(Optional.of(clienteExistente));
 
             // ACT:
@@ -230,7 +234,7 @@ public class ClienteServiceTest {
             ClienteCreateDTO dto = criarDto(999L, "João Silva", "joao@email.com", "54999998888", "12345678901");
 
             when(clienteRepository.checkCpf(anyString(), eq(999L))).thenReturn(false);
-            when(clienteRepository.checkEmail("joao@email.com", 999L)).thenReturn(false);
+            when(usuarioRepository.checkEmail("joao@email.com", 999L)).thenReturn(false);
             when(clienteRepository.findByIdOptional(999L)).thenReturn(Optional.empty());
 
             // ACT & ASSERT:
@@ -260,7 +264,7 @@ public class ClienteServiceTest {
             // ARRANGE:
             ClienteCreateDTO dto = criarDto(10L, "João Silva", "maria@email.com", "54999998888", "12345678901");
             when(clienteRepository.checkCpf(anyString(), eq(10L))).thenReturn(false);
-            when(clienteRepository.checkEmail("maria@email.com", 10L)).thenReturn(true);
+            when(usuarioRepository.checkEmail("maria@email.com", 10L)).thenReturn(true);
 
             // ACT & ASSERT:
             assertThatThrownBy(() -> clienteService.salvarCliente(dto))

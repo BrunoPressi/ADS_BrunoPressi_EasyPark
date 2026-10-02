@@ -53,6 +53,7 @@ public class ContratoBean implements Serializable {
     protected void postConstruct() {
         this.contrato = new ContratoCreateDTO();
         this.cliente = new ClienteResponseDTO();
+        this.veiculo = new VeiculoResponseDTO();
         this.lazyDataModel = new GenericLazyDataModel<>(
                 () -> contratoService.contar(),
                 (first, pageSize) -> contratoService.listarPaginado(first, pageSize),
@@ -78,6 +79,7 @@ public class ContratoBean implements Serializable {
         this.contrato.setDataInicio(contratoResponseDTO.getDataInicio());
         this.contrato.setDataTermino(contratoResponseDTO.getDataTermino());
         this.contrato.setCliente(contratoResponseDTO.getCliente());
+        this.contrato.setVeiculo(contratoResponseDTO.getVeiculo());
     }
 
     public void processarContrato() {
@@ -114,6 +116,10 @@ public class ContratoBean implements Serializable {
                     .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao Cancelar Contrato",
                             e.getMessage()));
         }
+    }
+
+    public void novoContrato() {
+        this.contrato = new ContratoCreateDTO();
     }
 
     public List<ClienteResponseDTO> buscarClientePorCpf(String cpf) {

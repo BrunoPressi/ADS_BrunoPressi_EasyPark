@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:p="http://primefaces.org/ui">
+<h:body>
+    <!-- Data table para listagem do cliente associado ao contrato -->
+    <p:dialog id="dialogClienteList"
+              header="Exibindo cliente associado ao contrato"
+              widgetVar="dialogClienteContrato"
+              minHeight="40" width="895"
+              modal="true"
+              showEffect="fade"
+              closeOnEscape="true">
+        <h:form id="formDialogClienteList">
+            <p:dataTable id="tabelaClientes"
+                         value="#{contratoBean.cliente}"
+                         lazy="false">
+
+                <p:column headerText="ID" style="width: 80px; text-align: center;">
+                    <h:outputText value="#{contratoBean.cliente.id}" />
+                </p:column>
+
+                <p:column headerText="Nome Completo">
+                    <h:outputText value="#{contratoBean.cliente.nomeCompleto}" />
+                </p:column>
+
+                <p:column headerText="CPF">
+                    <h:outputText value="#{contratoBean.cliente.cpf}" />
+                </p:column>
+
+                <p:column headerText="Email">
+                    <h:outputText value="#{contratoBean.cliente.email}" />
+                </p:column>
+
+                <p:column headerText="Telefone">
+                    <h:outputText value="#{contratoBean.cliente.telefone}" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </p:dialog>
+</h:body>
+</html>

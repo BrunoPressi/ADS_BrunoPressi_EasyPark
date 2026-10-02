@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:p="http://primefaces.org/ui">
+<h:body>
+    <!-- Data table para listagem das parcelas associado ao contrato -->
+    <p:dialog id="dialogParcelasList"
+              header="Exibindo parcelas do contrato"
+              widgetVar="dialogParcelas"
+              minHeight="40"
+              width="950"
+              modal="true"
+              showEffect="fade"
+              closeOnEscape="true">
+        <h:form id="formDialogParcelasList">
+            <p:dataTable id="tabelaParcelas"
+                         value="#{contratoBean.parcelas}"
+                         lazy="false"
+                         var="parcela"
+                         widgetVar="dtContratos"
+                         paginator="true"
+                         rows="5"
+                         paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="Exibindo {startRecord}-{endRecord} de {totalRecords} registros"
+                         rowKey="#{parcela.id}"
+                         emptyMessage="Nenhuma parcela encontrada.">
+
+                <p:column headerText="ID" style="width: 80px; text-align: center;">
+                    <h:outputText value="#{parcela.id}" />
+                </p:column>
+
+                <p:column headerText="Data de Vencimento" style="width: 80px; text-align: center;">
+                    <h:outputText value="#{parcela.dataVencimento}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Data de Pagamento" style="width: 80px; text-align: center;">
+                    <h:outputText value="#{ (parcela.dataPagamento) == null
+                        ? 'Pagamento Pendente'
+                        : (parcela.dataPagamento)}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Número da Parcela" style="width: 80px; text-align: center;">
+                    <h:outputText value="#{parcela.numeroParcela}ª" />
+                </p:column>
+
+                <p:column headerText="Valor" style="width: 80px; text-align: center;">
+                    <h:outputText value="R$#{parcela.valor}" />
+                </p:column>
+
+                <p:column headerText="Meio de Pagamento" style="width: 80px; text-align: center;">
+                    <h:outputText value="#{ (parcela.status) == 'pendente'
+                                ? 'Pagamento Pendente'
+                                : (parcela.status) == 'atrasada'
+                                ? 'Pagamento Pendente'
+                                : (parcela.meioPagamento)}" />
+                </p:column>
+
+                <p:column headerText="Cobrança Enviada?" style="width: 80px; text-align: center;">
+                    <h:outputText  />
+                    <p:tag severity="#{ (parcela.cobrancaEnviada ? 'success' : 'warning') }"
+                           value="#{ (parcela.cobrancaEnviada) ? 'Sim' : 'Não'}"/>
+                </p:column>
+
+                <p:column headerText="Status" style="width: 80px; text-align: center;">
+                    <p:tag severity="#{ (parcela.status) == 'pendente' ? 'warning'
+                                : (parcela.status) == 'atrasada' ? 'danger'
+                                : (parcela.status) == 'paga' ? 'success'
+                                : 'Secondary'}"
+                           value="#{ (parcela.status) == 'pendente' ? 'Pendente'
+                                :(parcela.status) == 'atrasada' ? 'Atrasada'
+                                : (parcela.status) == 'paga' ? 'Paga'
+                                : 'Não definido'}"  />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </p:dialog>
+</h:body>
+</html>

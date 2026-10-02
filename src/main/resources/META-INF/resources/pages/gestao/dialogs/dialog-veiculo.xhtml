@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:p="http://primefaces.org/ui">
+<h:body>
+    <!-- Formulário de cadastro de novo veículo -->
+    <p:dialog id="dialogVeiculo"
+              header="Preencha com os dados do veículo"
+              widgetVar="dialogVeiculo"
+              width="370"
+              closable="false"
+              modal="true"
+              showEffect="fade"
+              closeOnEscape="true">
+
+        <p:ajax event="close" resetValues="true" update="formDialogVeiculo" />
+
+        <h:form id="formDialogVeiculo">
+            <div class="ui-fluid">
+                <div>
+                    <p:outputLabel for="placa" value="Placa"/>
+                    <p:inputText id="placa" value="#{veiculoBean.veiculo.placa}" placeholder="Ex: ABC-1D23 / ABC-1234"/>
+                    <h:message for="placa" style="color: red"/>
+                </div>
+                <div style="margin-top: .5rem">
+                    <p:outputLabel value="Tipo do Veículo"/>
+                    <p:selectOneMenu id="tipoVeiculo" value="#{veiculoBean.veiculo.tipo}">
+                        <f:selectItem itemLabel="Selecione o tipo do veículo" itemValue=""/>
+                        <f:selectItem itemLabel="Carro" itemValue="carro"/>
+                        <f:selectItem itemLabel="Moto" itemValue="moto"/>
+                        <f:selectItem itemLabel="Van" itemValue="van"/>
+                    </p:selectOneMenu>
+                    <h:message for="tipoVeiculo" style="color: red"/>
+                </div>
+                <div style="margin-top: .5rem">
+                    <p:outputLabel for="marca" value="Digite a placa marca do veículo (opcional)"/>
+                    <p:inputText id="marca" value="#{veiculoBean.veiculo.marca}" placeholder="Ex: Chevrolet"/>
+                </div>
+                <div style="margin-top: .5rem">
+                    <p:outputLabel for="modelo" value="Digite o modelo do veículo (opcional)"/>
+                    <p:inputText id="modelo" value="#{veiculoBean.veiculo.modelo}" placeholder="Ex: Vectra"/>
+                </div>
+                <div style="margin-top: .5rem">
+                    <p:outputLabel for="cor" value="Digite a cor do veículo (opcional)"/>
+                    <p:inputText id="cor" value="#{veiculoBean.veiculo.cor}" placeholder="Ex: Preta"/>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.5rem;">
+                <p:commandButton type="button"
+                                 value="Voltar"
+                                 onclick="PF('dialogVeiculo').hide()"
+                                 styleClass="ui-button-flat mr-2"
+                                 style="width: 6rem"/>
+                <p:commandButton value="Salvar Veiculo"
+                                 process="@form"
+                                 actionListener="#{veiculoBean.processarVeiculo}"
+                                 update="@form"/>
+            </div>
+        </h:form>
+    </p:dialog>
+</h:body>
+</html>

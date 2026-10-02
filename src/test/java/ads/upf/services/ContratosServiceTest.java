@@ -34,9 +34,7 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.postgresql.hostchooser.HostRequirement.any;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Contratos Service - Suíte de Testes Unitários")

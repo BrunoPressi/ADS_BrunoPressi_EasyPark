@@ -38,14 +38,19 @@
     <div class="layout-wrapper">
         <div class="layout-topbar" style="margin-bottom: 20px;">
             <h:form id="menuForm">
-                <p:menubar>
-                    <p:menuitem value="Dashboard" icon="pi pi-home" url="/pages/dashboard/index.xhtml" />
-                    <p:submenu label="Gestão" icon="pi pi-plus">
-                        <p:menuitem value="Vagas" icon="pi pi-book" url="/pages/gestao/vagas.xhtml" />
-                        <p:menuitem value="Funcionários" icon="pi pi-id-card" url="/pages/gestao/funcionarios.xhtml" />
-                        <p:menuitem value="Clientes" icon="pi pi-user" url="/pages/gestao/clientes.xhtml" />
-                        <p:menuitem value="Contratos" icon="pi pi-briefcase" url="/pages/gestao/contratos.xhtml" />
-                    </p:submenu>
+                <p:menubar rendered="#{userSession.gerente}">
+                    <p:menuitem value="Dashboard" icon="pi pi-home" url="/pages/public/dashboard.xhtml" />
+                    <p:menuitem value="Vagas" icon="pi pi-book" url="/pages/gestao/vagas.xhtml" />
+                    <p:menuitem value="Funcionários" icon="pi pi-id-card" url="/pages/gestao/funcionarios.xhtml" />
+                    <p:menuitem value="Clientes" icon="pi pi-user" url="/pages/gestao/clientes.xhtml" />
+                    <p:menuitem value="Contratos" icon="pi pi-briefcase" url="/pages/gestao/contratos.xhtml" />
+                    <f:facet name="options">
+                        <p:commandButton value="Sair" icon="pi pi-sign-out" styleClass="ui-button-danger" action="/logout.xhtml?faces-redirect=true" />
+                    </f:facet>
+                </p:menubar>
+                <p:menubar rendered="#{userSession.atendente}">
+                    <p:menuitem value="Dashboard" icon="pi pi-home" url="/pages/public/dashboard.xhtml" />
+                    <p:menuitem value="Entrada e Saídas" icon="pi pi-book" url="/pages/operacao/fluxo.xhtml" />
                     <f:facet name="options">
                         <p:commandButton value="Sair" icon="pi pi-sign-out" styleClass="ui-button-danger" action="/logout.xhtml?faces-redirect=true" />
                     </f:facet>

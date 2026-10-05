@@ -5,7 +5,6 @@ import ads.upf.exceptions.EntityNotFoundException;
 import ads.upf.model.DTOs.cliente.ClienteCreateDTO;
 import ads.upf.model.DTOs.cliente.ClienteResponseDTO;
 import ads.upf.model.entities.Cliente;
-import ads.upf.model.entities.Usuario;
 import ads.upf.model.mappers.ClienteMapper;
 import ads.upf.repositories.ClienteRepository;
 import ads.upf.repositories.UsuarioRepository;

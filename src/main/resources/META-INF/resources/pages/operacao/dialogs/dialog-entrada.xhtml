@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+<h:body>
+
+    <h:form id="formBotaoEntrada">
+        <p:commandButton value="Registrar Entrada"
+                         icon="pi pi-plus"
+                         actionListener="#{permanenciaBean.novaEntrada}"
+                         oncomplete="PF('dialogEntrada').show() "
+                         resetValues="true"
+                         process="@this"
+                         update=":formDialogEntrada"
+                         style="margin-bottom: .7rem"/>
+    </h:form>
+
+    <!-- Formulário para registrar uma nova entrada-->
+    <p:dialog id="dialogEntrada"
+              widgetVar="dialogEntrada"
+              closable="false"
+              modal="true"
+              showEffect="fade"
+              width="370"
+              closeOnEscape="true"
+              header="Registrando nova entrada...">
+
+        <p:ajax event="close"
+                form="formDialogEntrada"
+                resetValues="true"
+                update="formDialogEntrada"/>
+
+        <h:form id="formDialogEntrada">
+            <div class="ui-fluid">
+                <div>
+                    <p:outputLabel for="placa" value="Veículo (PLACA)" />
+                    <p:inputText id="placa" required="true" value="#{permanenciaBean.entrada.placa}" placeholder="Digite a placa do veículo"/>
+                    <h:message for="placa" style="color:red;" />
+                </div>
+                <div style="margin-top: .5rem">
+                    <p:outputLabel for="tipoVeiculo" value="Tipo do Veículo"/>
+                    <p:selectOneMenu id="tipoVeiculo" value="#{permanenciaBean.entrada.tipoVeiculo}">
+                        <f:selectItem itemLabel="Selecione o tipo do veículo" itemValue=""/>
+                        <f:selectItem itemLabel="Carro" itemValue="carro"/>
+                        <f:selectItem itemLabel="Moto" itemValue="moto"/>
+                        <f:selectItem itemLabel="Van" itemValue="van"/>
+                    </p:selectOneMenu>
+                    <h:message for="tipoVeiculo" style="color: red"/>
+                </div>
+                <div style="margin-top: .5rem">
+                    <p:outputLabel for="tipoVaga" value="Tipo da Vaga"/>
+                    <p:selectOneMenu id="tipoVaga" value="#{permanenciaBean.entrada.tipoVaga}">
+                        <f:selectItem itemLabel="Selecione o tipo da vaga" itemValue=""/>
+                        <f:selectItem itemLabel="Comum" itemValue="comum"/>
+                        <f:selectItem itemLabel="Moto" itemValue="moto"/>
+                        <f:selectItem itemLabel="PNE" itemValue="pne"/>
+                        <f:selectItem itemLabel="Idoso" itemValue="idoso"/>
+                    </p:selectOneMenu>
+                    <h:message for="tipoVaga" style="color: red"/>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.5rem;">
+                <p:commandButton type="button"
+                                 value="Voltar"
+                                 onclick="PF('dialogEntrada').hide()"
+                                 styleClass="ui-button-flat mr-2"
+                                 style="width: 6rem"/>
+                <p:commandButton value="Salvar"
+                                 actionListener="#{permanenciaBean.processarEntrada}"
+                                 process="@form"
+                                 update="@form :dataTablePermanencias"/>
+            </div>
+        </h:form>
+    </p:dialog>
+
+</h:body>
+</html>

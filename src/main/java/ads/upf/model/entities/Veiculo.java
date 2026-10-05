@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "veiculos")
@@ -31,6 +33,9 @@ public class Veiculo {
 
     @Enumerated(EnumType.STRING)
     private VeiculoTipo tipo;
+
+    @OneToMany(mappedBy = "veiculo", fetch = FetchType.LAZY)
+    private List<Permanencia> permanenciaList = new ArrayList<>();
 
     @Column(nullable = true)
     private LocalDateTime criadoEm;

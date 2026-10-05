@@ -15,6 +15,7 @@ public interface VeiculoMapper {
     VeiculoMapper INSTANCE = Mappers.getMapper( VeiculoMapper.class );
 
     Veiculo toVeiculo(VeiculoCreateDTO veiculoCreateDTO);
+    Veiculo toVeiculo(VeiculoResponseDTO veiculoResponseDTO);
     VeiculoResponseDTO toVeiculoDto(Veiculo veiculo);
     List<VeiculoResponseDTO> toVeiculoDtoList (List<Veiculo> veiculoList);
 

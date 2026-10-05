@@ -3,7 +3,7 @@ INSERT INTO vagas (id, nome, status, tipoVaga) VALUES (9998, 'V02', 'em_manutenc
 INSERT INTO vagas (id, nome, status, tipoVaga) VALUES (9999, 'V03', 'ocupada', 'moto');
 
 -- =========================================================================
--- Funcionário 1: John Doe (Senha: john123)
+-- Gerente 1: John Doe (Senha: john123)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
 VALUES (9997, 'John Doe', 'John@email.com', '54996322831');

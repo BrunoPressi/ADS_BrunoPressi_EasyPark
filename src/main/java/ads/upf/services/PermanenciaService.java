@@ -44,28 +44,33 @@ public class PermanenciaService {
     }
 
     @Transactional
-    public void novaEntrada(PermanenciaCreateDTO permanenciaCreateDTO) {
-        Permanencia permanencia = new Permanencia();
-        Veiculo veiculo = buscarVeiculo(permanenciaCreateDTO.getPlaca());
-
-        if (veiculo == null) {
-            veiculo = new Veiculo();
-            veiculo.setPlaca(permanenciaCreateDTO.getPlaca());
-            veiculo.setTipo(permanenciaCreateDTO.getTipoVeiculo());
-            veiculoRepository.persist(veiculo);
-        }
-
-        Boolean veiculoJaEstacionado = checkVeiculoEstacionado(veiculo.getPlaca());
+    public PermanenciaResponseDTO novaEntrada(PermanenciaCreateDTO permanenciaCreateDTO) {
+        Boolean veiculoJaEstacionado = checkVeiculoEstacionado(permanenciaCreateDTO.getPlaca());
         if (veiculoJaEstacionado) throw new IllegalArgumentException("Esse veículo já está com uma entrada em andamento!");
+
+        // Busca a entidade gerenciada diretamente no repositório (evita entidade desanexada via DTO)
+        Veiculo veiculo = veiculoRepository.find("placa = ?1", permanenciaCreateDTO.getPlaca())
+                .firstResultOptional()
+                .orElseGet(() -> {
+                    Veiculo novo = new Veiculo();
+                    novo.setPlaca(permanenciaCreateDTO.getPlaca());
+                    novo.setTipo(permanenciaCreateDTO.getTipoVeiculo());
+                    veiculoRepository.persist(novo);
+                    return novo;
+                });
+
 
         Vaga vaga = definirVaga(permanenciaCreateDTO.getTipoVaga());
         vaga.setStatus(VagaStatus.ocupada);
 
+        Permanencia permanencia = new Permanencia();
         permanencia.setDataEntrada(LocalDateTime.now());
         permanencia.setStatus(PermanenciaStatus.em_andamento);
         permanencia.setVeiculo(veiculo);
         permanencia.setVaga(vaga);
         permanenciaRepository.persist(permanencia);
+
+        return PermanenciaMapper.INSTANCE.toPermanenciaDto(permanencia);
     }
 
     private Veiculo buscarVeiculo(String placa) {
@@ -74,7 +79,7 @@ public class PermanenciaService {
     }
 
     private Vaga definirVaga(VagaTipo vagaTipo) {
-        return vagaRepository.find("status = 'disponivel' and tipoVaga = ?1", vagaTipo)
+        return vagaRepository.find("status = ?1 and tipoVaga = ?2", VagaStatus.disponivel, vagaTipo)
                 .firstResultOptional()
                 .orElseThrow(
                         () -> new EntityNotFoundException("Nenhuma vaga disponível encontrada")
@@ -82,9 +87,7 @@ public class PermanenciaService {
     }
 
     private Boolean checkVeiculoEstacionado(String placa) {
-        return permanenciaRepository.find("veiculo.placa = ?1 and status = em_andamento", placa)
-                .firstResultOptional()
-                .isPresent();
+        return permanenciaRepository.count("veiculo.placa = ?1 and status = ?2", placa, PermanenciaStatus.em_andamento) > 0;
     }
 
     public int contar() {
@@ -96,7 +99,9 @@ public class PermanenciaService {
             return Collections.emptyList();
         }
 
-        List<Permanencia> permanencias = permanenciaRepository.findAll(Sort.by("dataEntrada"))
+        List<Permanencia> permanencias = permanenciaRepository.find(
+                "select p from Permanencia p join fetch p.veiculo join fetch p.vaga",
+                Sort.descending("dataEntrada"))
                 .range(first, first + pageSize - 1)
                 .list();
 

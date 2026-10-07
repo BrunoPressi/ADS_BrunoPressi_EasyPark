@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor @NoArgsConstructor
 @Getter @Setter
 @EqualsAndHashCode(of = "id")
-public class Veiculo {
+public class Veiculo extends  Auditado {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,21 +36,5 @@ public class Veiculo {
 
     @OneToMany(mappedBy = "veiculo", fetch = FetchType.LAZY)
     private List<Permanencia> permanenciaList = new ArrayList<>();
-
-    @Column(nullable = true)
-    private LocalDateTime criadoEm;
-
-    @Column(nullable = true)
-    private LocalDateTime atualizadoEm;
-
-    @PrePersist
-    private void prePersist() {
-        this.criadoEm = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    private void preUpdate() {
-        this.atualizadoEm = LocalDateTime.now();
-    }
 
 }

@@ -41,7 +41,7 @@
 
             <p:column headerText="Status">
                 <h:outputText value="#{ (permanencia.status) == 'em_andamento' ? 'Em Andamento'
-                : (permanenciaStatus) == 'concluida' ? 'Concluída'
+                : (permanencia.status) == 'concluida' ? 'Concluída'
                 : 'Não Definido'}"/>
             </p:column>
 
@@ -53,7 +53,12 @@
                 <h:outputText value="#{permanencia.vaga.nome}"/>
             </p:column>
 
+            <p:column headerText="Saída">
+                <p:commandButton value="Registrar Saída"
+                                 action="#{permanenciaBean.processarSaida(permanencia.veiculo.placa)}"
+                                 process="@this"
+                                 update=":dataTablePermanencias"/>
+            </p:column>
         </p:dataTable>
-
     </ui:define>
 </ui:composition>

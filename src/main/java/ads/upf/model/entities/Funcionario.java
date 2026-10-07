@@ -20,10 +20,4 @@ public class Funcionario extends Usuario{
     @Enumerated(EnumType.STRING)
     private UsuarioRole role;
 
-    @Override
-    protected void prePersist() {
-        super.prePersist();
-        this.role = UsuarioRole.atendente;
-    }
-
 }

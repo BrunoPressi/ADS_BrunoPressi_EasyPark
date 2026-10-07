@@ -1,9 +1,11 @@
 package ads.upf.presentation;
 
-import ads.upf.model.DTOs.permanencia.PermanenciaCreateDTO;
+import ads.upf.model.DTOs.permanencia.EntradaCreateDTO;
 import ads.upf.model.DTOs.permanencia.PermanenciaResponseDTO;
 import ads.upf.presentation.lazy.GenericLazyDataModel;
+import ads.upf.services.EntradaUseCase;
 import ads.upf.services.PermanenciaService;
+import ads.upf.services.SaidaUseCase;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -26,15 +28,24 @@ public class PermanenciaBean implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Inject
+    private EntradaUseCase entradaService;
+
+    @Inject
+    private SaidaUseCase saidaService;
+
+    @Inject
     private PermanenciaService permanenciaService;
+
+    @Inject
+    private UserSessionBean userSessionBean;
 
     private GenericLazyDataModel<PermanenciaResponseDTO> lazyDataModel;
 
-    private PermanenciaCreateDTO entrada;
+    private EntradaCreateDTO entrada;
 
     @PostConstruct
     protected void postConstruct() {
-        this.entrada = new PermanenciaCreateDTO();
+        this.entrada = new EntradaCreateDTO();
         this.lazyDataModel = new GenericLazyDataModel<>(
                 () -> permanenciaService.contar(),
                 ( first, pageSize) -> permanenciaService.listarPaginado(first, pageSize),
@@ -45,7 +56,8 @@ public class PermanenciaBean implements Serializable {
 
     public void processarEntrada() {
         try {
-            permanenciaService.novaEntrada(entrada);
+            entrada.setFuncionarioEmail(userSessionBean.getUsername());
+            entradaService.novaEntrada(entrada);
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage("Sucesso", "Entrada registrada!"));
             PrimeFaces.current().executeScript("PF('dialogEntrada').hide()");
@@ -56,8 +68,21 @@ public class PermanenciaBean implements Serializable {
         }
     }
 
+    public void processarSaida(String placa) {
+        try {
+            saidaService.novaSaida(placa);
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage("Sucesso", "Saída registrada!"));
+            PrimeFaces.current().executeScript("PF('dialogEntrada').hide()");
+        }
+        catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(SEVERITY_ERROR,"Erro ao registrar saída", e.getMessage()));
+        }
+    }
+
     public void novaEntrada() {
-        this.entrada = new PermanenciaCreateDTO();
+        this.entrada = new EntradaCreateDTO();
     }
 
 }

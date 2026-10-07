@@ -9,6 +9,7 @@ import ads.upf.model.mappers.ClienteMapper;
 import ads.upf.repositories.ClienteRepository;
 import ads.upf.repositories.UsuarioRepository;
 import ads.upf.utils.SecurityUtil;
+import io.quarkus.logging.Log;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -64,32 +65,25 @@ public class ClienteService {
         }
         String termoTratado = termo.trim();
 
-        // 1. Busca por E-mail (Chave Única textual)
         if (termoTratado.contains("@")) {
-            return clienteRepository.find("email = ?1", termoTratado.toLowerCase())
-                    .firstResultOptional()
-                    .map(ClienteMapper.INSTANCE::toClienteDto)
-                    .orElse(null);
+            Cliente cliente = clienteRepository.buscarPorEmail(termoTratado.toLowerCase()).orElse(null);
+            return ClienteMapper.INSTANCE.toClienteDto(cliente);
         }
 
         String digitos = termoTratado.replaceAll("\\D", "");
 
-        // 2. Se possuir exatamente 11 dígitos, busca por CPF via Blind Index
         if (digitos.length() == 11) {
             String cpfHash = SecurityUtil.generateBlindIndex(digitos);
-            return clienteRepository.find("cpfHash = ?1", cpfHash)
-                    .firstResultOptional()
-                    .map(ClienteMapper.INSTANCE::toClienteDto)
-                    .orElse(null);
+            Cliente cliente = clienteRepository.buscarPorCpf(cpfHash).orElse(null);
+            return ClienteMapper.INSTANCE.toClienteDto(cliente);
         }
 
         // 3. Se for puramente numérico e de tamanho compatível com ID (1 a 18 dígitos)
         if (termoTratado.matches("^\\d{1,18}$")) {
             try {
                 Long id = Long.valueOf(termoTratado);
-                return clienteRepository.findByIdOptional(id)
-                        .map(ClienteMapper.INSTANCE::toClienteDto)
-                        .orElse(null);
+                Cliente cliente = clienteRepository.findByIdOptional(id).orElse(null);
+                return ClienteMapper.INSTANCE.toClienteDto(cliente);
             } catch (NumberFormatException ignored) {
                 // Proteção defensiva adicional
             }
@@ -107,10 +101,7 @@ public class ClienteService {
             return Collections.emptyList();
         }
 
-        List<Cliente> clientes = clienteRepository.findAll(Sort.by("nomeCompleto"))
-                .range(first, first + pageSize - 1)
-                .list();
-
+        List<Cliente> clientes = clienteRepository.listarTodosPaginado(first, pageSize);
         return ClienteMapper.INSTANCE.toClienteDtoList(clientes);
     }
 
@@ -126,4 +117,12 @@ public class ClienteService {
         }
     }
 
+    public Cliente verificarClienteExiste(String cpf) {
+        String digitos = cpf.replaceAll("\\D", "");
+        String cpfHash = SecurityUtil.generateBlindIndex(digitos);
+        return clienteRepository.buscarPorCpf(cpfHash)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Cliente não encontrado")
+                );
+    }
 }

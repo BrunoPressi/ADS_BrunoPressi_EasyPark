@@ -56,11 +56,6 @@ public class FuncionarioService {
         }
     }
 
-    public List<FuncionarioResponseDTO> listarFuncionarios() {
-        List<Funcionario> funcionarioList = funcionarioRepository.listAll(Sort.by("nomeCompleto"));
-        return FuncionarioMapper.INSTANCE.toFuncionarioDtoList(funcionarioList);
-    }
-
     public FuncionarioResponseDTO buscarPorTermo(String termo) {
         if (termo == null || termo.isBlank()) {
             return null;
@@ -86,6 +81,11 @@ public class FuncionarioService {
                 .orElse(null);
     }
 
+    public List<FuncionarioResponseDTO> listarFuncionarios() {
+        List<Funcionario> funcionarios = funcionarioRepository.listAll(Sort.by("nomeCompleto"));
+        return FuncionarioMapper.INSTANCE.toFuncionarioDtoList(funcionarios);
+    }
+
     public int contar() {
         return (int) funcionarioRepository.count();
     }
@@ -109,6 +109,13 @@ public class FuncionarioService {
         if (funcionarioRepository.existsByNome(nomeCompleto, id)) {
             throw new EntityExistsException("Já existe um funcionário com esse nome.");
         }
+    }
+
+    public Funcionario definirFuncionario(String email) {
+        return funcionarioRepository.buscarPorEmail(email)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Funcionário não encontrado.")
+                );
     }
 
 }

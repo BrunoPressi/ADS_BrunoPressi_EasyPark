@@ -1,11 +1,10 @@
 package ads.upf.presentation;
 
-import ads.upf.model.DTOs.vaga.VagaCreateDTO;
+import ads.upf.model.DTOs.vaga.VagaFormDTO;
 import ads.upf.model.DTOs.vaga.VagaResponseDTO;
 import ads.upf.model.enums.VagaStatus;
 import ads.upf.presentation.lazy.GenericLazyDataModel;
 import ads.upf.services.VagaService;
-import io.quarkus.logging.Log;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -18,7 +17,7 @@ import org.primefaces.PrimeFaces;
 
 import java.io.Serializable;
 
-@Named
+@Named("vagaBean")
 @ViewScoped
 @Getter @Setter
 public class VagaBean implements Serializable {
@@ -29,13 +28,14 @@ public class VagaBean implements Serializable {
     VagaService vagaService;
 
     private GenericLazyDataModel<VagaResponseDTO> lazyDataModel;
+
     private String chaveUnicaFiltro;
-    private VagaCreateDTO vaga;
+    private VagaFormDTO vaga;
     private boolean emManutencao;
 
     @PostConstruct
     protected void postConstruct() {
-        this.vaga = new VagaCreateDTO();
+        this.vaga = new VagaFormDTO();
         this.lazyDataModel = new GenericLazyDataModel<>(
                 () -> vagaService.contar(),
                 (first, pageSize) -> vagaService.listarPaginado(first, pageSize),
@@ -45,6 +45,7 @@ public class VagaBean implements Serializable {
     }
 
     public void selecionarVaga(VagaResponseDTO vaga) {
+        novaVaga();
         this.emManutencao = vaga.getStatus() == VagaStatus.em_manutencao ? true : false;
         this.vaga.setId(vaga.getId());
         this.vaga.setNome(vaga.getNome());
@@ -54,9 +55,7 @@ public class VagaBean implements Serializable {
     public void processarVaga() {
         try {
             this.vaga.setStatus(this.emManutencao ? VagaStatus.em_manutencao : VagaStatus.disponivel);
-            Log.info(this.vaga.getStatus());
             vagaService.salvarVaga(vaga);
-            limparVaga();
             PrimeFaces.current().executeScript("PF('dialogVaga').hide()");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Sucesso", "Vaga registrada!"));
         }
@@ -70,17 +69,12 @@ public class VagaBean implements Serializable {
     }
 
     public void novaVaga() {
-        this.vaga = new VagaCreateDTO();
+        this.vaga = new VagaFormDTO();
     }
 
     public void limparFiltro() {
         this.chaveUnicaFiltro = null;
         lazyDataModel.limpar();
-    }
-
-    public void limparVaga() {
-        this.vaga = new VagaCreateDTO();
-        this.emManutencao = false;
     }
 
 }

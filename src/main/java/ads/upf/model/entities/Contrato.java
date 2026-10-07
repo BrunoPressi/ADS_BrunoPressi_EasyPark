@@ -1,7 +1,9 @@
 package ads.upf.model.entities;
 
+import ads.upf.exceptions.InvalidEditException;
 import ads.upf.model.enums.ContratoStatus;
 import ads.upf.model.enums.ContratoTipo;
+import ads.upf.model.enums.ParcelaStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor @NoArgsConstructor
 @Getter @Setter
 @EqualsAndHashCode(of = "id")
-public class Contrato {
+public class Contrato extends Auditado {
 
     @Id()
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,41 +53,51 @@ public class Contrato {
     @Enumerated(EnumType.STRING)
     private ContratoTipo contratoTipo;
 
-    @Column(nullable = true)
-    private LocalDateTime criadoEm;
-
-    @Column(nullable = true)
-    private LocalDateTime atualizadoEm;
-
-    @Column(nullable = true)
-    private String criadoPor;
-
-    @Column(nullable = true)
-    private String atualizadoPor;
-
-    @PrePersist
-    protected void prePersist() {
-        this.setStatus(ContratoStatus.ativo);
-        this.setContratoTipo(ContratoTipo.mensal);
-        this.setValorContratado(BigDecimal.valueOf(180.00));
-        this.criadoEm = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void preUpdate() {
-        this.atualizadoEm = LocalDateTime.now();
-    }
-
-    // Método auxiliar (helper) para adicionar
     public void adicionarParcela(Parcela parcela) {
         parcelas.add(parcela);
         parcela.setContrato(this); // Sincroniza o lado dono
     }
 
-    // Método auxiliar para remover (ativa o orphanRemoval)
     public void removerParcela(Parcela parcela) {
         parcelas.remove(parcela);
         parcela.setContrato(null); // Desvincula
+    }
+
+    public boolean possuiParcelaPaga() {
+        return this.parcelas.stream()
+                .anyMatch(p -> p.getStatus() == ParcelaStatus.paga || p.getDataPagamento() != null);
+    }
+
+    public boolean possuiParcelaAtrasada() {
+        return this.parcelas.stream()
+                .anyMatch(p -> p.getStatus() == ParcelaStatus.atrasada);
+    }
+
+    public void atualizarVigenciaEParcelas(LocalDate novaDataInicio, LocalDate novaDataTermino, List<Parcela> novasParcelas) {
+        if (this.status != ContratoStatus.ativo) {
+            throw new InvalidEditException("Não é permitido editar um contrato que não esteja ativo.");
+        }
+        if (possuiParcelaPaga()) {
+            throw new InvalidEditException("Não é possível alterar as datas de um contrato com parcelas já pagas.");
+        }
+
+        this.dataInicio = novaDataInicio;
+        this.dataTermino = novaDataTermino;
+
+        // Limpa as atuais e adiciona as novas
+        new ArrayList<>(this.parcelas).forEach(this::removerParcela);
+        novasParcelas.forEach(this::adicionarParcela);
+    }
+
+    public void cancelar() {
+        if (this.status == ContratoStatus.cancelado || this.status == ContratoStatus.encerrado) {
+            throw new InvalidEditException("Contratos encerrados ou cancelados não podem ser cancelados!");
+        }
+        if (possuiParcelaAtrasada()) {
+            throw new InvalidEditException("Não é possível cancelar um contrato com parcelas atrasadas!");
+        }
+
+        this.status = ContratoStatus.cancelado;
     }
 
 }

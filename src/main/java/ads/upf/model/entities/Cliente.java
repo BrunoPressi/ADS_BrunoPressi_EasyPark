@@ -32,11 +32,6 @@ public class Cliente extends Usuario {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "cliente")
     private List<Contrato> contratos = new ArrayList<>();
 
-    @Override
-    protected void prePersist() {
-        this.role = UsuarioRole.cliente;
-    }
-
     // Método facilitador: atualiza o CPF e gera o hash automaticamente
     public void setCpf(String cpf) {
         if (cpf != null) {

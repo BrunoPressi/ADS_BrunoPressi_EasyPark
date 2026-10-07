@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Table(name = "permanencias")
 @Getter @Setter
 @AllArgsConstructor @NoArgsConstructor
-public class Permanencia {
+public class Permanencia extends Auditado {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,26 +36,12 @@ public class Permanencia {
     @JoinColumn(name = "vaga_id")
     private Vaga vaga;
 
-    @Column(nullable = true)
-    private LocalDateTime criadoEm;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "funcionario_id")
+    private Funcionario funcionario;
 
-    @Column(nullable = true)
-    private LocalDateTime atualizadoEm;
-
-    @Column(nullable = true)
-    private String criadoPor;
-
-    @Column(nullable = true)
-    private String atualizadoPor;
-
-    @PrePersist
-    protected void prePersist() {
-        this.criadoEm = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void preUpdate() {
-        this.atualizadoEm = LocalDateTime.now();
-    }
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pagamento_id")
+    private Pagamento pagamento;
 
 }

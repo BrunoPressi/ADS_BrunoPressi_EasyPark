@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter @Setter
 @AllArgsConstructor @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class Parcela {
+public class Parcela extends Auditado {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,30 +45,12 @@ public class Parcela {
     @JoinColumn(name = "contrato_id")
     private Contrato contrato;
 
-    @Column(nullable = true)
-    private LocalDateTime criadoEm;
-
-    @Column(nullable = true)
-    private LocalDateTime atualizadoEm;
-
-    @Column(nullable = true)
-    private String criadoPor;
-
-    @Column(nullable = true)
-    private String atualizadoPor;
-
-    @PrePersist
+    @Override
     protected void prePersist() {
-        this.criadoEm = LocalDateTime.now();
-        this.dataPagamento = null;
         this.valor = BigDecimal.valueOf(180.00);
+        this.dataPagamento = null;
         this.meioPagamento = null;
         this.cobrancaEnviada = false;
-    }
-
-    @PreUpdate
-    protected void preUpdateUsuario() {
-        this.atualizadoEm = LocalDateTime.now();
     }
 
 }

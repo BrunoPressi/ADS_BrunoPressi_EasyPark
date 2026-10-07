@@ -3,10 +3,11 @@ package ads.upf.services;
 import ads.upf.exceptions.EntityExistsException;
 import ads.upf.exceptions.EntityNotFoundException;
 import ads.upf.exceptions.InvalidEditException;
-import ads.upf.model.DTOs.vaga.VagaCreateDTO;
+import ads.upf.model.DTOs.vaga.VagaFormDTO;
 import ads.upf.model.DTOs.vaga.VagaResponseDTO;
 import ads.upf.model.entities.Vaga;
 import ads.upf.model.enums.VagaStatus;
+import ads.upf.model.enums.VagaTipo;
 import ads.upf.model.mappers.VagaMapper;
 import ads.upf.repositories.VagaRepository;
 import io.quarkus.panache.common.Sort;
@@ -16,6 +17,7 @@ import jakarta.transaction.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class VagaService {
@@ -28,7 +30,7 @@ public class VagaService {
     }
 
     @Transactional
-    public void salvarVaga(VagaCreateDTO vagaDTO) {
+    public void salvarVaga(VagaFormDTO vagaDTO) {
 
         if (vagaDTO.getId() == null) {
             checkVagaExists(vagaDTO.getNome(), null);
@@ -40,26 +42,24 @@ public class VagaService {
             Vaga vaga = vagaRepository.findByIdOptional(vagaDTO.getId())
                     .orElseThrow( () -> new EntityNotFoundException("Vaga não encontrada."));
 
-            if (vaga.getStatus() == VagaStatus.ocupada)
-                throw new InvalidEditException("Vagas ocupadas não podem ser alteradas.");
-
+            vaga.editar();
             VagaMapper.INSTANCE.toUpdateFromVagaDto(vagaDTO, vaga);
         }
     }
 
     public List<VagaResponseDTO> listarVagas() {
-        List<Vaga> vagaList = vagaRepository.listAll(Sort.by("nome"));
-        return VagaMapper.INSTANCE.toDtoList(vagaList);
+        return vagaRepository.listAll(Sort.by("nome"))
+                .stream()
+                .map(VagaMapper.INSTANCE::toDto)
+                .collect(Collectors.toList());
     }
 
     public VagaResponseDTO buscarPeloNome(String nome) {
         if (nome == null || nome.isBlank()) {
             return null;
         }
-        return vagaRepository.findByNome(nome.trim())
-                .firstResultOptional()
-                .map(VagaMapper.INSTANCE::toDto)
-                .orElse(null);
+        Vaga vaga = vagaRepository.findByNome(nome.trim()).orElse(null);
+        return VagaMapper.INSTANCE.toDto(vaga);
     }
 
     public int contar() {
@@ -72,10 +72,10 @@ public class VagaService {
             return Collections.emptyList();
         }
 
-        List<Vaga> vagas = vagaRepository.findAll(Sort.by("nome"))
-                .range(first, first + pageSize - 1)
-                .list();
-        return VagaMapper.INSTANCE.toDtoList(vagas);
+        return vagaRepository.listarPaginado(first, pageSize)
+                .stream()
+                .map((v) -> VagaMapper.INSTANCE.toDto(v))
+                .collect(Collectors.toList());
     }
 
     private void checkVagaExists(String nome, Long id) {
@@ -84,4 +84,22 @@ public class VagaService {
         }
     }
 
+    @Transactional
+    public Vaga ocuparVaga(VagaTipo vagaTipo) {
+        Vaga vaga = vagaRepository.findByStatusAndTipo(vagaTipo)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Vaga não encontrada")
+                );
+        vaga.setStatus(VagaStatus.ocupada);
+        return vaga;
+    }
+
+    @Transactional
+    public void liberarVaga(long id) {
+        Vaga vaga = vagaRepository.findByIdOptional(id)
+                        .orElseThrow(
+                                () -> new EntityNotFoundException("Vaga não encontrada")
+                        );
+        vaga.setStatus(VagaStatus.disponivel);
+    }
 }

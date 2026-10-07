@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter @Setter
 @AllArgsConstructor @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class Usuario {
+public class Usuario extends Auditado {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,26 +25,4 @@ public class Usuario {
 
     @Column(nullable = false)
     private String telefone;
-
-    @Column(nullable = true)
-    private LocalDateTime criadoEm;
-
-    @Column(nullable = true)
-    private LocalDateTime atualizadoEm;
-
-    @Column(nullable = true)
-    private String criadoPor;
-
-    @Column(nullable = true)
-    private String atualizadoPor;
-
-    @PrePersist
-    protected void prePersist() {
-        this.criadoEm = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void preUpdateUsuario() {
-        this.atualizadoEm = LocalDateTime.now();
-    }
 }

@@ -11,7 +11,7 @@ import lombok.Setter;
 
 @Getter @Setter
 @AllArgsConstructor @NoArgsConstructor
-public class PermanenciaCreateDTO {
+public class EntradaCreateDTO {
 
     @NotNull(message = "A placa é obrigatória")
     @Placa
@@ -22,5 +22,8 @@ public class PermanenciaCreateDTO {
 
     @NotNull(message = "O tipo do veículo é obrigatório")
     private VeiculoTipo tipoVeiculo;
+
+    @NotNull(message = "O email do funcionário é obrigatório")
+    private String funcionarioEmail;
 
 }

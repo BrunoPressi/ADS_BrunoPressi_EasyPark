@@ -8,8 +8,6 @@ import ads.upf.model.entities.Cliente;
 import ads.upf.repositories.ClienteRepository;
 import ads.upf.repositories.UsuarioRepository;
 import ads.upf.utils.SecurityUtil;
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
-import io.quarkus.panache.common.Sort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -25,61 +23,28 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-// AssertJ Core: Asserções fluentes e legíveis
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-// Mockito: Simulação (stubbing) e auditoria de chamadas
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-/**
- * =========================================================================================
- * @ExtendWith(MockitoExtension.class) - JUnit 5:
- * Habilita a integração do Mockito com o ciclo de vida do JUnit 5.
- * Inicializa automaticamente os campos anotados com @Mock e gerencia o isolamento dos dublês.
- * =========================================================================================
- */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ClienteService - Suíte de Testes Unitários")
 public class ClienteServiceTest {
 
-    /**
-     * @Mock - Mockito:
-     * Dublê do ClienteRepository para simular operações de banco de dados
-     * sem conectar ao banco real PostgreSQL.
-     */
     @Mock
     private ClienteRepository clienteRepository;
 
     @Mock
     private UsuarioRepository usuarioRepository;
 
-    /**
-     * @Mock - Mockito:
-     * Dublê do PanacheQuery para simular consultas fluentes e paginação do Hibernate Panache.
-     */
-    @Mock
-    private PanacheQuery<Cliente> panacheQuery;
-
-    /**
-     * Objeto real sob teste (SUT - System Under Test).
-     */
     private ClienteService clienteService;
 
-    /**
-     * @BeforeEach - JUnit 5:
-     * Executado antes de CADA teste. Cria uma nova instância de ClienteService
-     * injetando o mock do repositório, garantindo testes isolados e reproduzíveis.
-     */
     @BeforeEach
     void setUp() {
         clienteService = new ClienteService(clienteRepository, usuarioRepository);
     }
 
-    // -------------------------------------------------------------------------------------
-    // Métodos auxiliares (Helpers) para montagem dos cenários
-    // -------------------------------------------------------------------------------------
     private ClienteCreateDTO criarDto(Long id, String nome, String email, String telefone, String cpf) {
         ClienteCreateDTO dto = new ClienteCreateDTO();
         dto.setId(id);
@@ -112,60 +77,44 @@ public class ClienteServiceTest {
         @Test
         @DisplayName("Deve persistir um novo cliente com sucesso quando CPF e Email forem únicos")
         void deveSalvarNovoClienteComSucesso() {
-            // ARRANGE:
             ClienteCreateDTO dto = criarDto(null, "João da Silva", "joao@email.com", "54999998888", "123.456.789-01");
 
-            // Mockito: when(...).thenReturn(...)
-            // Ensina ao mock que não existe duplicidade de CPF nem de E-mail
             when(clienteRepository.checkCpf(anyString(), isNull())).thenReturn(false);
             when(usuarioRepository.checkEmail("joao@email.com", null)).thenReturn(false);
 
-            // ACT:
             clienteService.salvarCliente(dto);
 
-            // ASSERT & VERIFY:
-            // Mockito: ArgumentCaptor permite interceptar a entidade enviada ao persist
             ArgumentCaptor<Cliente> captor = ArgumentCaptor.forClass(Cliente.class);
             verify(clienteRepository, times(1)).persist(captor.capture());
 
             Cliente clienteSalvo = captor.getValue();
-
-            // AssertJ: assertThat(...) validações da integridade dos atributos
             assertThat(clienteSalvo.getNomeCompleto()).isEqualTo("João da Silva");
             assertThat(clienteSalvo.getEmail()).isEqualTo("joao@email.com");
             assertThat(clienteSalvo.getTelefone()).isEqualTo("54999998888");
-            // Garante que a máscara foi removida e o CPF contém apenas dígitos
             assertThat(clienteSalvo.getCpf()).isEqualTo("12345678901");
-            // Garante que o Blind Index (cpfHash) foi gerado automaticamente
             assertThat(clienteSalvo.getCpfHash()).isNotBlank();
         }
 
         @Test
         @DisplayName("Deve lançar EntityExistsException se o CPF já estiver cadastrado")
         void deveLancarExcecaoQuandoCpfJaExistir() {
-            // ARRANGE: Repositório reporta que o CPF já existe
             ClienteCreateDTO dto = criarDto(null, "João da Silva", "joao@email.com", "54999998888", "12345678901");
             when(clienteRepository.checkCpf(anyString(), isNull())).thenReturn(true);
 
-            // ACT & ASSERT:
-            // AssertJ: assertThatThrownBy valida a captura da exceção esperada
             assertThatThrownBy(() -> clienteService.salvarCliente(dto))
                     .isInstanceOf(EntityExistsException.class)
                     .hasMessageContaining("Esse CPF já está cadastrado");
 
-            // Mockito: verify(..., never()) garante que persist NUNCA foi chamado
             verify(clienteRepository, never()).persist(any(Cliente.class));
         }
 
         @Test
         @DisplayName("Deve lançar EntityExistsException se o Email já estiver cadastrado")
         void deveLancarExcecaoQuandoEmailJaExistir() {
-            // ARRANGE: CPF livre, mas e-mail duplicado
             ClienteCreateDTO dto = criarDto(null, "João da Silva", "joao@email.com", "54999998888", "12345678901");
             when(clienteRepository.checkCpf(anyString(), isNull())).thenReturn(false);
             when(usuarioRepository.checkEmail("joao@email.com", null)).thenReturn(true);
 
-            // ACT & ASSERT:
             assertThatThrownBy(() -> clienteService.salvarCliente(dto))
                     .isInstanceOf(EntityExistsException.class)
                     .hasMessageContaining("Esse Email já está cadastrado");
@@ -186,7 +135,6 @@ public class ClienteServiceTest {
         @Test
         @DisplayName("Deve atualizar os dados do cliente com sucesso para ID existente")
         void deveAtualizarClienteComSucesso() {
-            // ARRANGE:
             Cliente clienteExistente = criarEntidade(10L, "João Antigo", "antigo@email.com", "54111111111", "12345678901");
             ClienteCreateDTO dtoEdicao = criarDto(10L, "João Novo", "novo@email.com", "54222222222", "98765432100");
 
@@ -194,50 +142,40 @@ public class ClienteServiceTest {
             when(usuarioRepository.checkEmail("novo@email.com", 10L)).thenReturn(false);
             when(clienteRepository.findByIdOptional(10L)).thenReturn(Optional.of(clienteExistente));
 
-            // ACT:
             clienteService.salvarCliente(dtoEdicao);
 
-            // ASSERT:
-            // A entidade gerenciada pelo Hibernate reflete as alterações
             assertThat(clienteExistente.getNomeCompleto()).isEqualTo("João Novo");
             assertThat(clienteExistente.getEmail()).isEqualTo("novo@email.com");
             assertThat(clienteExistente.getTelefone()).isEqualTo("54222222222");
             assertThat(clienteExistente.getCpf()).isEqualTo("98765432100");
 
-            // Em edições, persist não deve ser invocado novamente
             verify(clienteRepository, never()).persist(any(Cliente.class));
         }
 
         @Test
         @DisplayName("Deve atualizar mantendo o mesmo CPF e Email sem acusar duplicidade contra si mesmo")
         void deveAtualizarMantendoMesmoCpfEEmail() {
-            // ARRANGE:
             Cliente clienteExistente = criarEntidade(10L, "João Silva", "joao@email.com", "54111111111", "12345678901");
-            // Atualiza apenas o telefone mantendo os dados identificadores
             ClienteCreateDTO dtoEdicao = criarDto(10L, "João Silva", "joao@email.com", "54999998888", "12345678901");
 
             when(clienteRepository.checkCpf(anyString(), eq(10L))).thenReturn(false);
             when(usuarioRepository.checkEmail("joao@email.com", 10L)).thenReturn(false);
             when(clienteRepository.findByIdOptional(10L)).thenReturn(Optional.of(clienteExistente));
 
-            // ACT:
             clienteService.salvarCliente(dtoEdicao);
 
-            // ASSERT:
             assertThat(clienteExistente.getTelefone()).isEqualTo("54999998888");
         }
 
         @Test
         @DisplayName("Deve lançar EntityNotFoundException ao tentar atualizar cliente com ID inexistente")
         void deveLancarEntityNotFoundExceptionQuandoIdNaoExistir() {
-            // ARRANGE:
             ClienteCreateDTO dto = criarDto(999L, "João Silva", "joao@email.com", "54999998888", "12345678901");
 
             when(clienteRepository.checkCpf(anyString(), eq(999L))).thenReturn(false);
             when(usuarioRepository.checkEmail("joao@email.com", 999L)).thenReturn(false);
             when(clienteRepository.findByIdOptional(999L)).thenReturn(Optional.empty());
 
-            // ACT & ASSERT:
             assertThatThrownBy(() -> clienteService.salvarCliente(dto))
                     .isInstanceOf(EntityNotFoundException.class)
                     .hasMessageContaining("Cliente não encontrado");
@@ -246,11 +184,9 @@ public class ClienteServiceTest {
         @Test
         @DisplayName("Deve lançar EntityExistsException se o CPF já pertencer a outro cliente na edição")
         void deveLancarExcecaoQuandoCpfColidirComOutroId() {
-            // ARRANGE:
             ClienteCreateDTO dto = criarDto(10L, "João Silva", "joao@email.com", "54999998888", "12345678901");
             when(clienteRepository.checkCpf(anyString(), eq(10L))).thenReturn(true);
 
-            // ACT & ASSERT:
             assertThatThrownBy(() -> clienteService.salvarCliente(dto))
                     .isInstanceOf(EntityExistsException.class)
                     .hasMessageContaining("Esse CPF já está cadastrado");
@@ -261,12 +197,10 @@ public class ClienteServiceTest {
         @Test
         @DisplayName("Deve lançar EntityExistsException se o Email já pertencer a outro cliente na edição")
         void deveLancarExcecaoQuandoEmailColidirComOutroId() {
-            // ARRANGE:
             ClienteCreateDTO dto = criarDto(10L, "João Silva", "maria@email.com", "54999998888", "12345678901");
             when(clienteRepository.checkCpf(anyString(), eq(10L))).thenReturn(false);
             when(usuarioRepository.checkEmail("maria@email.com", 10L)).thenReturn(true);
 
-            // ACT & ASSERT:
             assertThatThrownBy(() -> clienteService.salvarCliente(dto))
                     .isInstanceOf(EntityExistsException.class)
                     .hasMessageContaining("Esse Email já está cadastrado");
@@ -287,57 +221,44 @@ public class ClienteServiceTest {
         @Test
         @DisplayName("Deve buscar por Email quando o termo contiver o caractere '@'")
         void deveBuscarPorEmailQuandoTermoContiverArroba() {
-            // ARRANGE:
             Cliente cliente = criarEntidade(1L, "João Silva", "joao@email.com", "54999998888", "12345678901");
 
-            when(clienteRepository.find(eq("email = ?1"), eq("joao@email.com"))).thenReturn(panacheQuery);
-            when(panacheQuery.firstResultOptional()).thenReturn(Optional.of(cliente));
+            when(clienteRepository.buscarPorEmail("joao@email.com")).thenReturn(Optional.of(cliente));
 
-            // ACT:
             ClienteResponseDTO resultado = clienteService.buscarPorChaveUnica("  JOAO@EMAIL.COM  ");
 
-            // ASSERT:
             assertThat(resultado).isNotNull();
             assertThat(resultado.getEmail()).isEqualTo("joao@email.com");
             assertThat(resultado.getNomeCompleto()).isEqualTo("João Silva");
 
-            verify(clienteRepository, times(1)).find(eq("email = ?1"), eq("joao@email.com"));
+            verify(clienteRepository, times(1)).buscarPorEmail("joao@email.com");
         }
 
         @Test
         @DisplayName("Deve buscar por CPF via Blind Index quando o termo contiver 11 dígitos numéricos")
         void deveBuscarPorCpfComOnzeDigitosFormatadoOuNao() {
-            // ARRANGE:
             Cliente cliente = criarEntidade(2L, "Maria Souza", "maria@email.com", "54988887777", "12345678901");
-
-            // O blind index do CPF 12345678901
             String cpfHashEsperado = SecurityUtil.generateBlindIndex("12345678901");
 
-            when(clienteRepository.find(eq("cpfHash = ?1"), eq(cpfHashEsperado))).thenReturn(panacheQuery);
-            when(panacheQuery.firstResultOptional()).thenReturn(Optional.of(cliente));
+            when(clienteRepository.buscarPorCpf(cpfHashEsperado)).thenReturn(Optional.of(cliente));
 
-            // ACT: Passamos CPF com máscara para testar remoção de formatação
             ClienteResponseDTO resultado = clienteService.buscarPorChaveUnica("123.456.789-01");
 
-            // ASSERT:
             assertThat(resultado).isNotNull();
             assertThat(resultado.getId()).isEqualTo(2L);
             assertThat(resultado.getNomeCompleto()).isEqualTo("Maria Souza");
 
-            verify(clienteRepository, times(1)).find(eq("cpfHash = ?1"), eq(cpfHashEsperado));
+            verify(clienteRepository, times(1)).buscarPorCpf(cpfHashEsperado);
         }
 
         @Test
         @DisplayName("Deve buscar por ID numérico quando o termo for puramente numérico (menor que 11 dígitos)")
         void deveBuscarPorIdQuandoTermoForNumerico() {
-            // ARRANGE:
             Cliente cliente = criarEntidade(42L, "Cliente 42", "cliente42@email.com", "54999998888", "12345678901");
             when(clienteRepository.findByIdOptional(42L)).thenReturn(Optional.of(cliente));
 
-            // ACT:
             ClienteResponseDTO resultado = clienteService.buscarPorChaveUnica("42");
 
-            // ASSERT:
             assertThat(resultado).isNotNull();
             assertThat(resultado.getId()).isEqualTo(42L);
 
@@ -347,44 +268,30 @@ public class ClienteServiceTest {
         @Test
         @DisplayName("Não deve lançar NumberFormatException para números com mais de 18 dígitos (proteção contra overflow)")
         void deveProtegerContraOverflowNumericoSemQuebrar() {
-            // ARRANGE: Termo numérico gigante (28 dígitos)
             String numeroGigante = "9999999999999999999999999999";
 
-            // ACT:
-            // A regex ^\\d{1,18}$ evita Long.valueOf para entradas além de 18 dígitos, retornando null com segurança
             ClienteResponseDTO resultado = clienteService.buscarPorChaveUnica(numeroGigante);
 
-            // ASSERT:
             assertThat(resultado).isNull();
             verify(clienteRepository, never()).findByIdOptional(anyLong());
         }
 
-        /**
-         * @ParameterizedTest - JUnit 5:
-         * Executa o teste múltiplas vezes para cobrir casos de borda sem duplicar código.
-         */
         @ParameterizedTest(name = "Entrada [{0}] deve retornar null com segurança")
         @NullAndEmptySource
         @ValueSource(strings = {"   ", "\t", "\n", " \t \n "})
         @DisplayName("Deve retornar null sem consultar o repositório para termos nulos ou em branco")
         void deveRetornarNullParaTermosNulosOuVazios(String entradaInvalida) {
-            // ACT:
             ClienteResponseDTO resultado = clienteService.buscarPorChaveUnica(entradaInvalida);
 
-            // ASSERT:
             assertThat(resultado).isNull();
-
-            // Mockito: Assegura que nenhuma consulta ao banco foi tentada
             verifyNoInteractions(clienteRepository);
         }
 
         @Test
         @DisplayName("Deve retornar null para texto arbitrário sem arroba e sem dígitos suficientes")
         void deveRetornarNullParaTextoArbitrarioSemDigitos() {
-            // ACT:
             ClienteResponseDTO resultado = clienteService.buscarPorChaveUnica("João da Silva");
 
-            // ASSERT:
             assertThat(resultado).isNull();
             verifyNoInteractions(clienteRepository);
         }
@@ -402,36 +309,27 @@ public class ClienteServiceTest {
         @Test
         @DisplayName("Deve listar clientes paginados com sucesso dentro dos limites informados")
         void deveListarPaginadoComSucesso() {
-            // ARRANGE:
             List<Cliente> pagina = List.of(
                     criarEntidade(1L, "Ana Souza", "ana@email.com", "54111111111", "12345678901")
             );
 
-            when(clienteRepository.findAll(any(Sort.class))).thenReturn(panacheQuery);
-            when(panacheQuery.range(0, 9)).thenReturn(panacheQuery);
-            when(panacheQuery.list()).thenReturn(pagina);
+            when(clienteRepository.listarTodosPaginado(0, 9)).thenReturn(pagina);
 
-            // ACT: first=0, pageSize=10 -> range(0, 9)
-            List<ClienteResponseDTO> resultado = clienteService.listarPaginado(0, 10);
+            List<ClienteResponseDTO> resultado = clienteService.listarPaginado(0, 9);
 
-            // ASSERT:
             assertThat(resultado).hasSize(1);
             assertThat(resultado.getFirst().getNomeCompleto()).isEqualTo("Ana Souza");
 
-            verify(panacheQuery).range(0, 9);
-            verify(panacheQuery).list();
+            verify(clienteRepository).listarTodosPaginado(0, 9);
         }
 
         @Test
         @DisplayName("Deve retornar a quantidade total de clientes registrados")
         void deveRetornarContagemTotal() {
-            // ARRANGE:
             when(clienteRepository.count()).thenReturn(100L);
 
-            // ACT:
             int total = clienteService.contar();
 
-            // ASSERT:
             assertThat(total).isEqualTo(100);
             verify(clienteRepository).count();
         }
@@ -439,18 +337,45 @@ public class ClienteServiceTest {
         @Test
         @DisplayName("Deve retornar lista vazia imediatamente para parâmetros de paginação inválidos")
         void deveRetornarListaVaziaParaPaginacaoInvalida() {
-            // ACT & ASSERT:
-            // 1. first < 0
             assertThat(clienteService.listarPaginado(-1, 10)).isEmpty();
-
-            // 2. pageSize == 0
             assertThat(clienteService.listarPaginado(0, 0)).isEmpty();
-
-            // 3. pageSize < 0
             assertThat(clienteService.listarPaginado(0, -5)).isEmpty();
 
-            // Mockito: Assegura que nenhuma consulta de paginação foi realizada no banco
             verifyNoInteractions(clienteRepository);
+        }
+    }
+
+    /*
+     * =====================================================================================
+     * 5. CENÁRIOS DE VERIFICAÇÃO DE CLIENTE EXISTENTE (verificarClienteExiste)
+     * =====================================================================================
+     */
+    @Nested
+    @DisplayName("Cenários de Verificação de Existência")
+    class VerificarClienteExisteCenarios {
+
+        @Test
+        @DisplayName("Deve retornar o cliente quando existir pelo CPF")
+        void deveRetornarClienteQuandoExistir() {
+            Cliente cliente = criarEntidade(1L, "Ana", "ana@email.com", "54111111111", "12345678901");
+            String cpfHash = SecurityUtil.generateBlindIndex("12345678901");
+            when(clienteRepository.buscarPorCpf(cpfHash)).thenReturn(Optional.of(cliente));
+
+            Cliente resultado = clienteService.verificarClienteExiste("12345678901");
+
+            assertThat(resultado).isNotNull();
+            assertThat(resultado.getNomeCompleto()).isEqualTo("Ana");
+        }
+
+        @Test
+        @DisplayName("Deve lançar EntityNotFoundException quando cliente não for encontrado pelo CPF")
+        void deveLancarExcecaoQuandoClienteNaoExistir() {
+            String cpfHash = SecurityUtil.generateBlindIndex("12345678901");
+            when(clienteRepository.buscarPorCpf(anyString())).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> clienteService.verificarClienteExiste(cpfHash))
+                    .isInstanceOf(EntityNotFoundException.class)
+                    .hasMessageContaining("Cliente não encontrado");
         }
     }
 }

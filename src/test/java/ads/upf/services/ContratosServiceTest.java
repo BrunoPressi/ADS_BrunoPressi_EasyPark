@@ -12,10 +12,7 @@ import ads.upf.model.entities.Parcela;
 import ads.upf.model.entities.Veiculo;
 import ads.upf.model.enums.ContratoStatus;
 import ads.upf.model.enums.ParcelaStatus;
-import ads.upf.repositories.ClienteRepository;
 import ads.upf.repositories.ContratoRepository;
-import ads.upf.repositories.VeiculoRepository;
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -33,7 +30,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,13 +40,10 @@ public class ContratosServiceTest {
     private ContratoRepository contratoRepository;
 
     @Mock
-    private ClienteRepository clienteRepository;
+    private ClienteService clienteService;
 
     @Mock
-    private VeiculoRepository veiculoRepository;
-
-    @Mock
-    private PanacheQuery<Veiculo> panacheQuery;
+    private VeiculoService veiculoService;
 
     @Mock
     private ParcelaService parcelaService;
@@ -64,6 +57,9 @@ public class ContratosServiceTest {
 
     @BeforeEach
     void setUp() {
+        dtoCliente.setCpf("12345678901");
+        dtoVeiculo.setPlaca("ABC1D23");
+
         dtoContrato.setContratoId(1L);
         dtoContrato.setDataInicio(LocalDate.now());
         dtoContrato.setDataTermino(LocalDate.now().plusMonths(6));
@@ -78,8 +74,8 @@ public class ContratosServiceTest {
         @Test
         @DisplayName("Deve lançar EntityNotFoundException quando cliente não existir")
         void deveLancarExcecaoQuandoClienteNaoExiste() {
-
-            when(clienteRepository.findByIdOptional(any())).thenReturn(Optional.empty());
+            when(clienteService.verificarClienteExiste(any()))
+                    .thenThrow(new EntityNotFoundException("Cliente não encontrado"));
 
             assertThatThrownBy(() -> contratoService.salvarContrato(dtoContrato))
                     .isInstanceOf(EntityNotFoundException.class)
@@ -89,13 +85,9 @@ public class ContratosServiceTest {
         @Test
         @DisplayName("Deve lançar EntityNotFoundException quando veiculo não existir")
         void deveLancarExcecaoQuandoveiculoNaoExiste() {
-
-            Cliente cliente = new Cliente();
-            Veiculo veiculo = new Veiculo();
-
-            when(clienteRepository.findByIdOptional(any())).thenReturn(Optional.of(cliente));
-            when(veiculoRepository.find(eq("placa = ?1"), eq(veiculo.getPlaca()))).thenReturn(panacheQuery);
-            when(panacheQuery.firstResultOptional()).thenReturn(Optional.empty());
+            when(clienteService.verificarClienteExiste(any())).thenReturn(new Cliente());
+            when(veiculoService.verificarVeiculoExiste(any()))
+                    .thenThrow(new EntityNotFoundException("Veículo não encontrado"));
 
             assertThatThrownBy(() -> contratoService.salvarContrato(dtoContrato))
                     .isInstanceOf(EntityNotFoundException.class)
@@ -110,7 +102,6 @@ public class ContratosServiceTest {
         @Test
         @DisplayName("Não deve permitir edição quando contrato possuir parcelas já pagas")
         void naoDeveEditarContratoComParcelaPaga() {
-
             Cliente cliente = new Cliente();
             Veiculo veiculo = new Veiculo();
 
@@ -121,11 +112,10 @@ public class ContratosServiceTest {
             parcelaPaga.setStatus(ParcelaStatus.paga);
             contratoExistente.getParcelas().add(parcelaPaga);
 
-            when(clienteRepository.findByIdOptional(any())).thenReturn(Optional.of(cliente));
-            when(contratoRepository.findByIdOptional(any())).thenReturn(Optional.of(contratoExistente));
-            when(veiculoRepository.find(eq("placa = ?1"), eq(dtoContrato.getVeiculo().getPlaca()))).thenReturn(panacheQuery);
-            when(panacheQuery.firstResultOptional()).thenReturn(Optional.of(veiculo));
+            when(clienteService.verificarClienteExiste(any())).thenReturn(cliente);
+            when(veiculoService.verificarVeiculoExiste(any())).thenReturn(veiculo);
             when(parcelaService.gerarParcelas(any(), any())).thenReturn(List.of(new Parcela()));
+            when(contratoRepository.findByIdOptional(any())).thenReturn(Optional.of(contratoExistente));
 
             assertThatThrownBy(() -> contratoService.salvarContrato(dtoContrato))
                     .isInstanceOf(InvalidEditException.class)
@@ -136,17 +126,16 @@ public class ContratosServiceTest {
         @ValueSource(strings = { "encerrado", "inadimplente", "cancelado" })
         @DisplayName("Não deve permitir edição quando contrato possuir status diferente de ativo")
         void naoDeveEditarContratoComStatusNaoAtivo(String status) {
-
             Cliente cliente = new Cliente();
             Veiculo veiculo = new Veiculo();
 
             Contrato contratoExistente = new Contrato();
             contratoExistente.setStatus(ContratoStatus.valueOf(status));
 
-            when(clienteRepository.findByIdOptional(any())).thenReturn(Optional.of(cliente));
+            when(clienteService.verificarClienteExiste(any())).thenReturn(cliente);
+            when(veiculoService.verificarVeiculoExiste(any())).thenReturn(veiculo);
+            when(parcelaService.gerarParcelas(any(), any())).thenReturn(List.of(new Parcela()));
             when(contratoRepository.findByIdOptional(any())).thenReturn(Optional.of(contratoExistente));
-            when(veiculoRepository.find(eq("placa = ?1"), eq(dtoContrato.getVeiculo().getPlaca()))).thenReturn(panacheQuery);
-            when(panacheQuery.firstResultOptional()).thenReturn(Optional.of(veiculo));
 
             assertThatThrownBy(() -> contratoService.salvarContrato(dtoContrato))
                     .isInstanceOf(InvalidEditException.class)
@@ -156,15 +145,12 @@ public class ContratosServiceTest {
         @Test
         @DisplayName("Não deve permitir cancelar um contrato quando o mesmo já estiver cancelado")
         void naoDeveCancelarContratoJaCancelado() {
-
-            ContratoResponseDTO contratoResponseDTO = new ContratoResponseDTO();
-
             Contrato contratoExistente = new Contrato();
             contratoExistente.setStatus(ContratoStatus.cancelado);
 
             when(contratoRepository.findByIdOptional(any())).thenReturn(Optional.of(contratoExistente));
 
-            assertThatThrownBy(() -> contratoService.cancelarContrato(contratoResponseDTO))
+            assertThatThrownBy(() -> contratoService.cancelarContrato(1L))
                     .isInstanceOf(InvalidEditException.class)
                     .hasMessageContaining("Contratos encerrados ou cancelados não podem ser cancelados!");
         }
@@ -172,16 +158,12 @@ public class ContratosServiceTest {
         @Test
         @DisplayName("Não deve permitir o cancelamento quando o contrato estiver encerrado")
         void naoDeveCancelarContratoComStatusEncerrado() {
-
-            ContratoResponseDTO contratoResponseDTO = new ContratoResponseDTO();
-            contratoResponseDTO.setStatus(ContratoStatus.encerrado);
-
             Contrato contratoExistente = new Contrato();
             contratoExistente.setStatus(ContratoStatus.encerrado);
 
             when(contratoRepository.findByIdOptional(any())).thenReturn(Optional.of(contratoExistente));
 
-            assertThatThrownBy(() -> contratoService.cancelarContrato(contratoResponseDTO))
+            assertThatThrownBy(() -> contratoService.cancelarContrato(1L))
                     .isInstanceOf(InvalidEditException.class)
                     .hasMessageContaining("Contratos encerrados ou cancelados não podem ser cancelados!");
         }
@@ -189,20 +171,16 @@ public class ContratosServiceTest {
         @Test
         @DisplayName("Não deve permitir edição quando o contrato tiver parcelas atrasada")
         void naoDeveCancelarContratoComParcelasAtrasadas() {
-
-            ContratoResponseDTO contratoResponseDTO = new ContratoResponseDTO();
-            contratoResponseDTO.setStatus(ContratoStatus.ativo);
-
             Contrato contratoExistente = new Contrato();
             contratoExistente.setStatus(ContratoStatus.ativo);
 
-            Parcela parcelaPaga = new Parcela();
-            parcelaPaga.setStatus(ParcelaStatus.atrasada);
-            contratoExistente.getParcelas().add(parcelaPaga);
+            Parcela parcelaAtrasada = new Parcela();
+            parcelaAtrasada.setStatus(ParcelaStatus.atrasada);
+            contratoExistente.getParcelas().add(parcelaAtrasada);
 
             when(contratoRepository.findByIdOptional(any())).thenReturn(Optional.of(contratoExistente));
 
-            assertThatThrownBy(() -> contratoService.cancelarContrato(contratoResponseDTO))
+            assertThatThrownBy(() -> contratoService.cancelarContrato(1L))
                     .isInstanceOf(InvalidEditException.class)
                     .hasMessageContaining("cancelar um contrato com parcelas atrasadas");
         }

@@ -102,13 +102,13 @@ public class ContratoBean implements Serializable {
         catch (Exception e) {
             FacesContext.getCurrentInstance()
                     .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "Erro ao criar contrato", e.getMessage()));
+                            "Erro ao salvar contrato", e.getMessage()));
         }
     }
 
     public void cancelarContrato(ContratoResponseDTO contratoResponseDTO) {
         try {
-            contratoService.cancelarContrato(contratoResponseDTO);
+            contratoService.cancelarContrato(contratoResponseDTO.getId());
             FacesContext.getCurrentInstance()
                     .addMessage(null, new FacesMessage( "Sucesso", "O contrato foi cancelado!"));
         } catch (Exception e) {

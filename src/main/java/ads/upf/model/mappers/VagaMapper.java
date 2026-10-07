@@ -1,6 +1,6 @@
 package ads.upf.model.mappers;
 
-import ads.upf.model.DTOs.vaga.VagaCreateDTO;
+import ads.upf.model.DTOs.vaga.VagaFormDTO;
 import ads.upf.model.DTOs.vaga.VagaResponseDTO;
 import ads.upf.model.entities.Vaga;
 import org.mapstruct.AfterMapping;
@@ -16,8 +16,8 @@ public interface VagaMapper {
 
     VagaMapper INSTANCE = Mappers.getMapper( VagaMapper.class );
 
-    Vaga toVaga(VagaCreateDTO vagaDTO);
-    void toUpdateFromVagaDto(VagaCreateDTO vagaCreateDTO, @MappingTarget Vaga vaga);
+    Vaga toVaga(VagaFormDTO vagaDTO);
+    void toUpdateFromVagaDto(VagaFormDTO vagaCreateDTO, @MappingTarget Vaga vaga);
     VagaResponseDTO toDto(Vaga vaga);
     List<VagaResponseDTO> toDtoList(List<Vaga> vagaList);
 

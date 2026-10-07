@@ -24,10 +24,10 @@
                             <i class="pi pi-key" />
                             <p:inputText id="inputChave"
                                          style="width: 240px"
+                                         label="Nome da Vaga"
                                          value="#{vagaBean.chaveUnicaFiltro}"
                                          placeholder="Buscar por nome da vaga..." />
                         </span>
-
                     <p:commandButton value="Buscar"
                                      icon="pi pi-search"
                                      action="#{vagaBean.pesquisar}"
@@ -41,6 +41,7 @@
                                      update="@form"
                                      styleClass="ui-button-secondary" />
                 </p:toolbarGroup>
+
             </p:toolbar>
 
             <p:dataTable id="listaVagas"
@@ -85,8 +86,9 @@
 
                 <p:column headerText="Editar">
                     <p:commandButton oncomplete="PF('dialogVaga').show()"
-                                     action="#{vagaBean.selecionarVaga(vaga)}"
-                                     update=":dialogVaga"
+                                     actionListener="#{vagaBean.selecionarVaga(vaga)}"
+                                     update="@form :dialogVaga"
+                                     process="@form"
                                      value="Editar"
                                      icon="pi pi-pencil" styleClass="rounded-button ui-button-help">
                     </p:commandButton>

@@ -11,7 +11,7 @@ import lombok.Setter;
 
 @Getter @Setter
 @AllArgsConstructor @NoArgsConstructor
-public class VagaCreateDTO {
+public class VagaFormDTO {
 
         private Long id;
 

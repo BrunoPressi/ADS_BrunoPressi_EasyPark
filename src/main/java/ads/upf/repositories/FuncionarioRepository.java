@@ -5,6 +5,8 @@ import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 
+import java.util.Optional;
+
 @ApplicationScoped
 public class FuncionarioRepository implements PanacheRepository<Funcionario> {
 
@@ -25,5 +27,9 @@ public class FuncionarioRepository implements PanacheRepository<Funcionario> {
     public PanacheQuery<Funcionario> findByNome(String nome) {
         nome = nome.toLowerCase() + "%";
         return find("lower(nomeCompleto) like ?1", nome);
+    }
+
+    public Optional<Funcionario> buscarPorEmail(String email) {
+        return find("email = ?1", email).firstResultOptional();
     }
 }

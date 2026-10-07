@@ -1,5 +1,6 @@
 package ads.upf.model.entities;
 
+import ads.upf.exceptions.InvalidEditException;
 import ads.upf.model.enums.VagaStatus;
 import ads.upf.model.enums.VagaTipo;
 import jakarta.persistence.*;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter @Setter
 @AllArgsConstructor @NoArgsConstructor
 @EqualsAndHashCode (of = "id")
-public class Vaga {
+public class Vaga extends Auditado {
 
     @Id()
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,20 +28,8 @@ public class Vaga {
     @Enumerated(EnumType.STRING)
     private VagaTipo tipoVaga;
 
-    @Column(nullable = true)
-    private LocalDateTime criadoEm;
-
-    @Column(nullable = true)
-    private LocalDateTime atualizadoEm;
-
-    @PrePersist
-    private void prePersist() {
-        this.criadoEm = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    private void preUpdate() {
-        this.atualizadoEm = LocalDateTime.now();
+    public void editar() {
+        if (this.status.equals(VagaStatus.ocupada)) throw new InvalidEditException("Vagas ocupadas não podem ser editadas");
     }
 
 }

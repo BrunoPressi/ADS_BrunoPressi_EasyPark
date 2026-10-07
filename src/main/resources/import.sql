@@ -1,6 +1,17 @@
-INSERT INTO vagas (id, nome, status, tipoVaga) VALUES (9997, 'V01', 'disponivel', 'comum');
-INSERT INTO vagas (id, nome, status, tipoVaga) VALUES (9998, 'V02', 'em_manutencao', 'idoso');
-INSERT INTO vagas (id, nome, status, tipoVaga) VALUES (9999, 'V03', 'ocupada', 'moto');
+INSERT INTO vagas (id, nome, status, tipoVaga)
+    VALUES (9993, 'V01', 'disponivel', 'comum');
+INSERT INTO vagas (id, nome, status, tipoVaga)
+    VALUES (9994, 'V02', 'disponivel', 'comum');
+INSERT INTO vagas (id, nome, status, tipoVaga)
+    VALUES (9995, 'V03', 'disponivel', 'comum');
+INSERT INTO vagas (id, nome, status, tipoVaga)
+    VALUES (9996, 'V04', 'disponivel', 'comum');
+INSERT INTO vagas (id, nome, status, tipoVaga)
+    VALUES (9997, 'V05', 'disponivel', 'comum');
+INSERT INTO vagas (id, nome, status, tipoVaga)
+    VALUES (9998, 'V06', 'em_manutencao', 'idoso');
+INSERT INTO vagas (id, nome, status, tipoVaga)
+    VALUES (9999, 'V07', 'ocupada', 'moto');
 
 -- =========================================================================
 -- Gerente 1: John Doe (Senha: john123)

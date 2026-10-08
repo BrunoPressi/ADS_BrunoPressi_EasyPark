@@ -31,15 +31,8 @@ public class Pagamento extends Auditado {
     @Enumerated(EnumType.STRING)
     private PagamentoMeio meioPagamento;
 
-    @Column
-    private BigDecimal desconto;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "permanencia_id")
     private Permanencia permanencia;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "funcionario_id")
-    private Funcionario funcionario;
 
 }

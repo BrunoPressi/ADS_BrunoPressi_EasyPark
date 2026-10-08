@@ -1,6 +1,7 @@
 package ads.upf.services;
 
 import ads.upf.exceptions.EntityNotFoundException;
+import ads.upf.exceptions.InvalidEditException;
 import ads.upf.model.DTOs.contrato.ContratoCreateDTO;
 import ads.upf.model.DTOs.contrato.ContratoResponseDTO;
 import ads.upf.model.DTOs.parcela.ParcelaResponseDTO;
@@ -8,14 +9,11 @@ import ads.upf.model.entities.Cliente;
 import ads.upf.model.entities.Contrato;
 import ads.upf.model.entities.Parcela;
 import ads.upf.model.entities.Veiculo;
+import ads.upf.model.enums.ContratoStatus;
 import ads.upf.model.mappers.ContratoMapper;
 import ads.upf.model.mappers.ParcelaMapper;
-import ads.upf.repositories.ClienteRepository;
 import ads.upf.repositories.ContratoRepository;
-import ads.upf.repositories.ParcelaRepository;
-import ads.upf.repositories.VeiculoRepository;
 import ads.upf.utils.SecurityUtil;
-import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -57,6 +55,9 @@ public class ContratoService {
         );
 
         if (contratoCreateDTO.getContratoId() == null) {
+            if (verificarPossuiContratoAtivo(placa))
+                throw new IllegalArgumentException("Esse veículo já pertence a outro contrato ativo");
+
             Contrato contrato = ContratoMapper.INSTANCE.toContrato(contratoCreateDTO);
             contrato.setCliente(cliente);
             contrato.setVeiculo(veiculo);
@@ -69,6 +70,8 @@ public class ContratoService {
                             () -> new EntityNotFoundException("Contrato não encontrado.")
                     );
 
+            if (!verificarSeContratoAtivo(contratoCreateDTO.getContratoId()))
+                throw new InvalidEditException("Contratos cancelados ou encerrados não podem ser editados");
 
             contrato.setCliente(cliente);
             contrato.setVeiculo(veiculo);
@@ -123,5 +126,10 @@ public class ContratoService {
         );
     }
 
+    private Boolean verificarSeContratoAtivo(Long id) {
+        return contratoRepository.findByIdOptional(id)
+                .stream()
+                .filter((c) -> c.getStatus().equals(ContratoStatus.ativo)).count() > 0;
+    }
 
 }

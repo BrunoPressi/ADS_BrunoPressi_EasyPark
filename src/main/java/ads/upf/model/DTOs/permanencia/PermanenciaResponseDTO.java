@@ -1,8 +1,8 @@
 package ads.upf.model.DTOs.permanencia;
 
+import ads.upf.model.DTOs.pagamento.PagamentoResponseDTO;
 import ads.upf.model.DTOs.vaga.VagaResponseDTO;
 import ads.upf.model.DTOs.veiculo.VeiculoResponseDTO;
-import ads.upf.model.entities.Pagamento;
 import ads.upf.model.enums.PermanenciaStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,6 +21,7 @@ public class PermanenciaResponseDTO {
     private PermanenciaStatus status;
     private VeiculoResponseDTO veiculo;
     private VagaResponseDTO vaga;
-    private Pagamento pagamento;
+    private PagamentoResponseDTO pagamento;
 
+    private Boolean isRotativo;
 }

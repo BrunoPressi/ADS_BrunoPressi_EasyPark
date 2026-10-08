@@ -36,12 +36,11 @@ public class Permanencia extends Auditado {
     @JoinColumn(name = "vaga_id")
     private Vaga vaga;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "funcionario_id")
-    private Funcionario funcionario;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pagamento_id")
     private Pagamento pagamento;
+
+    @Column()
+    private Boolean isRotativo;
 
 }

@@ -4,6 +4,7 @@ import ads.upf.model.DTOs.cliente.ClienteResponseDTO;
 import ads.upf.model.DTOs.parcela.ParcelaResponseDTO;
 import ads.upf.model.DTOs.veiculo.VeiculoResponseDTO;
 import ads.upf.model.enums.ContratoStatus;
+import ads.upf.model.enums.ContratoTipo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,7 @@ public class ContratoResponseDTO {
     private LocalDate dataInicio;
     private LocalDate dataTermino;
     private BigDecimal valorContratado;
+    private ContratoTipo contratoTipo;
     private ContratoStatus status;
     private ClienteResponseDTO cliente;
     private VeiculoResponseDTO veiculo;

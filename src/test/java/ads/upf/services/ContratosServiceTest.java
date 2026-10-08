@@ -4,7 +4,6 @@ import ads.upf.exceptions.EntityNotFoundException;
 import ads.upf.exceptions.InvalidEditException;
 import ads.upf.model.DTOs.cliente.ClienteResponseDTO;
 import ads.upf.model.DTOs.contrato.ContratoCreateDTO;
-import ads.upf.model.DTOs.contrato.ContratoResponseDTO;
 import ads.upf.model.DTOs.veiculo.VeiculoResponseDTO;
 import ads.upf.model.entities.Cliente;
 import ads.upf.model.entities.Contrato;

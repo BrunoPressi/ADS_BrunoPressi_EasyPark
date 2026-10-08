@@ -34,4 +34,10 @@ public class PermanenciaService {
         return PermanenciaMapper.INSTANCE.toPermanenciaDtoList(permanencias);
     }
 
+    public PermanenciaResponseDTO buscarPermanenciaPelaPlaca(String placa) {
+        return permanenciaRepository.verificarVeiculoEstacionado(placa)
+                .map(PermanenciaMapper.INSTANCE::toPermanenciaDto)
+                .orElse(null);
+    }
+
 }

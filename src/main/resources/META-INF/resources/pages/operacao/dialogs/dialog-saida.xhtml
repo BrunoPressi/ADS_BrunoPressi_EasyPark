@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+<h:body>
+    <p:dialog id="dialogSaida"
+              widgetVar="dialogSaida"
+              closable="true"
+              modal="true"
+              showEffect="fade"
+              width="440"
+              closeOnEscape="true"
+              header="Confirme os dados do pagamento...">
+
+        <p:ajax event="close"
+                form="formDialogSaida"
+                resetValues="true"
+                update="formDialogSaida"/>
+
+        <h:form id="formDialogSaida">
+            <div class="ui-fluid">
+                <div>
+                    <div  style="margin-top: .5rem">
+                        <p:outputLabel for="veiculo" value="Placa do Veículo" />
+                        <p:inputText id="veiculo" readonly="true" value="#{permanenciaBean.saida.placa}"/>
+                    </div>
+                    <div  style="margin-top: .5rem">
+                        <p:outputLabel for="pagamentoValor" value="Pagamento" />
+                        <p:inputText id="pagamentoValor" readonly="true" value="R$ #{permanenciaBean.saida.valor}"/>
+                    </div>
+                    <div style="margin-top: .5rem">
+                        <p:outputLabel for="meioPagamento" value="Selecione o meio de pagamento"/>
+                        <p:selectOneMenu id="meioPagamento" value="#{permanenciaBean.saida.meioPagamento}">
+                            <f:selectItem itemLabel="Selecione o meio de pagamento" itemValue=""/>
+                            <f:selectItem itemLabel="Cartão" itemValue="cartao"/>
+                            <f:selectItem itemLabel="Pix" itemValue="pix"/>
+                            <f:selectItem itemLabel="Dinheiro" itemValue="dinheiro"/>
+                        </p:selectOneMenu>
+                        <h:message for="meioPagamento" style="color: red"/>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.5rem;">
+                    <p:commandButton type="button"
+                                     value="Voltar"
+                                     onclick="PF('dialogSaida').hide()"
+                                     styleClass="ui-button-flat mr-2"
+                                     style="width: 6rem"/>
+                    <p:commandButton value="Salvar"
+                                     actionListener="#{permanenciaBean.processarSaida}"
+                                     process="@form"
+                                     update="@form :formDataTablePermanencias"/>
+                </div>
+            </div>
+        </h:form>
+    </p:dialog>
+</h:body>
+</html>

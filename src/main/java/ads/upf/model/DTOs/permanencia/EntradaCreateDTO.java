@@ -23,7 +23,6 @@ public class EntradaCreateDTO {
     @NotNull(message = "O tipo do veículo é obrigatório")
     private VeiculoTipo tipoVeiculo;
 
-    @NotNull(message = "O email do funcionário é obrigatório")
-    private String funcionarioEmail;
+    private Boolean isRotativo;
 
 }

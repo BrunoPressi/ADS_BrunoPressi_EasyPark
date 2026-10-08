@@ -214,6 +214,19 @@
                                           showIcon="true" showOnFocus="false"  />
                             <h:message for="dataTermino" style="color:red;" />
                         </div>
+                        <div style="margin-top: .5rem">
+                            <p:outputLabel for="valorContratado" value="Valor Contratado"/>
+                            <p:inputText id="valorContratado" placeholder="R$ 180,00" value="#{contratoBean.contrato.valorContratado}"/>
+                            <h:message for="valorContratado" style="color: red"/>
+                        </div>
+                        <div style="margin-top: .5rem">
+                            <p:outputLabel for="tipoContrato" value="Tipo do Contrato"/>
+                            <p:selectOneMenu id="tipoContrato" value="#{contratoBean.contrato.contratoTipo}">
+                                <f:selectItem itemLabel="Selecione o tipo do contrato" itemValue=""/>
+                                <f:selectItem itemLabel="Mensal" itemValue="mensal"/>
+                            </p:selectOneMenu>
+                            <h:message for="tipoContrato" style="color: red"/>
+                        </div>
                         <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.5rem;">
                             <p:commandButton type="button"
                                              value="Voltar"

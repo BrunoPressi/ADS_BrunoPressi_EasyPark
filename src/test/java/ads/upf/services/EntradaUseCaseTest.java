@@ -47,12 +47,9 @@ class EntradaUseCaseTest {
     private EntradaUseCase entradaUseCase;
 
     @Test
-    @DisplayName("Deve registrar nova entrada com sucesso para veículo válido")
+    @DisplayName("Deve registrar nova entrada com sucesso para veículo válido (rotativo)")
     void deveRegistrarNovaEntradaComSucesso() {
-        EntradaCreateDTO dto = new EntradaCreateDTO("ABC1D23", VagaTipo.comum, VeiculoTipo.carro, "john@email.com");
-
-        Funcionario funcionario = new Funcionario();
-        funcionario.setEmail("john@email.com");
+        EntradaCreateDTO dto = new EntradaCreateDTO("ABC1D23", VagaTipo.comum, VeiculoTipo.carro, true);
 
         Veiculo veiculo = new Veiculo();
         veiculo.setPlaca("ABC1D23");
@@ -61,7 +58,6 @@ class EntradaUseCaseTest {
         vaga.setStatus(VagaStatus.ocupada);
 
         when(permanenciaRepository.verificarVeiculoEstacionado("ABC1D23")).thenReturn(Optional.empty());
-        when(funcionarioService.definirFuncionario("john@email.com")).thenReturn(funcionario);
         when(veiculoService.obterOuCriar("ABC1D23", VeiculoTipo.carro)).thenReturn(veiculo);
         when(vagaService.ocuparVaga(VagaTipo.comum)).thenReturn(vaga);
 
@@ -74,16 +70,16 @@ class EntradaUseCaseTest {
 
         Permanencia permanenciaSalva = captor.getValue();
         assertThat(permanenciaSalva.getStatus()).isEqualTo(PermanenciaStatus.em_andamento);
-        assertThat(permanenciaSalva.getFuncionario()).isEqualTo(funcionario);
         assertThat(permanenciaSalva.getVeiculo()).isEqualTo(veiculo);
         assertThat(permanenciaSalva.getVaga()).isEqualTo(vaga);
         assertThat(permanenciaSalva.getDataEntrada()).isNotNull();
+        assertThat(permanenciaSalva.getIsRotativo()).isTrue();
     }
 
     @Test
     @DisplayName("Deve falhar ao tentar registrar veículo que já está com entrada em andamento")
     void deveFalharQuandoVeiculoJaEstacionado() {
-        EntradaCreateDTO dto = new EntradaCreateDTO("ABC1D23", VagaTipo.comum, VeiculoTipo.carro, "john@email.com");
+        EntradaCreateDTO dto = new EntradaCreateDTO("ABC1D23", VagaTipo.comum, VeiculoTipo.carro, true);
         when(permanenciaRepository.verificarVeiculoEstacionado("ABC1D23")).thenReturn(Optional.of(new Permanencia()));
 
         assertThatThrownBy(() -> entradaUseCase.novaEntrada(dto))
@@ -96,24 +92,9 @@ class EntradaUseCaseTest {
     }
 
     @Test
-    @DisplayName("Deve propagar EntityNotFoundException quando o funcionário não for encontrado")
-    void deveLancarExcecaoQuandoFuncionarioNaoExistir() {
-        EntradaCreateDTO dto = new EntradaCreateDTO("ABC1D23", VagaTipo.comum, VeiculoTipo.carro, "inexistente@email.com");
-        when(permanenciaRepository.verificarVeiculoEstacionado("ABC1D23")).thenReturn(Optional.empty());
-        when(funcionarioService.definirFuncionario("inexistente@email.com"))
-                .thenThrow(new EntityNotFoundException("Funcionário não encontrado."));
-
-        assertThatThrownBy(() -> entradaUseCase.novaEntrada(dto))
-                .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("Funcionário não encontrado");
-
-        verify(permanenciaRepository, never()).persist(any(Permanencia.class));
-    }
-
-    @Test
     @DisplayName("Deve propagar EntityNotFoundException quando não houver vaga disponível")
     void deveLancarExcecaoQuandoNaoHouverVaga() {
-        EntradaCreateDTO dto = new EntradaCreateDTO("ABC1D23", VagaTipo.comum, VeiculoTipo.carro, "john@email.com");
+        EntradaCreateDTO dto = new EntradaCreateDTO("ABC1D23", VagaTipo.comum, VeiculoTipo.carro, false);
 
         when(permanenciaRepository.verificarVeiculoEstacionado("ABC1D23")).thenReturn(Optional.empty());
         when(funcionarioService.definirFuncionario("john@email.com")).thenReturn(new Funcionario());

@@ -2,15 +2,15 @@ package ads.upf.model.DTOs.contrato;
 
 import ads.upf.model.DTOs.cliente.ClienteResponseDTO;
 import ads.upf.model.DTOs.veiculo.VeiculoResponseDTO;
-import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotNull;
+import ads.upf.model.enums.ContratoStatus;
+import ads.upf.model.enums.ContratoTipo;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @AllArgsConstructor @NoArgsConstructor
@@ -32,6 +32,16 @@ public class ContratoCreateDTO {
 
     @NotNull(message = "O veículo é obrigatório.")
     private VeiculoResponseDTO veiculo;
+
+    @NotNull(message = "O valor contratado é obrigatório.")
+    @Positive(message = "O valor deve ser positivo.")
+    @Digits(integer = 3, fraction = 2, message = "O preço deve ter no máximo 3 dígitos e 2 casas decimais")
+    private BigDecimal valorContratado;
+
+    @NotNull(message = "O tipo do contrato é obrigatório.")
+    private ContratoTipo contratoTipo;
+
+    private ContratoStatus status = ContratoStatus.ativo;
 
     @AssertTrue(message = "O contrato deve ter a duração mínima de 1 mês.")
     public boolean isPeriodoMinimoValido() {

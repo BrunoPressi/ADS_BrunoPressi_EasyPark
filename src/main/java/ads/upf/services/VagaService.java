@@ -2,7 +2,6 @@ package ads.upf.services;
 
 import ads.upf.exceptions.EntityExistsException;
 import ads.upf.exceptions.EntityNotFoundException;
-import ads.upf.exceptions.InvalidEditException;
 import ads.upf.model.DTOs.vaga.VagaFormDTO;
 import ads.upf.model.DTOs.vaga.VagaResponseDTO;
 import ads.upf.model.entities.Vaga;

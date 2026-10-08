@@ -80,6 +80,8 @@ public class ContratoBean implements Serializable {
         this.contrato.setDataTermino(contratoResponseDTO.getDataTermino());
         this.contrato.setCliente(contratoResponseDTO.getCliente());
         this.contrato.setVeiculo(contratoResponseDTO.getVeiculo());
+        this.contrato.setValorContratado(contratoResponseDTO.getValorContratado());
+        this.contrato.setContratoTipo(contratoResponseDTO.getContratoTipo());
     }
 
     public void processarContrato() {

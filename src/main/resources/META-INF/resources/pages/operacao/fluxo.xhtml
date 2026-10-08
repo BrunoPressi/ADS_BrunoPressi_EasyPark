@@ -9,56 +9,97 @@
         <!-- Formulário para registro de uma nova entrada -->
         <ui:include src="/pages/operacao/dialogs/dialog-entrada.xhtml"/>
 
-        <!-- Data Table com listagem paginada SERVER SIDE -->
-        <p:dataTable id="dataTablePermanencias"
-                     var="permanencia"
-                     value="#{permanenciaBean.lazyDataModel}"
-                     lazy="true"
-                     paginator="true"
-                     rows="10"
-                     rowsPerPageTemplate="5,10,20"
-                     paginatorPosition="bottom"
-                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                     currentPageReportTemplate="Exibindo {startRecord}-{endRecord} de {totalRecords} registros"
-                     rowKey="#{permanencia.id}"
-                     emptyMessage="Nenhuma permanência encontrada.">
+        <!-- Formulário para registro de uma nova saída -->
+        <ui:include src="/pages/operacao/dialogs/dialog-saida.xhtml"/>
 
-            <p:column headerText="ID">
-                <h:outputLabel value="#{permanencia.id}"/>
-            </p:column>
+        <!-- Formulário com barra de pesquisa e listagem -->
+        <h:form id="formDataTablePermanencias">
 
-            <p:column headerText="Data Entrada">
-                <h:outputText value="#{permanencia.dataEntrada}">
-                    <f:convertDateTime pattern="dd/MM/yyyy - HH:mm" type="localDateTime"/>
-                </h:outputText>
-            </p:column>
+            <!-- Barra de Pesquisa por Chave Única -->
+            <p:toolbar style="margin-bottom: 1rem;">
+                <p:toolbarGroup>
+                        <span class="ui-input-icon-left" style="margin-right: .5rem;">
+                            <i class="pi pi-key" />
+                            <p:inputText id="inputChave"
+                                         value="#{permanenciaBean.chaveUnicaFiltro}"
+                                         placeholder="Buscar pela placa..." />
+                        </span>
 
-            <p:column headerText="Data Saída">
-                <h:outputText value="#{ (permanencia.dataSaida) == null ? 'Saída Não Registrada' : permanencia.dataSaida}">
-                    <f:convertDateTime pattern="dd/MM/yyyy" type="localDateTime"/>
-                </h:outputText>
-            </p:column>
+                    <p:commandButton value="Buscar"
+                                     icon="pi pi-search"
+                                     action="#{permanenciaBean.pesquisar}"
+                                     update="@form"
+                                     style="margin-right: .5rem;"
+                                     styleClass="mr-2" />
 
-            <p:column headerText="Status">
-                <h:outputText value="#{ (permanencia.status) == 'em_andamento' ? 'Em Andamento'
-                : (permanencia.status) == 'concluida' ? 'Concluída'
-                : 'Não Definido'}"/>
-            </p:column>
+                    <p:commandButton value="Limpar"
+                                     icon="pi pi-times"
+                                     action="#{permanenciaBean.limparFiltro}"
+                                     update="@form"
+                                     styleClass="ui-button-secondary" />
+                </p:toolbarGroup>
+            </p:toolbar>
 
-            <p:column headerText="Veiculo">
-                <h:outputText value="#{permanencia.veiculo.placa}"/>
-            </p:column>
+            <!-- Data Table com listagem paginada SERVER SIDE -->
+            <p:dataTable id="dataTablePermanencias"
+                         var="permanencia"
+                         value="#{permanenciaBean.lazyDataModel}"
+                         lazy="true"
+                         paginator="true"
+                         rows="10"
+                         rowsPerPageTemplate="5,10,20"
+                         paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="Exibindo {startRecord}-{endRecord} de {totalRecords} registros"
+                         rowKey="#{permanencia.id}"
+                         emptyMessage="Nenhuma permanência encontrada.">
 
-            <p:column headerText="Vaga">
-                <h:outputText value="#{permanencia.vaga.nome}"/>
-            </p:column>
+                <p:column headerText="ID">
+                    <h:outputLabel value="#{permanencia.id}"/>
+                </p:column>
 
-            <p:column headerText="Saída">
-                <p:commandButton value="Registrar Saída"
-                                 action="#{permanenciaBean.processarSaida(permanencia.veiculo.placa)}"
-                                 process="@this"
-                                 update=":dataTablePermanencias"/>
-            </p:column>
-        </p:dataTable>
+                <p:column headerText="Data Entrada">
+                    <h:outputText value="#{permanencia.dataEntrada}">
+                        <f:convertDateTime pattern="dd/MM/yyyy - HH:mm" type="localDateTime"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Data Saída">
+                    <h:outputText value="#{ (permanencia.dataSaida) == null ? 'Saída Não Registrada' : permanencia.dataSaida}">
+                        <f:convertDateTime pattern="dd/MM/yyyy - HH:mm" type="localDateTime"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Status" style="width: 80px; text-align: center;">
+                    <p:tag severity="#{ (permanencia.status) == 'em_andamento' ? 'warning'
+                                : (permanencia.status) == 'concluida' ? 'success'
+                                : 'Não Definido'}"
+                           value="#{ (permanencia.status) == 'em_andamento' ? 'Em Andamento'
+                                : (permanencia.status) == 'concluida' ? 'Concluida'
+                                : 'Não definido'}"  />
+                </p:column>
+
+                <p:column headerText="Veiculo">
+                    <h:outputText value="#{permanencia.veiculo.placa}"/>
+                </p:column>
+
+                <p:column headerText="Vaga">
+                    <h:outputText value="#{permanencia.vaga.nome}"/>
+                </p:column>
+
+                <p:column headerText="É Rotativo?">
+                    <h:outputText value="#{ (permanencia.isRotativo) ? 'Sim' : 'Não'}"/>
+                </p:column>
+
+                <p:column headerText="Saída">
+                    <p:commandButton value="Registrar Saída"
+                                     disabled="#{ (permanencia.status) == 'concluida' ? true : false}"
+                                     actionListener="#{permanenciaBean.novaSaida(permanencia)}"
+                                     process="@this"
+                                     styleClass="#{(permanencia.status) == 'concluida' ? 'ui-button-secondary' : 'ui-button-info'}"
+                                     update=":formDataTablePermanencias :dialogSaida"/>
+                </p:column>
+            </p:dataTable>
+        </h:form>
     </ui:define>
 </ui:composition>

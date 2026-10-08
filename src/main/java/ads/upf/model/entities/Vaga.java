@@ -6,8 +6,6 @@ import ads.upf.model.enums.VagaTipo;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity()
 @Table(name = "vagas")
 @Getter @Setter

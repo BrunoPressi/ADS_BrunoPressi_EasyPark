@@ -9,8 +9,6 @@ import ads.upf.model.mappers.ClienteMapper;
 import ads.upf.repositories.ClienteRepository;
 import ads.upf.repositories.UsuarioRepository;
 import ads.upf.utils.SecurityUtil;
-import io.quarkus.logging.Log;
-import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;

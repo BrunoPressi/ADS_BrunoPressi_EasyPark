@@ -2,11 +2,14 @@ package ads.upf.services;
 
 import ads.upf.exceptions.EntityNotFoundException;
 import ads.upf.model.DTOs.permanencia.PermanenciaResponseDTO;
+import ads.upf.model.DTOs.permanencia.SaidaCreateDTO;
 import ads.upf.model.entities.Pagamento;
 import ads.upf.model.entities.Permanencia;
+import ads.upf.model.enums.PagamentoStatus;
 import ads.upf.model.enums.PermanenciaStatus;
 import ads.upf.model.mappers.PermanenciaMapper;
 import ads.upf.repositories.PermanenciaRepository;
+import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -33,20 +36,20 @@ public class SaidaUseCase {
     }
 
     @Transactional
-    public PermanenciaResponseDTO novaSaida(String placa) {
-        Permanencia permanencia = permanenciaRepository.verificarVeiculoEstacionado(placa)
+    public PermanenciaResponseDTO novaSaida(SaidaCreateDTO saida) {
+        Permanencia permanencia = permanenciaRepository.verificarVeiculoEstacionado(saida.getPlaca())
                 .orElseThrow(
                         () -> new EntityNotFoundException("Permanência não encontrada.")
                 );
 
-        LocalDateTime dataSaida = LocalDateTime.now();
-
-        if (!contratoService.verificarPossuiContratoAtivo(placa)) {
-            Pagamento pagamento = pagamentoService.gerarPagamento(permanencia.getDataEntrada(), dataSaida);
+        // Só gera pagamento quando for rotativo
+        if (saida.getValor() != null || saida.getMeioPagamento() != null) {
+            Pagamento pagamento = pagamentoService.gerarPagamento(saida.getValor(), saida.getMeioPagamento());
             permanencia.setPagamento(pagamento);
+            pagamento.setPermanencia(permanencia);
         }
 
-        permanencia.setDataSaida(dataSaida);
+        permanencia.setDataSaida(LocalDateTime.now());
         permanencia.setStatus(PermanenciaStatus.concluida);
         vagaService.liberarVaga(permanencia.getVaga().getId());
         return PermanenciaMapper.INSTANCE.toPermanenciaDto(permanencia);

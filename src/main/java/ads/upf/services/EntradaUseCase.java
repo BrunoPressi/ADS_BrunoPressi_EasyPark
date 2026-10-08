@@ -21,36 +21,35 @@ public class EntradaUseCase {
     private final PermanenciaRepository permanenciaRepository;
     private final VeiculoService veiculoService;
     private final VagaService vagaService;
-    private final FuncionarioService funcionarioService;
+    private final ContratoService contratoService;
 
     @Inject
     public EntradaUseCase(PermanenciaRepository permanenciaRepository,
                           VeiculoService veiculoService,
                           VagaService vagaService,
-                          FuncionarioService funcionarioService) {
+                          FuncionarioService funcionarioService,
+                          ContratoService contratoService) {
         this.permanenciaRepository = permanenciaRepository;
         this.veiculoService = veiculoService;
         this.vagaService = vagaService;
-        this.funcionarioService = funcionarioService;
+        this.contratoService = contratoService;
     }
 
     @Transactional
-    public PermanenciaResponseDTO novaEntrada(EntradaCreateDTO permanenciaCreateDTO) {
-        Boolean veiculoJaEstacionado = verificarVeiculoEstacionado(permanenciaCreateDTO.getPlaca());
+    public PermanenciaResponseDTO novaEntrada(EntradaCreateDTO entrada) {
+        Boolean veiculoJaEstacionado = verificarVeiculoEstacionado(entrada.getPlaca());
         if (veiculoJaEstacionado)
             throw new IllegalArgumentException("Esse veículo já está com uma entrada em andamento!");
 
-        Funcionario funcionario = funcionarioService
-                .definirFuncionario(permanenciaCreateDTO.getFuncionarioEmail());
         Veiculo veiculo = veiculoService
-                .obterOuCriar(permanenciaCreateDTO.getPlaca(), permanenciaCreateDTO.getTipoVeiculo());
+                .obterOuCriar(entrada.getPlaca(), entrada.getTipoVeiculo());
         Vaga vaga = vagaService
-                .ocuparVaga(permanenciaCreateDTO.getTipoVaga());
+                .ocuparVaga(entrada.getTipoVaga());
 
         Permanencia permanencia = new Permanencia();
+        permanencia.setIsRotativo(!contratoService.verificarPossuiContratoAtivo(entrada.getPlaca()));
         permanencia.setDataEntrada(LocalDateTime.now());
         permanencia.setStatus(PermanenciaStatus.em_andamento);
-        permanencia.setFuncionario(funcionario);
         permanencia.setVeiculo(veiculo);
         permanencia.setVaga(vaga);
         permanenciaRepository.persist(permanencia);

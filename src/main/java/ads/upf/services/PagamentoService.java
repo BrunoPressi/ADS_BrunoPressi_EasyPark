@@ -2,6 +2,7 @@ package ads.upf.services;
 
 import ads.upf.model.entities.Pagamento;
 import ads.upf.model.entities.Tarifa;
+import ads.upf.model.enums.PagamentoMeio;
 import ads.upf.model.enums.PagamentoStatus;
 import ads.upf.repositories.PagamentoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -27,12 +28,12 @@ public class PagamentoService {
     }
 
     @Transactional
-    public Pagamento gerarPagamento(LocalDateTime dataEntrada, LocalDateTime dataSaida) {
-        BigDecimal valorTotal = calcularValorPermanencia(dataEntrada, dataSaida);
-
+    public Pagamento gerarPagamento(BigDecimal valor, PagamentoMeio meio) {
         Pagamento pagamento = new Pagamento();
-        pagamento.setValor(valorTotal);
-        pagamento.setStatus(PagamentoStatus.pendente);
+        pagamento.setValor(valor);
+        pagamento.setStatus(PagamentoStatus.pago);
+        pagamento.setMeioPagamento(meio);
+        pagamento.setDataPagamento(LocalDateTime.now());
 
         pagamentoRepository.persist(pagamento);
 

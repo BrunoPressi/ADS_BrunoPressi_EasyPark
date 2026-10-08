@@ -138,7 +138,7 @@ public class ContratosServiceTest {
 
             assertThatThrownBy(() -> contratoService.salvarContrato(dtoContrato))
                     .isInstanceOf(InvalidEditException.class)
-                    .hasMessageContaining("contrato que não esteja ativo.");
+                    .hasMessageContaining("Contratos cancelados ou encerrados não podem ser editados");
         }
 
         @Test

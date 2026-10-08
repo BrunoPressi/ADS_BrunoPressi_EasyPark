@@ -16,9 +16,6 @@ import java.time.LocalDateTime;
 @Getter @Setter
 public class SaidaCreateDTO {
 
-    @NotNull(message = "O email do funcionário é obrigatório")
-    private String funcionarioEmail;
-
     @NotNull(message = "O pagamento é obrigatório")
     private PagamentoMeio meioPagamento;
 

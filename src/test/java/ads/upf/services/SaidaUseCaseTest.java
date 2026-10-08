@@ -2,10 +2,13 @@ package ads.upf.services;
 
 import ads.upf.exceptions.EntityNotFoundException;
 import ads.upf.model.DTOs.permanencia.PermanenciaResponseDTO;
+import ads.upf.model.DTOs.permanencia.SaidaCreateDTO;
 import ads.upf.model.entities.Pagamento;
 import ads.upf.model.entities.Permanencia;
 import ads.upf.model.entities.Vaga;
 import ads.upf.model.entities.Veiculo;
+import ads.upf.model.enums.PagamentoMeio;
+import ads.upf.model.enums.PagamentoStatus;
 import ads.upf.model.enums.PermanenciaStatus;
 import ads.upf.repositories.PermanenciaRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -36,9 +39,6 @@ class SaidaUseCaseTest {
     private VagaService vagaService;
 
     @Mock
-    private ContratoService contratoService;
-
-    @Mock
     private PagamentoService pagamentoService;
 
     @InjectMocks
@@ -47,13 +47,17 @@ class SaidaUseCaseTest {
     @Test
     @DisplayName("Deve registrar saída com sucesso gerando pagamento quando veículo não tiver contrato ativo")
     void deveRegistrarSaidaComGeracaoDePagamento() {
-        String placa = "ABC1D23";
+
+        SaidaCreateDTO saida = new SaidaCreateDTO();
+        saida.setPlaca("ABC1D23");
+        saida.setValor(BigDecimal.valueOf(70.00));
+        saida.setMeioPagamento(PagamentoMeio.dinheiro);
 
         Vaga vaga = new Vaga();
         vaga.setId(10L);
 
         Veiculo veiculo = new Veiculo();
-        veiculo.setPlaca(placa);
+        veiculo.setPlaca(saida.getPlaca());
 
         Permanencia permanencia = new Permanencia();
         permanencia.setId(1L);
@@ -63,14 +67,13 @@ class SaidaUseCaseTest {
         permanencia.setVeiculo(veiculo);
 
         Pagamento pagamento = new Pagamento();
-        pagamento.setValor(BigDecimal.valueOf(140.00));
+        permanencia.setPagamento(pagamento);
 
-        when(permanenciaRepository.verificarVeiculoEstacionado(placa)).thenReturn(Optional.of(permanencia));
-        when(contratoService.verificarPossuiContratoAtivo(placa)).thenReturn(false);
-        when(pagamentoService.gerarPagamento(eq(permanencia.getDataEntrada()), any(LocalDateTime.class)))
+        when(permanenciaRepository.verificarVeiculoEstacionado(saida.getPlaca())).thenReturn(Optional.of(permanencia));
+        when(pagamentoService.gerarPagamento(BigDecimal.valueOf(70.00), PagamentoMeio.dinheiro))
                 .thenReturn(pagamento);
 
-        PermanenciaResponseDTO resultado = saidaUseCase.novaSaida(placa);
+        PermanenciaResponseDTO resultado = saidaUseCase.novaSaida(saida);
 
         assertThat(resultado).isNotNull();
         assertThat(permanencia.getDataSaida()).isNotNull();
@@ -82,13 +85,17 @@ class SaidaUseCaseTest {
     @Test
     @DisplayName("Deve registrar saída sem gerar cobrança quando veículo possuir contrato ativo")
     void deveRegistrarSaidaSemPagamentoQuandoPossuirContrato() {
-        String placa = "ABC1D23";
+
+        SaidaCreateDTO saida = new SaidaCreateDTO();
+        saida.setPlaca("ABC1D23");
+        saida.setValor(null);
+        saida.setMeioPagamento(null);
 
         Vaga vaga = new Vaga();
         vaga.setId(10L);
 
         Veiculo veiculo = new Veiculo();
-        veiculo.setPlaca(placa);
+        veiculo.setPlaca(saida.getPlaca());
 
         Permanencia permanencia = new Permanencia();
         permanencia.setId(1L);
@@ -97,10 +104,9 @@ class SaidaUseCaseTest {
         permanencia.setVaga(vaga);
         permanencia.setVeiculo(veiculo);
 
-        when(permanenciaRepository.verificarVeiculoEstacionado(placa)).thenReturn(Optional.of(permanencia));
-        when(contratoService.verificarPossuiContratoAtivo(placa)).thenReturn(true);
+        when(permanenciaRepository.verificarVeiculoEstacionado(saida.getPlaca())).thenReturn(Optional.of(permanencia));
 
-        PermanenciaResponseDTO resultado = saidaUseCase.novaSaida(placa);
+        PermanenciaResponseDTO resultado = saidaUseCase.novaSaida(saida);
 
         assertThat(resultado).isNotNull();
         assertThat(permanencia.getDataSaida()).isNotNull();
@@ -111,9 +117,13 @@ class SaidaUseCaseTest {
     @Test
     @DisplayName("Deve lançar EntityNotFoundException quando permanência ativa não for encontrada pela placa")
     void deveLancarExcecaoQuandoPermanenciaNaoEncontrada() {
+
+        SaidaCreateDTO saida = new SaidaCreateDTO();
+        saida.setPlaca("XYZ9999");
+
         when(permanenciaRepository.verificarVeiculoEstacionado("XYZ9999")).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> saidaUseCase.novaSaida("XYZ9999"))
+        assertThatThrownBy(() -> saidaUseCase.novaSaida(saida))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Permanência não encontrada");
 

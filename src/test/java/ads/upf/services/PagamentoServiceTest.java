@@ -1,6 +1,7 @@
 package ads.upf.services;
 
 import ads.upf.model.entities.Pagamento;
+import ads.upf.model.enums.PagamentoMeio;
 import ads.upf.model.enums.PagamentoStatus;
 import ads.upf.repositories.PagamentoRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -172,22 +173,23 @@ class PagamentoServiceTest {
     class GeracaoPagamento {
 
         @Test
-        @DisplayName("Deve gerar entidade Pagamento com status pendente e valor correto")
+        @DisplayName("Deve gerar entidade Pagamento")
         void deveGerarPagamentoComSucesso() {
-            LocalDateTime saida = entradaBase.plusMinutes(75); // 1h + 1 fração = 105.00
 
-            Pagamento pagamento = pagamentoService.gerarPagamento(entradaBase, saida);
+            Pagamento pagamento = pagamentoService.gerarPagamento(
+                    BigDecimal.valueOf(190.00),
+                    PagamentoMeio.cartao);
 
             assertThat(pagamento).isNotNull();
-            assertThat(pagamento.getValor()).isEqualByComparingTo("105.00");
-            assertThat(pagamento.getStatus()).isEqualTo(PagamentoStatus.pendente);
+            assertThat(pagamento.getValor()).isEqualByComparingTo("190.00");
+            assertThat(pagamento.getStatus()).isEqualTo(PagamentoStatus.pago);
 
             ArgumentCaptor<Pagamento> captor = ArgumentCaptor.forClass(Pagamento.class);
             verify(pagamentoRepository).persist(captor.capture());
 
             Pagamento pagamentoPersistido = captor.getValue();
-            assertThat(pagamentoPersistido.getValor()).isEqualByComparingTo("105.00");
-            assertThat(pagamentoPersistido.getStatus()).isEqualTo(PagamentoStatus.pendente);
+            assertThat(pagamentoPersistido.getValor()).isEqualByComparingTo("190.00");
+            assertThat(pagamentoPersistido.getStatus()).isEqualTo(PagamentoStatus.pago);
         }
     }
 }

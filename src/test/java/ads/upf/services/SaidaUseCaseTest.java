@@ -62,6 +62,7 @@ class SaidaUseCaseTest {
         permanencia.setDataEntrada(LocalDateTime.now().minusHours(2));
         permanencia.setVaga(vaga);
         permanencia.setVeiculo(veiculo);
+        permanencia.setIsRotativo(true);
 
         Pagamento pagamento = new Pagamento();
         permanencia.setPagamento(pagamento);
@@ -99,6 +100,7 @@ class SaidaUseCaseTest {
         permanencia.setStatus(PermanenciaStatus.em_andamento);
         permanencia.setDataEntrada(LocalDateTime.now().minusHours(2));
         permanencia.setVaga(vaga);
+        permanencia.setIsRotativo(false);
         permanencia.setVeiculo(veiculo);
 
         when(permanenciaRepository.verificarVeiculoEstacionado(saida.getPlaca())).thenReturn(Optional.of(permanencia));

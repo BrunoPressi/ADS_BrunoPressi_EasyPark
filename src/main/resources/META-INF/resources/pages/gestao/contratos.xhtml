@@ -122,6 +122,7 @@
 
                 <p:column headerText="Cancelar">
                     <p:commandButton value="Cancelar"
+                                     disabled="#{ (contrato.status) == 'cancelado' ? true : false}"
                                      action="#{contratoBean.cancelarContrato(contrato)}"
                                      update="@form"
                                      styleClass="mr-2 ui-button-danger rounded-button"
@@ -135,7 +136,9 @@
                     <p:commandButton value="Editar"
                                      icon="pi pi-pencil" styleClass="rounded-button ui-button-help"
                                      oncomplete="PF('dialogContrato').show()"
-                                     action="#{contratoBean.selecionarContrato(contrato)}"
+                                     resetValues="true"
+                                     disabled="#{ (contrato.status) == 'cancelado' ? true : false}"
+                                     actionListener="#{contratoBean.selecionarContrato(contrato)}"
                                      update=":dialogContrato"/>
                 </p:column>
             </p:dataTable>

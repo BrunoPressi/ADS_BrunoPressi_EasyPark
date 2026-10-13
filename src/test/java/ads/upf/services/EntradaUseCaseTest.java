@@ -3,7 +3,6 @@ package ads.upf.services;
 import ads.upf.exceptions.EntityNotFoundException;
 import ads.upf.model.DTOs.permanencia.EntradaCreateDTO;
 import ads.upf.model.DTOs.permanencia.PermanenciaResponseDTO;
-import ads.upf.model.entities.Funcionario;
 import ads.upf.model.entities.Permanencia;
 import ads.upf.model.entities.Vaga;
 import ads.upf.model.entities.Veiculo;

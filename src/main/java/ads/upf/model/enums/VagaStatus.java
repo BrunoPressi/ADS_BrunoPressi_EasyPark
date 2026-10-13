@@ -4,6 +4,7 @@ public enum VagaStatus {
 
     disponivel,
     ocupada,
-    em_manutencao
+    em_manutencao,
+    reservada
 
 }

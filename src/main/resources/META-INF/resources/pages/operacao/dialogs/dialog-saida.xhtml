@@ -22,12 +22,14 @@
             <div class="ui-fluid">
                 <div>
                     <div  style="margin-top: .5rem">
-                        <p:outputLabel for="veiculo" value="Placa do Veículo" />
-                        <p:inputText id="veiculo" readonly="true" value="#{permanenciaBean.saida.placa}"/>
+                        <p:outputLabel value="Placa do Veículo: " />
+                        <h:outputText readonly="true" value="#{permanenciaBean.saida.placa}"/>
                     </div>
                     <div  style="margin-top: .5rem">
-                        <p:outputLabel for="pagamentoValor" value="Pagamento" />
-                        <p:inputText id="pagamentoValor" readonly="true" value="R$ #{permanenciaBean.saida.valor}"/>
+                        <p:outputLabel value="Valor: " />
+                        <h:outputText readonly="true" value="#{permanenciaBean.saida.valor}">
+                            <f:convertNumber type="currency" currencySymbol="R$" locale="pt_BR"/>
+                        </h:outputText>
                     </div>
                     <div style="margin-top: .5rem">
                         <p:outputLabel for="meioPagamento" value="Selecione o meio de pagamento"/>

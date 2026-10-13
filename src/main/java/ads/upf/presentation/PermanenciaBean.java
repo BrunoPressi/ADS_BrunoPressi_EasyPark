@@ -1,16 +1,13 @@
 package ads.upf.presentation;
 
-import ads.upf.model.DTOs.pagamento.PagamentoResponseDTO;
 import ads.upf.model.DTOs.permanencia.EntradaCreateDTO;
 import ads.upf.model.DTOs.permanencia.PermanenciaResponseDTO;
 import ads.upf.model.DTOs.permanencia.SaidaCreateDTO;
-import ads.upf.model.mappers.PagamentoMapper;
 import ads.upf.presentation.lazy.GenericLazyDataModel;
 import ads.upf.services.EntradaUseCase;
 import ads.upf.services.PagamentoService;
 import ads.upf.services.PermanenciaService;
 import ads.upf.services.SaidaUseCase;
-import io.quarkus.logging.Log;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -101,7 +98,6 @@ public class PermanenciaBean implements Serializable {
                     dataSaida);
             saida.setValor(valor);
             saida.setPlaca(permanencia.getVeiculo().getPlaca());
-            saida.setDataSaida(dataSaida);
 
             // É setado no dialogSaida
             // saida.setMeioPagamento(null);

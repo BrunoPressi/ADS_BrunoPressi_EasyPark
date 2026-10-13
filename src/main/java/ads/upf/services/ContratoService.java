@@ -28,16 +28,19 @@ public class ContratoService {
     private final ParcelaService parcelaService;
     private final VeiculoService veiculoService;
     private final ClienteService clienteService;
+    private final DashboardService dashboardService;
 
     @Inject
     public ContratoService(ContratoRepository contratoRepository,
                            ParcelaService parcelaService,
                            VeiculoService veiculoService,
-                           ClienteService clienteService) {
+                           ClienteService clienteService,
+                           DashboardService dashboardService) {
         this.contratoRepository = contratoRepository;
         this.parcelaService = parcelaService;
         this.veiculoService = veiculoService;
         this.clienteService = clienteService;
+        this.dashboardService = dashboardService;
     }
 
     @Transactional
@@ -122,14 +125,14 @@ public class ContratoService {
 
     private Contrato verificarContratoExiste(Long id) {
         return contratoRepository.findByIdOptional(id).orElseThrow(
-                () -> new EntityNotFoundException("Contrato não encontrado")
+                () -> new EntityNotFoundException("Contrato não encontrado!")
         );
     }
 
-    private Boolean verificarSeContratoAtivo(Long id) {
+    private boolean verificarSeContratoAtivo(Long id) {
         return contratoRepository.findByIdOptional(id)
-                .stream()
-                .filter((c) -> c.getStatus().equals(ContratoStatus.ativo)).count() > 0;
+                .map(contrato -> contrato.getStatus() == ContratoStatus.ativo)
+                .orElse(false);
     }
 
 }

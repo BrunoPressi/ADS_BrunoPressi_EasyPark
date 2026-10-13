@@ -1,6 +1,5 @@
 package ads.upf.model.DTOs.permanencia;
 
-import ads.upf.model.DTOs.pagamento.PagamentoCreateDTO;
 import ads.upf.model.enums.PagamentoMeio;
 import ads.upf.validation.Placa;
 import jakarta.validation.constraints.NotNull;
@@ -25,8 +24,5 @@ public class SaidaCreateDTO {
     @NotNull(message = "A placa do veículo é obrigatória")
     @Placa
     private String placa;
-
-    @NotNull(message = "A data de saída é obrigatória")
-    private LocalDateTime dataSaida;
 
 }

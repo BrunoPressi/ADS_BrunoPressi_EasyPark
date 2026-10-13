@@ -8,7 +8,6 @@ import ads.upf.model.entities.Permanencia;
 import ads.upf.model.entities.Vaga;
 import ads.upf.model.entities.Veiculo;
 import ads.upf.model.enums.PagamentoMeio;
-import ads.upf.model.enums.PagamentoStatus;
 import ads.upf.model.enums.PermanenciaStatus;
 import ads.upf.repositories.PermanenciaRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -24,8 +23,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

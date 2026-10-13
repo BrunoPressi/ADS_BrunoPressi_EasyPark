@@ -71,9 +71,10 @@
                 </p:column>
                 <p:column headerText="Editar">
                     <p:commandButton icon="pi pi-pencil" styleClass="rounded-button ui-button-help"
-                                     action="#{funcionarioBean.selecionarFuncionario(funcionario)}"
+                                     actionListener="#{funcionarioBean.selecionarFuncionario(funcionario)}"
                                      oncomplete="PF('dialogFuncionario').show()"
                                      update=":dialogFuncionario"
+                                     resetValues="true"
                                      value="Editar"/>
                 </p:column>
             </p:dataTable>

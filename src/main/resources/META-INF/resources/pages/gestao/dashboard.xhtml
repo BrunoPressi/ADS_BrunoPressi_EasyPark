@@ -1,0 +1,361 @@
+<ui:composition template="/templates/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <ui:define name="content">
+        <h:form id="formDashboard">
+
+            <!-- CABEÇALHO DO DASHBOARD COM BOTÃO DE ATUALIZAÇÃO -->
+            <div class="flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="m-0 text-900 font-bold">Painel de Indicadores (Dashboard)</h2>
+                    <span class="text-600 text-sm">Monitoramento operacional em tempo real, faturamento e gestão de contratos</span>
+                </div>
+                <div>
+                    <p:commandButton value="Atualizar Indicadores"
+                                     icon="pi pi-refresh"
+                                     action="#{dashBean.atualizarIndicadores}"
+                                     process="@this"
+                                     update="@form"
+                                     styleClass="ui-button-outlined ui-button-secondary" />
+                </div>
+            </div>
+
+            <!-- ========================================================================= -->
+            <!-- 1. CARDS DE DESTAQUE - OPERAÇÃO E TEMPO REAL                              -->
+            <!-- ========================================================================= -->
+            <div class="grid mb-4">
+
+                <!-- CARD 1: OCUPAÇÃO DO PÁTIO -->
+                <div class="col-12 sm:col-6 lg:col-3">
+                    <div class="surface-card shadow-1 p-3 border-round border-left-3 border-blue-500 h-full flex flex-column justify-content-between">
+                        <div>
+                            <div class="flex justify-content-between align-items-center mb-2">
+                                <span class="text-600 font-medium text-sm">Taxa de Ocupação</span>
+                                <div class="flex align-items-center justify-content-center bg-blue-100 border-round" style="width:2.2rem; height:2.2rem">
+                                    <i class="pi pi-th-large text-blue-600 text-lg"></i>
+                                </div>
+                            </div>
+                            <div class="text-900 font-bold text-3xl mb-2">
+                                <h:outputText value="#{dashBean.ocupacaoKpiDTO.taxaOcupacao}">
+                                    <f:convertNumber pattern="#0.0" />
+                                </h:outputText>%
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-2 pt-2 border-top-1 surface-border text-xs text-700">
+                            <span>Livres: <b>#{dashBean.ocupacaoKpiDTO.disponiveis}</b></span>
+                            <span>•</span>
+                            <span>Ocupadas: <b>#{dashBean.ocupacaoKpiDTO.ocupadas}</b></span>
+                            <span>•</span>
+                            <span>Total: <b>#{dashBean.ocupacaoKpiDTO.totalVagas}</b></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 2: VEÍCULOS NO PÁTIO AGORA -->
+                <div class="col-12 sm:col-6 lg:col-3">
+                    <div class="surface-card shadow-1 p-3 border-round border-left-3 border-purple-500 h-full flex flex-column justify-content-between">
+                        <div>
+                            <div class="flex justify-content-between align-items-center mb-2">
+                                <span class="text-600 font-medium text-sm">Veículos no Pátio</span>
+                                <div class="flex align-items-center justify-content-center bg-purple-100 border-round" style="width:2.2rem; height:2.2rem">
+                                    <i class="pi pi-car text-purple-600 text-lg"></i>
+                                </div>
+                            </div>
+                            <div class="text-900 font-bold text-3xl mb-2">
+                                <h:outputText value="#{dashBean.veiculosAtuaisKpiDTO.veiculosPatio}" />
+                                <span class="text-sm font-normal text-600 ml-1">veículos ativos</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-2 pt-2 border-top-1 surface-border text-xs text-700">
+                            <span>Rotativos: <b>#{dashBean.veiculosAtuaisKpiDTO.rotativosPatio}</b></span>
+                            <span>•</span>
+                            <span>Mensalistas: <b>#{dashBean.veiculosAtuaisKpiDTO.mensalistasPatio}</b></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 3: TEMPO MÉDIO & GIRO HOJE -->
+                <div class="col-12 sm:col-6 lg:col-3">
+                    <div class="surface-card shadow-1 p-3 border-round border-left-3 border-orange-500 h-full flex flex-column justify-content-between">
+                        <div>
+                            <div class="flex justify-content-between align-items-center mb-2">
+                                <span class="text-600 font-medium text-sm">Permanência Média (Hoje)</span>
+                                <div class="flex align-items-center justify-content-center bg-orange-100 border-round" style="width:2.2rem; height:2.2rem">
+                                    <i class="pi pi-clock text-orange-600 text-lg"></i>
+                                </div>
+                            </div>
+                            <div class="text-900 font-bold text-3xl mb-2">
+                                <h:outputText value="#{dashBean.tempoMedioKpiDTO.tempoMedioFormatado}" />
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-2 pt-2 border-top-1 surface-border text-xs text-700">
+                            <span>Giro de Vagas: <b>#{dashBean.giroVagasKpiDTO.giroMedioHoje}x</b></span>
+                            <span>•</span>
+                            <span>Entradas: <b>#{dashBean.giroVagasKpiDTO.totalEntradasHoje}</b></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 4: RECEITA HOJE (ROTATIVO) -->
+                <div class="col-12 sm:col-6 lg:col-3">
+                    <div class="surface-card shadow-1 p-3 border-round border-left-3 border-green-500 h-full flex flex-column justify-content-between">
+                        <div>
+                            <div class="flex justify-content-between align-items-center mb-2">
+                                <span class="text-600 font-medium text-sm">Faturamento Hoje (Rotativo)</span>
+                                <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width:2.2rem; height:2.2rem">
+                                    <i class="pi pi-dollar text-green-600 text-lg"></i>
+                                </div>
+                            </div>
+                            <div class="text-900 font-bold text-3xl mb-2 text-green-700">
+                                <h:outputText value="#{dashBean.receitaHojeKpiDTO.faturamentoHoje}">
+                                    <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                </h:outputText>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-2 pt-2 border-top-1 surface-border text-xs text-700">
+                            <span>Pagamentos finalizados: <b>#{dashBean.receitaHojeKpiDTO.totalTransacoesHoje}</b></span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ========================================================================= -->
+            <!-- 2. DESEMPENHO DO MÊS ATUAL (FINANCEIRO, MENSALISTAS E INADIMPLÊNCIA)     -->
+            <!-- ========================================================================= -->
+            <div class="grid mb-4">
+
+                <!-- CARD CONSOLIDADO DE RECEITA DO MÊS -->
+                <div class="col-12 lg:col-4">
+                    <div class="surface-card shadow-1 p-4 border-round h-full flex flex-column justify-content-between">
+                        <div>
+                            <div class="flex justify-content-between align-items-center mb-3">
+                                <span class="text-900 font-bold text-lg">Receita Total do Mês</span>
+                                <span class="bg-teal-100 text-teal-800 text-xs font-semibold px-2 py-1 border-round">Mês Vigente</span>
+                            </div>
+                            <div class="text-900 font-bold text-3xl mb-3 text-teal-700">
+                                <h:outputText value="#{dashBean.receitaMesKpiDTO.receitaTotalMes}">
+                                    <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                </h:outputText>
+                            </div>
+
+                            <div class="surface-100 border-round p-3 mb-3">
+                                <div class="flex justify-content-between mb-2 text-sm">
+                                    <span class="text-700">Rotativo:</span>
+                                    <span class="font-bold">
+                                        <h:outputText value="#{dashBean.receitaMesKpiDTO.receitaRotativo}">
+                                            <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                        </h:outputText>
+                                        <small class="text-500 font-normal ml-1">(#{dashBean.receitaMesKpiDTO.percentualRotativo}%)</small>
+                                    </span>
+                                </div>
+                                <div class="flex justify-content-between text-sm">
+                                    <span class="text-700">Mensalistas:</span>
+                                    <span class="font-bold">
+                                        <h:outputText value="#{dashBean.receitaMesKpiDTO.receitaMensalistas}">
+                                            <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                        </h:outputText>
+                                        <small class="text-500 font-normal ml-1">(#{dashBean.receitaMesKpiDTO.percentualMensalistas}%)</small>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid text-xs text-600 pt-2 border-top-1 surface-border">
+                            <div class="col-6">
+                                <span>Ticket Médio Rotativo:</span><br/>
+                                <strong class="text-900 text-sm">
+                                    <h:outputText value="#{dashBean.receitaMesKpiDTO.ticketMedioRotativo}">
+                                        <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                    </h:outputText>
+                                </strong>
+                            </div>
+                            <div class="col-6">
+                                <span>RevPAS (Receita/Vaga):</span><br/>
+                                <strong class="text-900 text-sm">
+                                    <h:outputText value="#{dashBean.receitaMesKpiDTO.revpas}">
+                                        <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                    </h:outputText>
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD DE CONTRATOS, CARTEIRA E CHURN -->
+                <div class="col-12 lg:col-4">
+                    <div class="surface-card shadow-1 p-4 border-round h-full flex flex-column justify-content-between">
+                        <div>
+                            <div class="flex justify-content-between align-items-center mb-3">
+                                <span class="text-900 font-bold text-lg">Mensalistas &amp; Churn</span>
+                                <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-1 border-round">Contratos</span>
+                            </div>
+                            <div class="flex align-items-baseline gap-2 mb-3">
+                                <span class="text-900 font-bold text-3xl">#{dashBean.contratosKpiDTO.ativos}</span>
+                                <span class="text-600 text-sm">contratos ativos (#{dashBean.contratosKpiDTO.totalCadastrados} no total)</span>
+                            </div>
+
+                            <div class="surface-100 border-round p-3 mb-3">
+                                <div class="flex justify-content-between mb-2 text-sm">
+                                    <span class="text-700">Novos no mês:</span>
+                                    <span class="font-bold text-green-600">+ #{dashBean.churnKpiDTO.novosContratosMes}</span>
+                                </div>
+                                <div class="flex justify-content-between mb-2 text-sm">
+                                    <span class="text-700">Cancelados / Encerrados:</span>
+                                    <span class="font-bold text-red-600">- #{dashBean.churnKpiDTO.contratosPerdidosMes}</span>
+                                </div>
+                                <div class="flex justify-content-between text-sm pt-2 border-top-1 surface-border">
+                                    <span class="text-900 font-semibold">Saldo Líquido do Mês:</span>
+                                    <span class="font-bold #{dashBean.churnKpiDTO.saldoLiquidoMes >= 0 ? 'text-green-700' : 'text-red-700'}">
+                                        #{dashBean.churnKpiDTO.saldoLiquidoMes >= 0 ? '+' : ''}#{dashBean.churnKpiDTO.saldoLiquidoMes}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 border-top-1 surface-border text-xs text-600">
+                            <span>Vagas Comprometidas por Mensalistas:</span>
+                            <span class="font-bold text-900 ml-1">#{dashBean.contratosKpiDTO.percentualVagasComprometidas}%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD DE INADIMPLÊNCIA -->
+                <div class="col-12 lg:col-4">
+                    <div class="surface-card shadow-1 p-4 border-round h-full flex flex-column justify-content-between">
+                        <div>
+                            <div class="flex justify-content-between align-items-center mb-3">
+                                <span class="text-900 font-bold text-lg">Inadimplência</span>
+                                <p:tag severity="#{dashBean.inadimplenciaKpiDTO.parcelasAtrasadas > 0 ? 'warning' : 'success'}"
+                                       value="#{dashBean.inadimplenciaKpiDTO.parcelasAtrasadas > 0 ? 'Atenção' : 'Em Dia'}" />
+                            </div>
+                            <div class="text-900 font-bold text-3xl mb-3 #{dashBean.inadimplenciaKpiDTO.parcelasAtrasadas > 0 ? 'text-orange-600' : 'text-green-600'}">
+                                <h:outputText value="#{dashBean.inadimplenciaKpiDTO.taxaInadimplenciaPercentual}">
+                                    <f:convertNumber pattern="#0.0" />
+                                </h:outputText>%
+                                <span class="text-600 text-xs font-normal ml-1">do faturado</span>
+                            </div>
+
+                            <div class="surface-100 border-round p-3 mb-3">
+                                <div class="flex justify-content-between mb-2 text-sm">
+                                    <span class="text-700">Parcelas em atraso:</span>
+                                    <span class="font-bold text-red-600">#{dashBean.inadimplenciaKpiDTO.parcelasAtrasadas}</span>
+                                </div>
+                                <div class="flex justify-content-between text-sm">
+                                    <span class="text-700">Total em aberto:</span>
+                                    <span class="font-bold text-red-600">
+                                        <h:outputText value="#{dashBean.inadimplenciaKpiDTO.valorInadimplente}">
+                                            <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                        </h:outputText>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 border-top-1 surface-border text-xs text-600">
+                            <span>Atrasos com vencimento até a data de hoje.</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ========================================================================= -->
+            <!-- 3. ALERTAS E EXCEÇÕES OPERACIONAIS (AÇÃO IMEDIATA)                        -->
+            <!-- ========================================================================= -->
+            <div class="grid">
+
+                <!-- TABELA: ESTADIAS EXCESSIVAS (> 24H) -->
+                <div class="col-12 lg:col-6">
+                    <p:panel header="Veículos com Estadia Excessiva (> 24 horas no pátio)"
+                             toggleable="false"
+                             styleClass="shadow-1">
+                        <f:facet name="actions">
+                            <i class="pi pi-exclamation-triangle text-orange-500 mr-2"></i>
+                        </f:facet>
+
+                        <p:dataTable value="#{dashBean.estadiasExcessivas}"
+                                     var="estadia"
+                                     emptyMessage="Nenhum veículo com estadia excessiva no momento."
+                                     styleClass="ui-datatable-sm"
+                                     rows="5"
+                                     responsiveLayout="scroll">
+
+                            <p:column headerText="Placa" width="100">
+                                <b>#{estadia.placa}</b>
+                            </p:column>
+
+                            <p:column headerText="Modelo">
+                                #{estadia.modelo}
+                            </p:column>
+
+                            <p:column headerText="Vaga" width="70">
+                                <p:tag severity="info" value="#{estadia.vagaNome}" />
+                            </p:column>
+
+                            <p:column headerText="Entrada">
+                                #{estadia.dataEntrada}
+                            </p:column>
+
+                            <p:column headerText="Tempo" width="90">
+                                <span class="text-red-600 font-bold">#{estadia.horasEstacionado}h</span>
+                            </p:column>
+
+                            <p:column headerText="Tipo" width="95">
+                                <p:tag severity="#{estadia.isRotativo ? 'warning' : 'success'}"
+                                       value="#{estadia.isRotativo ? 'Rotativo' : 'Mensalista'}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </div>
+
+                <!-- TABELA: PARCELAS A VENCER NOS PRÓXIMOS 7 DIAS -->
+                <div class="col-12 lg:col-6">
+                    <p:panel header="Cobranças / Parcelas a Vencer (Próximos 7 dias)"
+                             toggleable="false"
+                             styleClass="shadow-1">
+                        <f:facet name="actions">
+                            <i class="pi pi-calendar text-blue-500 mr-2"></i>
+                        </f:facet>
+
+                        <p:dataTable value="#{dashBean.parcelasAVencer}"
+                                     var="parcela"
+                                     emptyMessage="Nenhuma parcela com vencimento nos próximos 7 dias."
+                                     styleClass="ui-datatable-sm"
+                                     rows="5"
+                                     responsiveLayout="scroll">
+
+                            <p:column headerText="Cliente">
+                                <b>#{parcela.clienteNome}</b>
+                            </p:column>
+
+                            <p:column headerText="Telefone" width="120">
+                                #{parcela.telefone}
+                            </p:column>
+
+                            <p:column headerText="Parc." width="60">
+                                ##{parcela.numeroParcela}
+                            </p:column>
+
+                            <p:column headerText="Vencimento" width="100">
+                                #{parcela.dataVencimento}
+                            </p:column>
+
+                            <p:column headerText="Valor" width="100">
+                                <h:outputText value="#{parcela.valor}">
+                                    <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </div>
+
+            </div>
+
+        </h:form>
+    </ui:define>
+</ui:composition>

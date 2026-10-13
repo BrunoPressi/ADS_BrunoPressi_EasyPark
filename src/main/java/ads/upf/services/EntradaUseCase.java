@@ -2,13 +2,13 @@ package ads.upf.services;
 
 import ads.upf.model.DTOs.permanencia.EntradaCreateDTO;
 import ads.upf.model.DTOs.permanencia.PermanenciaResponseDTO;
-import ads.upf.model.entities.Funcionario;
 import ads.upf.model.entities.Permanencia;
 import ads.upf.model.entities.Vaga;
 import ads.upf.model.entities.Veiculo;
 import ads.upf.model.enums.PermanenciaStatus;
 import ads.upf.model.mappers.PermanenciaMapper;
 import ads.upf.repositories.PermanenciaRepository;
+import io.quarkus.cache.CacheInvalidateAll;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;

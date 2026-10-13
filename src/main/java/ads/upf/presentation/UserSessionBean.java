@@ -2,8 +2,11 @@ package ads.upf.presentation;
 
 import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+
+import java.io.IOException;
 
 /**
  * Expõe informações do usuário autenticado para as views JSF.
@@ -34,6 +37,9 @@ public class UserSessionBean {
     @Inject
     SecurityIdentity identity;
 
+    @Inject
+    FacesContext facesContext;
+
     public String getUsername() {
         if (identity.isAnonymous()) {
             return "anônimo";
@@ -50,12 +56,27 @@ public class UserSessionBean {
         return !identity.isAnonymous();
     }
 
-
     public boolean isGerente() {
         return identity.hasRole("gerente");
     }
 
     public boolean isAtendente() {
         return identity.hasRole("atendente");
+    }
+
+    public void redirecionar() throws IOException {
+        String outcome = "/pages/gestao/dashboard.xhtml";
+
+        if (identity.hasRole("gerente")) {
+            outcome = "/pages/gestao/dashboard.xhtml";
+        }
+        else if (identity.hasRole("atendente")) {
+            outcome = "/pages/operacao/fluxo.xhtml";
+        }
+
+        // Executa o redirecionamento no FacesContext
+        facesContext.getExternalContext().redirect(
+                facesContext.getExternalContext().getRequestContextPath() + outcome + "?faces-redirect=true"
+        );
     }
 }

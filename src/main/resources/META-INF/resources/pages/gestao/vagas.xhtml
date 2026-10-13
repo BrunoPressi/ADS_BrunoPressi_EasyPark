@@ -88,7 +88,7 @@
                     <p:commandButton oncomplete="PF('dialogVaga').show()"
                                      actionListener="#{vagaBean.selecionarVaga(vaga)}"
                                      update="@form :dialogVaga"
-                                     process="@form"
+                                     resetValues="true"
                                      value="Editar"
                                      icon="pi pi-pencil" styleClass="rounded-button ui-button-help">
                     </p:commandButton>

@@ -1,6 +1,5 @@
 package ads.upf.repositories;
 
-import ads.upf.model.DTOs.permanencia.PermanenciaResponseDTO;
 import ads.upf.model.entities.Permanencia;
 import ads.upf.model.enums.PermanenciaStatus;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;

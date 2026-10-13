@@ -43,7 +43,7 @@
 
     <!-- Define a página inicial -->
     <welcome-file-list>
-        <welcome-file>vagasxhtml</welcome-file>
+        <welcome-file>dashboard.xhtml</welcome-file>
     </welcome-file-list>
 
     <!-- Configuração de timeout de sessão -->

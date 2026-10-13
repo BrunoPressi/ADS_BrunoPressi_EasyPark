@@ -5,11 +5,10 @@ import ads.upf.model.DTOs.permanencia.PermanenciaResponseDTO;
 import ads.upf.model.DTOs.permanencia.SaidaCreateDTO;
 import ads.upf.model.entities.Pagamento;
 import ads.upf.model.entities.Permanencia;
-import ads.upf.model.enums.PagamentoStatus;
 import ads.upf.model.enums.PermanenciaStatus;
 import ads.upf.model.mappers.PermanenciaMapper;
 import ads.upf.repositories.PermanenciaRepository;
-import io.quarkus.logging.Log;
+import io.quarkus.cache.CacheInvalidateAll;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -42,8 +41,10 @@ public class SaidaUseCase {
                         () -> new EntityNotFoundException("Permanência não encontrada.")
                 );
 
-        // Só gera pagamento quando for rotativo
-        if (saida.getValor() != null || saida.getMeioPagamento() != null) {
+        if (permanencia.getIsRotativo()) {
+            if (saida.getValor() == null || saida.getMeioPagamento() == null) {
+                throw new IllegalStateException("Veículo rotativo exige valor e meio de pagamento.");
+            }
             Pagamento pagamento = pagamentoService.gerarPagamento(saida.getValor(), saida.getMeioPagamento());
             permanencia.setPagamento(pagamento);
             pagamento.setPermanencia(permanencia);

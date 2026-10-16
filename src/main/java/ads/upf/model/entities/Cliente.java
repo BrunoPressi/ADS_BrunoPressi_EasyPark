@@ -19,6 +19,9 @@ import java.util.List;
 @AllArgsConstructor @NoArgsConstructor
 public class Cliente extends Usuario {
 
+    @Column(unique = true)
+    private String asaasCustomerId;
+
     @Convert(converter = StringCryptoConverter.class)
     @Column(nullable = false)
     private String cpf;

@@ -39,5 +39,4 @@ public class PermanenciaService {
                 .map(PermanenciaMapper.INSTANCE::toPermanenciaDto)
                 .orElse(null);
     }
-
 }

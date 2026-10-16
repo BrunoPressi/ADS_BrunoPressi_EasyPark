@@ -19,6 +19,12 @@ public class Parcela extends Auditado {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
+    private String asaasPaymentId;
+
+    @Column
+    private String invoiceUrl;
+
     @Column(nullable = false)
     private LocalDate dataVencimento;
 
@@ -47,9 +53,6 @@ public class Parcela extends Auditado {
     @Override
     protected void prePersist() {
         this.valor = BigDecimal.valueOf(180.00);
-        this.dataPagamento = null;
-        this.meioPagamento = null;
-        this.cobrancaEnviada = false;
     }
 
 }

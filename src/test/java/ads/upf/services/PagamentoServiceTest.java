@@ -178,7 +178,7 @@ class PagamentoServiceTest {
 
             Pagamento pagamento = pagamentoService.gerarPagamento(
                     BigDecimal.valueOf(190.00),
-                    PagamentoMeio.cartao);
+                    PagamentoMeio.CREDIT_CARD);
 
             assertThat(pagamento).isNotNull();
             assertThat(pagamento.getValor()).isEqualByComparingTo("190.00");

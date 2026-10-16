@@ -19,9 +19,8 @@ public class PermanenciaRepository implements PanacheRepository<Permanencia> {
     public List<Permanencia> listarPaginado(int first, int pageSize) {
         return find(
                 "select p from Permanencia p join fetch p.veiculo join fetch p.vaga",
-                Sort.descending("dataEntrada"))
+                Sort.descending("p.status", "dataEntrada"))
                 .range(first, first + pageSize - 1)
                 .list();
     }
-
 }

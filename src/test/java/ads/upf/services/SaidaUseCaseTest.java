@@ -48,7 +48,7 @@ class SaidaUseCaseTest {
         SaidaCreateDTO saida = new SaidaCreateDTO();
         saida.setPlaca("ABC1D23");
         saida.setValor(BigDecimal.valueOf(70.00));
-        saida.setMeioPagamento(PagamentoMeio.dinheiro);
+        saida.setMeioPagamento(PagamentoMeio.DINHEIRO);
 
         Vaga vaga = new Vaga();
         vaga.setId(10L);
@@ -68,7 +68,7 @@ class SaidaUseCaseTest {
         permanencia.setPagamento(pagamento);
 
         when(permanenciaRepository.verificarVeiculoEstacionado(saida.getPlaca())).thenReturn(Optional.of(permanencia));
-        when(pagamentoService.gerarPagamento(BigDecimal.valueOf(70.00), PagamentoMeio.dinheiro))
+        when(pagamentoService.gerarPagamento(BigDecimal.valueOf(70.00), PagamentoMeio.DINHEIRO))
                 .thenReturn(pagamento);
 
         PermanenciaResponseDTO resultado = saidaUseCase.novaSaida(saida);

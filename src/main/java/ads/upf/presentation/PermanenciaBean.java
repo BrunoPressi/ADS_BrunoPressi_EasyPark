@@ -17,10 +17,12 @@ import jakarta.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.SortMeta;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static jakarta.faces.application.FacesMessage.SEVERITY_ERROR;
 
@@ -48,6 +50,8 @@ public class PermanenciaBean implements Serializable {
     private EntradaCreateDTO entrada;
     private SaidaCreateDTO saida;
     private String chaveUnicaFiltro;
+
+    private List<SortMeta> sortBy;
 
     @PostConstruct
     protected void postConstruct() {

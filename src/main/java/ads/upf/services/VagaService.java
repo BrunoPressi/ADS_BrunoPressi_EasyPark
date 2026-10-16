@@ -9,7 +9,6 @@ import ads.upf.model.enums.VagaStatus;
 import ads.upf.model.enums.VagaTipo;
 import ads.upf.model.mappers.VagaMapper;
 import ads.upf.repositories.VagaRepository;
-import io.quarkus.cache.CacheInvalidateAll;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

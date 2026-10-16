@@ -20,7 +20,6 @@
         <quarkus.platform.version>3.39.1</quarkus.platform.version>
         <skipITs>true</skipITs>
         <surefire-plugin.version>3.5.6</surefire-plugin.version>
-        <argLine></argLine>
     </properties>
 
     <dependencyManagement>
@@ -114,7 +113,22 @@
             <version>${org.mapstruct.version}</version>
         </dependency>
 
+        <!-- Camada REST -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-jackson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-client-jackson</artifactId>
+        </dependency>
+
         <!-- Testes -->
+        <dependency>
+            <groupId>io.quarkiverse.ngrok</groupId>
+            <artifactId>quarkus-ngrok</artifactId>
+            <version>1.8.0</version>
+        </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit</artifactId>

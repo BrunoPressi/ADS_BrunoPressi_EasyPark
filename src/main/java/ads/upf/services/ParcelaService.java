@@ -1,19 +1,17 @@
 package ads.upf.services;
 
+import ads.upf.exceptions.EntityNotFoundException;
+import ads.upf.integration.asaas.DTOs.AsaasWebhookEvent;
 import ads.upf.model.entities.Parcela;
+import ads.upf.model.enums.ParcelaMeiosPagamento;
 import ads.upf.model.enums.ParcelaStatus;
 import ads.upf.repositories.ParcelaRepository;
-import io.quarkus.logging.Log;
-import io.quarkus.runtime.StartupEvent;
-import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -63,53 +61,6 @@ public class ParcelaService {
         return parcelas;
     }
 
-    /**
-     * Executa todos os dias às 01:00 da manhã.
-     * Atualização atômica (Bulk Update) em banco, evitando N+1 e estouro de memória.
-     */
-    @Scheduled(cron = "0 0 1 * * ?")
-    @Transactional
-    public void processarParcelasVencidas() {
-        Log.info("Iniciando rotina agendada de atualização de parcelas vencidas...");
-
-        int totalAtualizadas = parcelaRepository.update(
-                "status = ?1, atualizadoEm = ?2 where status = ?3 and dataVencimento < ?4 and dataPagamento is null",
-                ParcelaStatus.atrasada,
-                LocalDateTime.now(),
-                ParcelaStatus.pendente,
-                LocalDate.now()
-        );
-
-        Log.infof("Rotina concluída: %d parcela(s) marcada(s) como atrasada(s).", totalAtualizadas);
-    }
-
-    /**
-     * Método auxiliar para usar na classe de testes unitários ParcelaServiceTest
-     * Classes anotadas com @Scheduled devem retornar void
-     */
-    public int processarParcelasVencidasTest() {
-        Log.info("Iniciando rotina agendada de atualização de parcelas vencidas...");
-
-        int totalAtualizadas = parcelaRepository.update(
-                "status = ?1, atualizadoEm = ?2 where status = ?3 and dataVencimento < ?4 and dataPagamento is null",
-                ParcelaStatus.atrasada,
-                LocalDateTime.now(),
-                ParcelaStatus.pendente,
-                LocalDate.now()
-        );
-
-        Log.infof("Rotina concluída: %d parcela(s) marcada(s) como atrasada(s).", totalAtualizadas);
-        return totalAtualizadas;
-    }
-
-    /**
-     * Sincroniza parcelas no startup da aplicação caso o servidor estivesse desligado no horário do cron.
-     */
-    void onStart(@Observes StartupEvent ev) {
-        Log.info("Startup da aplicação: verificando parcelas vencidas pendentes...");
-        processarParcelasVencidas();
-    }
-
     private int calcularTotalMeses(LocalDate dataInicio, LocalDate dataTermino) {
         YearMonth inicio = YearMonth.from(dataInicio);
         YearMonth termino = YearMonth.from(dataTermino);
@@ -118,5 +69,37 @@ public class ParcelaService {
         long diferencaCompetencias = ChronoUnit.MONTHS.between(inicio, termino);
 
         return (int) Math.max(diferencaCompetencias, 1);
+    }
+
+    @Transactional
+    public void marcarComoPago(AsaasWebhookEvent.Payment payment) {
+        Parcela p = parcelaRepository.findByAsaasPaymentId(payment.id())
+                .firstResultOptional()
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Parcela não encontrada")
+                );
+
+        if (p.getStatus().equals(ParcelaStatus.paga)) return;
+
+        p.setStatus(ParcelaStatus.paga);
+        p.setDataPagamento(payment.paymentDate());
+        p.setMeioPagamento(ParcelaMeiosPagamento.valueOf(payment.billingType()));
+    }
+
+    @Transactional
+    public void marcarComoAtrasada(String asaasPaymentId) {
+        Parcela p = parcelaRepository.findByAsaasPaymentId(asaasPaymentId)
+                .firstResultOptional()
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Parcela não encontrada")
+                );
+
+        if (p.getStatus().equals(ParcelaStatus.paga)) return;
+
+        p.setStatus(ParcelaStatus.atrasada);
+    }
+
+    public List<Parcela> buscarComVencimentoEm7Dias() {
+        return parcelaRepository.buscarComVencimentoEm7Dias();
     }
 }

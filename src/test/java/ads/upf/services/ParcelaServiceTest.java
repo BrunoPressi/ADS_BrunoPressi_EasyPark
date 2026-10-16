@@ -18,10 +18,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ParcelaService - Suíte de Testes Unitários")
@@ -95,38 +91,4 @@ public class ParcelaServiceTest {
             assertThat(parcelas.get(2).getDataVencimento()).isEqualTo(LocalDate.of(2026, 4, 10));
         }
     }
-
-    @Nested
-    @DisplayName("Processamento Agendado de Parcelas Vencidas")
-    class ProcessamentoVencidasTests {
-
-        @Test
-        @DisplayName("Deve invocar o update em lote atômico no repositório e retornar o total afetado")
-        void deveExecutarBulkUpdateComSucesso() {
-            when(parcelaRepository.update(any(), any(), any(), any(), any())).thenReturn(7);
-
-            int totalAtualizadas = parcelaService.processarParcelasVencidasTest();
-
-            assertThat(totalAtualizadas).isEqualTo(7);
-
-            verify(parcelaRepository).update(
-                    any(),
-                    eq(ParcelaStatus.atrasada),
-                    any(),
-                    eq(ParcelaStatus.pendente),
-                    eq(LocalDate.now())
-            );
-        }
-
-        @Test
-        @DisplayName("Deve retornar 0 quando não existirem parcelas vencidas a atualizar")
-        void deveRetornarZeroQuandoNaoHouverParcelasVencidas() {
-            when(parcelaRepository.update(any(), any(), any(), any(), any())).thenReturn(0);
-
-            int totalAtualizadas = parcelaService.processarParcelasVencidasTest();
-
-            assertThat(totalAtualizadas).isZero();
-        }
-    }
-
 }

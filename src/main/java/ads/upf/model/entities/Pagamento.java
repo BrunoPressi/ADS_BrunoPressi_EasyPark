@@ -19,6 +19,12 @@ public class Pagamento extends Auditado {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
+    private String asaasPaymentId;
+
+    @Column
+    private String invoiceUrl;
+
     @Column(nullable = false)
     private BigDecimal valor;
 

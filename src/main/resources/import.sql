@@ -25,22 +25,22 @@ INSERT INTO funcionarios (usuarioId, senha, role)
 VALUES (9998,'$2a$12$dT/KMvGXDfgag7CvOjDcme/hXA6LrZtGBml0IBLVa3UKyBJ9Sb7NK', 'atendente');
 
 -- =========================================================================
--- Cliente 1: Carlos Eduardo Silva (CPF original: 123.456.789-09)
+-- Cliente 1: Carlos Eduardo Silva (CPF original: 179.253.352-70)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
 VALUES (9995, 'Carlos Eduardo Silva', 'carlos.silva@email.com', '54991234567');
 
 INSERT INTO clientes (usuarioId, cpf, cpfHash, role)
-VALUES (9995, 'pj+YtG62ko/P9bTBkTU7GxLMl7LUsIDMkB4mXF8Ct68weN+hB7B+5vKj', 'Fl20s0l3r42YaMwRs9PiijIGvVp+vZOzBJPRMl5/lsw=', 'cliente');
+VALUES (9995, 'mO2A9htsuP4y/tte3q9L0gGQePoh22ZaurRearkl+jAyYqbGXfgp', 'anjl8Q0juNi/3emb2WIgCXLJcbjYuNcO+i3otvPoPN0=', 'cliente');
 
 -- =========================================================================
--- Cliente 2: Mariana Souza Lima (CPF original: 987.654.321-00)
+-- Cliente 2: Mariana Souza Lima (CPF original: 179.364.218-40)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
 VALUES (9996, 'Mariana Souza Lima', 'mariana.lima@email.com', '54998765432');
 
 INSERT INTO clientes (usuarioId, cpf, cpfHash, role)
-VALUES (9996, 'D1D5mAQ7qS0xO+pW4M9j2cErumN5k5ScNOGBKtRkGMUUgtubUQvFhT5+', 'J1okrJglqlleHhvBxJWpKNFN7ZmqtC7dsfwQY8SErvU=', 'cliente');
+VALUES (9996, 'WaniAjOHXsOSQ4DkRfgCSdqgMHV5abSl8nQf2IWCdJSWFEYXVr4Y', 'O/yb7WuWUaMqxVFLh8HhJRnT15zVlSxZRK2RJrlk22E=', 'cliente');
 
 -- -----------------------------------------------------------------------------
 -- 1. VAGAS (Capacidade total: 25 vagas diversificadas)
@@ -80,76 +80,76 @@ ON CONFLICT (id) DO UPDATE SET
 -- =============================================================================
 
 -- =========================================================================
--- Cliente 201: Ana Clara Vasconcelos (CPF original: 111.222.333-44)
+-- Cliente 201: Ana Clara Vasconcelos (CPF original: 101.900.560-29)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
-VALUES (201, 'Ana Clara Vasconcelos', 'ana.vasconcelos@email.com', '54981112233');
+VALUES (201, 'Ana Clara Vasconcelos', 'ana.vasconcelos@email.com', '54996322831');
 
 INSERT INTO clientes (usuarioId, cpf, cpfHash, role)
-VALUES (201, 'Xj38fS77zb3qUq4vLcvobnNGDenZSLDWq84/Rrz3JekHtz2d4zJmUN6G', 'uhMNFMEEtYI7c6gv9FHn8nS8bMsfHoWOOlMbIAS6vsA=', 'cliente');
+VALUES (201, 'LdAqVux+S311UC8DEcUsTaRlZ2ppEsG5eJtbaE/QHOUavEk08yoP', 'v2w5ZnoP4Cs0mu4heQMlz0sdtr0V5j6jsFQ7G1Nb8+E=', 'cliente');
 
 -- =========================================================================
--- Cliente 202: Bruno Henrique Silveira (CPF original: 222.333.444-55)
+-- Cliente 202: Bruno Henrique Silveira (CPF original: 102.011.426-60)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
 VALUES (202, 'Bruno Henrique Silveira', 'bruno.silveira@email.com', '54982223344');
 
 INSERT INTO clientes (usuarioId, cpf, cpfHash, role)
-VALUES (202, 'd2ekuMPmOpK+A70vVItMNdO13FC845bz8LjF3vOYLLFkqt5SFi+n4GZR', 'q+5X83PPMDZ0zaUTaQ/WL+n1+B/lwfonXU7JSX87kwY=', 'cliente');
+VALUES (202, 'mhCM5sVyfOhPwBtQlZnrUp4inadv7M0FyJp05retI1ziaankkpot', 'g6j9vI8nUbODOV1cJy7kwVIo6BftqtmdLe3PWW1pIyI=', 'cliente');
 
 -- =========================================================================
--- Cliente 203: Camila Rodrigues Duarte (CPF original: 333.444.555-66)
+-- Cliente 203: Camila Rodrigues Duarte (CPF original: 102.122.292-57)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
 VALUES (203, 'Camila Rodrigues Duarte', 'camila.duarte@email.com', '54983334455');
 
 INSERT INTO clientes (usuarioId, cpf, cpfHash, role)
-VALUES (203, 'hLRXkJqMgJNOGPoHSz4JMzlFEEQHDArZsP9DdblDOJkb7BjM6D03Hrml', 'n5mzcHmj86Q9ZhIYGdsn2Vwy0P9nN0WAm+o/3MAuBOg=', 'cliente');
+VALUES (203, 'YkDqhQvPBfYmIguuEGkxyROki2iSoN3wt5TKJmYBUdE9Iw84WUmF', 'kduR264XguGWHVZPhSIpaQQMYDM1NGXZnQOcePTeQ+w=', 'cliente');
 
 -- =========================================================================
--- Cliente 204: Diego Fernandes Costa (CPF original: 444.555.666-77)
+-- Cliente 204: Diego Fernandes Costa (CPF original: 102.233.158-26)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
 VALUES (204, 'Diego Fernandes Costa', 'diego.costa@email.com', '54984445566');
 
 INSERT INTO clientes (usuarioId, cpf, cpfHash, role)
-VALUES (204, 'SlNhdC8tcEuNZoZxSjjE070AGzn+WOzxP4VLezUP2aBC5O1wMIZtMgTr', 'nDT8yFa/3Qq+6ROSFS482apMZG+1SVywk86VGCVcIWk=', 'cliente');
+VALUES (204, 'Xpe9gQ/4uIAqW+01egtXGyMYWfimUj5rJDKRx6GlnMgUjon8j0cK', 'L/a6cxVykTHD0LEnrbZdOnrw2rSBLVF+Aqghc1gsc4U=', 'cliente');
 
 -- =========================================================================
--- Cliente 205: Eduarda Martins Rios (CPF original: 555.666.777-88)
+-- Cliente 205: Eduarda Martins Rios (CPF original: 102.344.024-58)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
 VALUES (205, 'Eduarda Martins Rios', 'eduarda.rios@email.com', '54985556677');
 
 INSERT INTO clientes (usuarioId, cpf, cpfHash, role)
-VALUES (205, 'syb5Q8/7MW6IacBWrWl+yUlTiVrGVyxDOgrjmXxAnyNh7CZ37/5Af2+F', 'O3QSO0RnONjei6CXXqKWPYD5gpo0slZAZniPEJGrkhs=', 'cliente');
+VALUES (205, 'Uj1xJu9iPJXxZpETJAlf25w8I13dMh+UFgmP+XtngLLV8EII1mT9', 'qrE1i/VFJSxyy1A8rDq9Xxcty7YINHgC3dMVgTIbois=', 'cliente');
 
 -- =========================================================================
--- Cliente 206: Fabio Junior de Castro (CPF original: 666.777.888-99)
+-- Cliente 206: Fabio Junior de Castro (CPF original: 102.454.890-29)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
 VALUES (206, 'Fabio Junior de Castro', 'fabio.castro@email.com', '54986667788');
 
 INSERT INTO clientes (usuarioId, cpf, cpfHash, role)
-VALUES (206, 'ljeoA4ABr9EfIjBPy2+b+AgU+5OEa2F03LPVhJJQ1OKmLHnG4WlpYofP', '1Fd9esX4eewrAki4/4LdfCHXbnZOVTqlgCtKGtcQrkA=', 'cliente');
+VALUES (206, 'jj+pzvsS5w03r7Lu0ZtsiLif2I7/JX2dNuZ/HtejELFcq4K/+v62', 'Aga6my9argdIIvO18uIbuPCpVxsdZeeOFF5Q92vG9Kw=', 'cliente');
 
 -- =========================================================================
--- Cliente 207: Gabriela Meireles Santos (CPF original: 777.888.999-00)
+-- Cliente 207: Gabriela Meireles Santos (CPF original: 102.565.756-06)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
 VALUES (207, 'Gabriela Meireles Santos', 'gabriela.santos@email.com', '54987778899');
 
 INSERT INTO clientes (usuarioId, cpf, cpfHash, role)
-VALUES (207, 'RRJjcvYig39nQszFcit0QpIshDKCqvfnG6ICB94s2B8+jITwPWSDbFwv', 'E7hBdsM/x7cuifKsc9EAXZ6E7laHR0gx9IJCjwxidpc=', 'cliente');
+VALUES (207, 'gXuGmXfW8YxzKRAHax34vZBThsGL6c/q3YShjiFUh08z/kJcwpxP', 'cSqAoJOc1o1TglFp7Nl6Yl0iWjbDXMsV1aZLwTJrkrI=', 'cliente');
 
 -- =========================================================================
--- Cliente 208: Helio Ferreira Lima (CPF original: 888.999.000-11)
+-- Cliente 208: Helio Ferreira Lima (CPF original: 102.676.622-20)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
 VALUES (208, 'Helio Ferreira Lima', 'helio.lima@email.com', '54988889900');
 
 INSERT INTO clientes (usuarioId, cpf, cpfHash, role)
-VALUES (208, 'DVaQzHNjLlQ9WUt78S2S+ogO6DOiXWbP/6WZF1nOz50odjyQe49HzR04', 'riXDZy3TbBtEqwZCFIkjYLfNTvwFH/tw49KxbQD9IJA=', 'cliente');
+VALUES (208, 'c29HANDGRUPJBJWuWD2GOtRckaH6aTdgfrPCssHHQJZDeBzRBMZb', 'uEZgW9sBjpvjU1UGxlSDIJI5r6aocAcQ3Vf+/J/v6R8=', 'cliente');
 
 -- -----------------------------------------------------------------------------
 -- 3. VEÍCULOS (Mensalistas e Rotativos)
@@ -181,63 +181,75 @@ ON CONFLICT (id) DO NOTHING;
 -- 4. CONTRATOS (Cenários para Churn, Novos Contratos e Inadimplência)
 -- -----------------------------------------------------------------------------
 INSERT INTO contratos (id, datainicio, datatermino, valorcontratado, contratotipo, status, cliente_id, veiculo_id, criado_em, criado_por) VALUES
-    -- Contratos Ativos de longa data (iniciados há 4 meses)
-    (401, CURRENT_DATE - INTERVAL '120 days', CURRENT_DATE + INTERVAL '245 days', 180.00, 'mensal', 'ativo',        201, 301, CURRENT_TIMESTAMP - INTERVAL '120 days', 'seed'),
-    (402, CURRENT_DATE - INTERVAL '90 days',  CURRENT_DATE + INTERVAL '275 days', 180.00, 'mensal', 'ativo',        202, 302, CURRENT_TIMESTAMP - INTERVAL '90 days',  'seed'),
-    
-    -- Novos Contratos adquiridos no mês anterior (iniciados há ~35 dias)
-    (403, CURRENT_DATE - INTERVAL '35 days',  CURRENT_DATE + INTERVAL '330 days', 180.00, 'mensal', 'ativo',        203, 303, CURRENT_TIMESTAMP - INTERVAL '35 days',  'seed'),
-    (404, CURRENT_DATE - INTERVAL '30 days',  CURRENT_DATE + INTERVAL '335 days', 180.00, 'mensal', 'inadimplente', 204, 304, CURRENT_TIMESTAMP - INTERVAL '30 days',  'seed'),
-    
-    -- Novos Contratos adquiridos no mês corrente (iniciados nos últimos 15 dias)
-    (405, CURRENT_DATE - INTERVAL '10 days',  CURRENT_DATE + INTERVAL '355 days', 180.00, 'mensal', 'ativo',        205, 305, CURRENT_TIMESTAMP - INTERVAL '10 days',  'seed'),
-    (406, CURRENT_DATE - INTERVAL '5 days',   CURRENT_DATE + INTERVAL '360 days', 180.00, 'mensal', 'ativo',        206, 306, CURRENT_TIMESTAMP - INTERVAL '5 days',   'seed'),
-    
-    -- Contrato Cancelado no mês corrente (Churn deste mês)
+    -- As datas de inicio sao calculadas para que uma parcela de cada contrato (401 a 405) venca em
+    -- exatamente 7 dias (CURRENT_DATE + 7), a janela usada pelo CobrancaService para cobrar no Asaas.
+    -- Contrato 401: inicio ha ~4 meses (parcela 4 vence em 7 dias)
+    (401, (CURRENT_DATE + INTERVAL '7 days' - INTERVAL '4 months')::date, (CURRENT_DATE + INTERVAL '7 days' - INTERVAL '4 months' + INTERVAL '12 months')::date, 180.00, 'mensal', 'ativo',        201, 301, CURRENT_TIMESTAMP - INTERVAL '120 days', 'seed'),
+    -- Contrato 402: inicio ha ~3 meses (parcela 3 vence em 7 dias)
+    (402, (CURRENT_DATE + INTERVAL '7 days' - INTERVAL '3 months')::date, (CURRENT_DATE + INTERVAL '7 days' - INTERVAL '3 months' + INTERVAL '12 months')::date, 180.00, 'mensal', 'ativo',        202, 302, CURRENT_TIMESTAMP - INTERVAL '90 days',  'seed'),
+
+    -- Novos Contratos adquiridos no mes anterior (parcela 2 vence em 7 dias)
+    (403, (CURRENT_DATE + INTERVAL '7 days' - INTERVAL '2 months')::date, (CURRENT_DATE + INTERVAL '7 days' - INTERVAL '2 months' + INTERVAL '12 months')::date, 180.00, 'mensal', 'ativo',        203, 303, CURRENT_TIMESTAMP - INTERVAL '53 days',  'seed'),
+    -- Contrato 404 inadimplente: parcela 1 vencida e nao paga (atrasada), parcela 2 vence em 7 dias
+    (404, (CURRENT_DATE + INTERVAL '7 days' - INTERVAL '2 months')::date, (CURRENT_DATE + INTERVAL '7 days' - INTERVAL '2 months' + INTERVAL '12 months')::date, 180.00, 'mensal', 'inadimplente', 204, 304, CURRENT_TIMESTAMP - INTERVAL '53 days',  'seed'),
+
+    -- Novos Contratos adquiridos no mes corrente
+    -- Contrato 405: parcela 1 vence em 7 dias
+    (405, (CURRENT_DATE + INTERVAL '7 days' - INTERVAL '1 month')::date,  (CURRENT_DATE + INTERVAL '7 days' - INTERVAL '1 month' + INTERVAL '12 months')::date,  180.00, 'mensal', 'ativo',        205, 305, CURRENT_TIMESTAMP - INTERVAL '23 days',  'seed'),
+    -- Contrato 406 (controle): parcela 1 vence em ~25 dias, nao deve ser cobrada ainda
+    (406, CURRENT_DATE - INTERVAL '5 days',   (CURRENT_DATE - INTERVAL '5 days' + INTERVAL '12 months')::date, 180.00, 'mensal', 'ativo',        206, 306, CURRENT_TIMESTAMP - INTERVAL '5 days',   'seed'),
+
+    -- Contrato Cancelado no mes corrente (Churn deste mes)
     (407, CURRENT_DATE - INTERVAL '60 days',  CURRENT_DATE - INTERVAL '10 days',  180.00, 'mensal', 'cancelado',    207, 307, CURRENT_TIMESTAMP - INTERVAL '60 days',  'seed'),
-    
-    -- Contrato Encerrado / Não Renovado no mês anterior (Churn mês passado)
+
+    -- Contrato Encerrado / Nao Renovado no mes anterior (Churn mes passado)
     (408, CURRENT_DATE - INTERVAL '180 days', CURRENT_DATE - INTERVAL '25 days',  180.00, 'mensal', 'encerrado',     208, 308, CURRENT_TIMESTAMP - INTERVAL '180 days', 'seed')
 ON CONFLICT (id) DO NOTHING;
 
 -- -----------------------------------------------------------------------------
--- 5. PARCELAS DE CONTRATOS (Para KPIs Financeiros e Inadimplência)
+-- 5. PARCELAS DE CONTRATOS (Para KPIs Financeiros, Inadimplencia e teste do Asaas)
+-- Gera 1 parcela por mes (12 por contrato) para os contratos 401 a 406, seguindo o
+-- ParcelaService.gerarParcelas (vencimento = datainicio + N meses). Regras de status:
+--   * vencida e contrato nao inadimplente  -> 'paga' (cobrancaenviada = true)
+--   * vencida do contrato 404 (1a parcela) -> 'atrasada'
+--   * demais                               -> 'pendente' (cobrancaenviada = false, sem asaasPaymentId)
+-- TESTE ASAAS: as parcelas que vencem em exatamente 7 dias (401/4, 402/3, 403/2, 404/2 e 405/1)
+-- sao selecionadas pelo CobrancaService (startup + cron 02:00), que cria cobranca no sandbox
+-- (gera asaasPaymentId e invoiceUrl). Os clientes nao possuem asaasCustomerId: ele sera criado
+-- no Asaas na primeira cobranca. As demais parcelas pendentes sao controle (nao devem ser cobradas).
+-- IDs das parcelas: contrato_id * 100 + numeroparcela (ex.: 40104)
 -- -----------------------------------------------------------------------------
+INSERT INTO parcelas (id, contrato_id, numeroparcela, datavencimento, datapagamento, valor, meiopagamento, status, cobrancaenviada, criado_em, criado_por)
+SELECT
+    c.id * 100 + g.n,
+    c.id,
+    g.n,
+    (c.datainicio + make_interval(months => g.n))::date,
+    CASE WHEN (c.datainicio + make_interval(months => g.n))::date < CURRENT_DATE AND c.id <> 404
+         THEN (c.datainicio + make_interval(months => g.n))::date END,
+    180.00,
+    CASE WHEN (c.datainicio + make_interval(months => g.n))::date < CURRENT_DATE AND c.id <> 404
+         THEN (ARRAY['PIX','CREDIT_CARD','DEBIT_CARD'])[1 + (g.n % 3)] END,
+    CASE WHEN (c.datainicio + make_interval(months => g.n))::date >= CURRENT_DATE THEN 'pendente'
+         WHEN c.id = 404 THEN 'atrasada'
+         ELSE 'paga' END,
+    (c.datainicio + make_interval(months => g.n))::date < CURRENT_DATE AND c.id <> 404,
+    CURRENT_TIMESTAMP,
+    'seed'
+FROM contratos c
+CROSS JOIN generate_series(1, 12) AS g(n)
+WHERE c.id BETWEEN 401 AND 406
+ON CONFLICT (id) DO NOTHING;
+
 INSERT INTO parcelas (id, contrato_id, numeroparcela, datavencimento, datapagamento, valor, meiopagamento, status, cobrancaenviada, criado_em, criado_por) VALUES
-    -- Contrato 401 (Cliente 201 - Totalmente em dia)
-    (501, 401, 1, CURRENT_DATE - INTERVAL '90 days', CURRENT_DATE - INTERVAL '92 days', 180.00, 'pix',    'paga',     true, CURRENT_TIMESTAMP, 'seed'),
-    (502, 401, 2, CURRENT_DATE - INTERVAL '60 days', CURRENT_DATE - INTERVAL '60 days', 180.00, 'cartão', 'paga',     true, CURRENT_TIMESTAMP, 'seed'),
-    (503, 401, 3, CURRENT_DATE - INTERVAL '30 days', CURRENT_DATE - INTERVAL '31 days', 180.00, 'pix',    'paga',     true, CURRENT_TIMESTAMP, 'seed'),
-    (504, 401, 4, CURRENT_DATE + INTERVAL '10 days', NULL,                              180.00, NULL,     'pendente', true, CURRENT_TIMESTAMP, 'seed'),
-    (505, 401, 5, CURRENT_DATE + INTERVAL '40 days', NULL,                              180.00, NULL,     'pendente', false,CURRENT_TIMESTAMP, 'seed'),
-
-    -- Contrato 402 (Cliente 202 - Em dia)
-    (506, 402, 1, CURRENT_DATE - INTERVAL '60 days', CURRENT_DATE - INTERVAL '58 days', 180.00, 'pix',    'paga',     true, CURRENT_TIMESTAMP, 'seed'),
-    (507, 402, 2, CURRENT_DATE - INTERVAL '30 days', CURRENT_DATE - INTERVAL '29 days', 180.00, 'cartão', 'paga',     true, CURRENT_TIMESTAMP, 'seed'),
-    (508, 402, 3, CURRENT_DATE + INTERVAL '5 days',  NULL,                              180.00, NULL,     'pendente', true, CURRENT_TIMESTAMP, 'seed'),
-
-    -- Contrato 403 (Cliente 203 - Novo do mês passado, 1ª paga, 2ª pendente)
-    (509, 403, 1, CURRENT_DATE - INTERVAL '25 days', CURRENT_DATE - INTERVAL '25 days', 180.00, 'pix',    'paga',     true, CURRENT_TIMESTAMP, 'seed'),
-    (510, 403, 2, CURRENT_DATE + INTERVAL '5 days',  NULL,                              180.00, NULL,     'pendente', true, CURRENT_TIMESTAMP, 'seed'),
-
-    -- Contrato 404 (Cliente 204 - Inadimplente: parcela vencida não paga)
-    (511, 404, 1, CURRENT_DATE - INTERVAL '20 days', NULL,                              180.00, NULL,     'atrasada', true, CURRENT_TIMESTAMP, 'seed'),
-    (512, 404, 2, CURRENT_DATE + INTERVAL '10 days', NULL,                              180.00, NULL,     'pendente', false,CURRENT_TIMESTAMP, 'seed'),
-
-    -- Contrato 405 (Cliente 205 - Novo do mês atual)
-    (513, 405, 1, CURRENT_DATE + INTERVAL '20 days', NULL,                              180.00, NULL,     'pendente', true, CURRENT_TIMESTAMP, 'seed'),
-
-    -- Contrato 406 (Cliente 206 - Novo do mês atual)
-    (514, 406, 1, CURRENT_DATE + INTERVAL '25 days', NULL,                              180.00, NULL,     'pendente', true, CURRENT_TIMESTAMP, 'seed'),
-
     -- Contrato 407 (Cliente 207 - Cancelado com 1 paga)
-    (515, 407, 1, CURRENT_DATE - INTERVAL '50 days', CURRENT_DATE - INTERVAL '49 days', 180.00, 'cartão', 'paga',     true, CURRENT_TIMESTAMP, 'seed'),
+    (515, 407, 1, CURRENT_DATE - INTERVAL '50 days', CURRENT_DATE - INTERVAL '49 days', 180.00, 'DEBIT_CARD', 'paga',     true, CURRENT_TIMESTAMP, 'seed'),
 
-    -- Contrato 408 (Cliente 208 - Encerrado / Histórico)
-    (516, 408, 1, CURRENT_DATE - INTERVAL '150 days', CURRENT_DATE - INTERVAL '150 days', 180.00, 'pix',  'paga',     true, CURRENT_TIMESTAMP, 'seed'),
-    (517, 408, 2, CURRENT_DATE - INTERVAL '120 days', CURRENT_DATE - INTERVAL '119 days', 180.00, 'pix',  'paga',     true, CURRENT_TIMESTAMP, 'seed'),
-    (518, 408, 3, CURRENT_DATE - INTERVAL '90 days',  CURRENT_DATE - INTERVAL '90 days',  180.00, 'pix',  'paga',     true, CURRENT_TIMESTAMP, 'seed'),
-    (519, 408, 4, CURRENT_DATE - INTERVAL '60 days',  CURRENT_DATE - INTERVAL '58 days',  180.00, 'pix',  'paga',     true, CURRENT_TIMESTAMP, 'seed')
+    -- Contrato 408 (Cliente 208 - Encerrado / Historico)
+    (516, 408, 1, CURRENT_DATE - INTERVAL '150 days', CURRENT_DATE - INTERVAL '150 days', 180.00, 'PIX',  'paga',     true, CURRENT_TIMESTAMP, 'seed'),
+    (517, 408, 2, CURRENT_DATE - INTERVAL '120 days', CURRENT_DATE - INTERVAL '119 days', 180.00, 'PIX',  'paga',     true, CURRENT_TIMESTAMP, 'seed'),
+    (518, 408, 3, CURRENT_DATE - INTERVAL '90 days',  CURRENT_DATE - INTERVAL '90 days',  180.00, 'PIX',  'paga',     true, CURRENT_TIMESTAMP, 'seed'),
+    (519, 408, 4, CURRENT_DATE - INTERVAL '60 days',  CURRENT_DATE - INTERVAL '58 days',  180.00, 'PIX',  'paga',     true, CURRENT_TIMESTAMP, 'seed')
 ON CONFLICT (id) DO NOTHING;
 
 -- -----------------------------------------------------------------------------
@@ -283,25 +295,25 @@ ON CONFLICT (id) DO NOTHING;
 -- -----------------------------------------------------------------------------
 INSERT INTO pagamentos (id, valor, datapagamento, status, meiopagamento, permanencia_id, criado_em, criado_por) VALUES
     -- Pagamento da Permanência 602 (45 min = 1 hora cheia -> R$ 70,00)
-    (701, 70.00,  CURRENT_TIMESTAMP - INTERVAL '1 day 4 hours 15 minutes', 'pago', 'pix',      602, CURRENT_TIMESTAMP, 'seed'),
+    (701, 70.00,  CURRENT_TIMESTAMP - INTERVAL '1 day 4 hours 15 minutes', 'pago', 'PIX',      602, CURRENT_TIMESTAMP, 'seed'),
     
     -- Pagamento da Permanência 603 (1h 30 min = 1h + fração -> R$ 105.00)
-    (702, 105.00, CURRENT_TIMESTAMP - INTERVAL '1 day 4 hours 30 minutes', 'pago', 'cartao',   603, CURRENT_TIMESTAMP, 'seed'),
+    (702, 105.00, CURRENT_TIMESTAMP - INTERVAL '1 day 4 hours 30 minutes', 'pago', 'CREDIT_CARD',   603, CURRENT_TIMESTAMP, 'seed'),
     
     -- Pagamento da Permanência 604 (3h 40 min = 3h + fração -> R$ 245.00)
-    (703, 245.00, CURRENT_TIMESTAMP - INTERVAL '1 day 4 hours 20 minutes', 'pago', 'dinheiro', 604, CURRENT_TIMESTAMP, 'seed'),
+    (703, 245.00, CURRENT_TIMESTAMP - INTERVAL '1 day 4 hours 20 minutes', 'pago', 'DINHEIRO', 604, CURRENT_TIMESTAMP, 'seed'),
     
     -- Pagamento da Permanência 605 (Moto 2h -> R$ 140.00)
-    (704, 140.00, CURRENT_TIMESTAMP - INTERVAL '1 day 5 hours',            'pago', 'pix',      605, CURRENT_TIMESTAMP, 'seed'),
+    (704, 140.00, CURRENT_TIMESTAMP - INTERVAL '1 day 5 hours',            'pago', 'PIX',      605, CURRENT_TIMESTAMP, 'seed'),
     
     -- Pagamento da Permanência 607 de hoje (1h 15 min -> R$ 105.00)
-    (705, 105.00, CURRENT_DATE + TIME '08:45:00',                          'pago', 'pix',      607, CURRENT_TIMESTAMP, 'seed'),
+    (705, 105.00, CURRENT_DATE + TIME '08:45:00',                          'pago', 'PIX',      607, CURRENT_TIMESTAMP, 'seed'),
     
     -- Pagamento da Permanência 608 de hoje (2h 15 min -> R$ 175.00)
-    (706, 175.00, CURRENT_DATE + TIME '10:15:00',                          'pago', 'cartao',   608, CURRENT_TIMESTAMP, 'seed'),
+    (706, 175.00, CURRENT_DATE + TIME '10:15:00',                          'pago', 'CREDIT_CARD',   608, CURRENT_TIMESTAMP, 'seed'),
     
     -- Pagamento da Permanência 610 de hoje (1h 45 min -> R$ 140.00)
-    (707, 140.00, CURRENT_DATE + TIME '10:45:00',                          'pago', 'dinheiro', 610, CURRENT_TIMESTAMP, 'seed')
+    (707, 140.00, CURRENT_DATE + TIME '10:45:00',                          'pago', 'DINHEIRO', 610, CURRENT_TIMESTAMP, 'seed')
 ON CONFLICT (id) DO NOTHING;
 
 -- -----------------------------------------------------------------------------

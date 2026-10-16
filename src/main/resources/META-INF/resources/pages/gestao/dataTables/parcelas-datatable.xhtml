@@ -9,7 +9,7 @@
               header="Exibindo parcelas do contrato"
               widgetVar="dialogParcelas"
               minHeight="40"
-              width="950"
+              width="1250"
               modal="true"
               showEffect="fade"
               closeOnEscape="true">
@@ -26,6 +26,7 @@
                                     {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                          currentPageReportTemplate="Exibindo {startRecord}-{endRecord} de {totalRecords} registros"
                          rowKey="#{parcela.id}"
+                         sortBy="#{contratoBean.sortBy}"
                          emptyMessage="Nenhuma parcela encontrada.">
 
                 <p:column headerText="ID" style="width: 80px; text-align: center;">
@@ -39,14 +40,18 @@
                 </p:column>
 
                 <p:column headerText="Data de Pagamento" style="width: 80px; text-align: center;">
-                    <h:outputText value="#{ (parcela.dataPagamento) == null
-                        ? 'Pagamento Pendente'
-                        : (parcela.dataPagamento)}">
+                    <h:outputText value="#{(parcela.status) == 'pendente'
+                                ? 'Pagamento Pendente'
+                                : (parcela.status) == 'atrasada'
+                                ? 'Pagamento Atrasado'
+                                : (parcela.status) == 'cancelada'
+                                ? 'Parcela Cancelada'
+                                : (parcela.dataPagamento)}">
                         <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
                     </h:outputText>
                 </p:column>
 
-                <p:column headerText="Número da Parcela" style="width: 80px; text-align: center;">
+                <p:column headerText="Número da Parcela" sortBy="#{parcela.numeroParcela}" style="width: 80px; text-align: center;">
                     <h:outputText value="#{parcela.numeroParcela}ª" />
                 </p:column>
 
@@ -58,8 +63,10 @@
                     <h:outputText value="#{ (parcela.status) == 'pendente'
                                 ? 'Pagamento Pendente'
                                 : (parcela.status) == 'atrasada'
-                                ? 'Pagamento Pendente'
-                                : (parcela.meioPagamento)}" />
+                                ? 'Pagamento Atrasado'
+                                : (parcela.status) == 'cancelada'
+                                ? 'Parcela Cancelada'
+                                : (parcela.meioPagamento.descricao)}" />
                 </p:column>
 
                 <p:column headerText="Cobrança Enviada?" style="width: 80px; text-align: center;">
@@ -72,11 +79,16 @@
                     <p:tag severity="#{ (parcela.status) == 'pendente' ? 'warning'
                                 : (parcela.status) == 'atrasada' ? 'danger'
                                 : (parcela.status) == 'paga' ? 'success'
+                                : (parcela.status) == 'cancelada' ? 'info'
                                 : 'Secondary'}"
-                           value="#{ (parcela.status) == 'pendente' ? 'Pendente'
-                                :(parcela.status) == 'atrasada' ? 'Atrasada'
-                                : (parcela.status) == 'paga' ? 'Paga'
-                                : 'Não definido'}"  />
+                           value="#{parcela.status.descricao}"  />
+                </p:column>
+
+                <p:column headerText="Pagamento" style="width: 80px; text-align: center;">
+                    <p:link value="Ver pagamento"
+                            rendered="#{parcela.invoiceUrl != null}"
+                            href="#{parcela.invoiceUrl}"
+                            target="_blank"/>
                 </p:column>
             </p:dataTable>
         </h:form>

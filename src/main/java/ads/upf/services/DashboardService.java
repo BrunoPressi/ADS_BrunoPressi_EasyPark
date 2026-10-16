@@ -2,7 +2,6 @@ package ads.upf.services;
 
 import ads.upf.model.DTOs.dashboard.*;
 import ads.upf.repositories.DashboardRepository;
-import io.quarkus.cache.Cache;
 import io.quarkus.cache.CacheManager;
 import io.quarkus.cache.CacheResult;
 import jakarta.enterprise.context.ApplicationScoped;

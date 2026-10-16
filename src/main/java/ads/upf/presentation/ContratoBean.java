@@ -18,6 +18,9 @@ import jakarta.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -47,6 +50,8 @@ public class ContratoBean implements Serializable {
     private ClienteResponseDTO cliente;
     private VeiculoResponseDTO veiculo;
 
+    private List<SortMeta> sortBy;
+
     private String chaveUnicaFiltro;
 
     @PostConstruct
@@ -60,9 +65,17 @@ public class ContratoBean implements Serializable {
                 ContratoResponseDTO::getId,
                 (termo) -> contratoService.buscarPorCliente(termo)
         );
+
+        sortBy = new ArrayList<>();
+        sortBy.add(SortMeta.builder()
+                .field("numeroParcela")
+                .order(SortOrder.ASCENDING)
+                .priority(1)
+                .build());
     }
 
     public void selecionarParcelas(ContratoResponseDTO contratoResponseDTO) {
+        resetarTabela();
         this.parcelas = contratoService.buscarParcelasDoContrato(contratoResponseDTO.getId());
     }
 
@@ -152,4 +165,12 @@ public class ContratoBean implements Serializable {
         lazyDataModel.limpar();
     }
 
+    public void resetarTabela() {
+        DataTable dataTable = (DataTable) FacesContext.getCurrentInstance()
+                .getViewRoot().findComponent("formDialogParcelasList:tabelaParcelas");
+
+        if (dataTable != null) {
+            dataTable.setFirst(0);
+        }
+    }
 }

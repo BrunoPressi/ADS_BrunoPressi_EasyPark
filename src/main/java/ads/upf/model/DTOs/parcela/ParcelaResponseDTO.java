@@ -22,5 +22,6 @@ public class ParcelaResponseDTO {
     private ParcelaMeiosPagamento meioPagamento;
     private Boolean cobrancaEnviada;
     private ParcelaStatus status;
+    private String invoiceUrl;
 
 }

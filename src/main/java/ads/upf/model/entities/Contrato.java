@@ -96,6 +96,12 @@ public class Contrato extends Auditado {
             throw new InvalidEditException("Não é possível cancelar um contrato com parcelas atrasadas!");
         }
 
+        this.parcelas.forEach(
+                (p) -> {
+                    if (!p.getStatus().equals(ParcelaStatus.paga)) p.setStatus(ParcelaStatus.cancelada);
+                }
+        );
+
         this.status = ContratoStatus.cancelado;
     }
 

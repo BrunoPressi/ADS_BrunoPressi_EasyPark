@@ -1,11 +1,11 @@
 package ads.upf.services;
 
-import ads.upf.exceptions.EntityNotFoundException;
 import ads.upf.integration.asaas.DTOs.AsaasWebhookEvent;
 import ads.upf.model.entities.Parcela;
 import ads.upf.model.enums.ParcelaMeiosPagamento;
 import ads.upf.model.enums.ParcelaStatus;
 import ads.upf.repositories.ParcelaRepository;
+import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -16,6 +16,7 @@ import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class ParcelaService {
@@ -73,33 +74,48 @@ public class ParcelaService {
 
     @Transactional
     public void marcarComoPago(AsaasWebhookEvent.Payment payment) {
-        Parcela p = parcelaRepository.findByAsaasPaymentId(payment.id())
-                .firstResultOptional()
-                .orElseThrow(
-                        () -> new EntityNotFoundException("Parcela não encontrada")
-                );
+        Optional<Parcela> opt = parcelaRepository.findByAsaasPaymentId(payment.id())
+                .firstResultOptional();
 
-        if (p.getStatus().equals(ParcelaStatus.paga)) return;
+        if (opt.isEmpty()) {
+            Log.warnf("Webhook ignorado: parcela não encontrada para o pagamento %s", payment.id());
+            return;
+        }
+        Parcela parcela = opt.get();
 
-        p.setStatus(ParcelaStatus.paga);
-        p.setDataPagamento(payment.paymentDate());
-        p.setMeioPagamento(ParcelaMeiosPagamento.valueOf(payment.billingType()));
+        if (parcela.getStatus().equals(ParcelaStatus.paga)) return;
+
+        if (parcela.getStatus().equals(ParcelaStatus.cancelada)) {
+            Log.warnf("Alerta no Webhook: Pagamento recebido de parcela cancelada %s", payment.id());
+        }
+
+        parcela.setStatus(ParcelaStatus.paga);
+        parcela.setDataPagamento(payment.paymentDate());
+        parcela.setMeioPagamento(ParcelaMeiosPagamento.valueOf(payment.billingType()));
+
+        parcela.getContrato().encerrarSeQuitado();
     }
 
     @Transactional
-    public void marcarComoAtrasada(String asaasPaymentId) {
-        Parcela p = parcelaRepository.findByAsaasPaymentId(asaasPaymentId)
-                .firstResultOptional()
-                .orElseThrow(
-                        () -> new EntityNotFoundException("Parcela não encontrada")
-                );
+    public void marcarComoAtrasada(AsaasWebhookEvent.Payment payment) {
+        Optional<Parcela> opt = parcelaRepository.findByAsaasPaymentId(payment.id())
+                .firstResultOptional();
 
-        if (p.getStatus().equals(ParcelaStatus.paga)) return;
+        if (opt.isEmpty()) {
+            Log.warnf("Webhook ignorado: parcela não encontrada para o pagamento %s", payment.id());
+            return;
+        }
+        Parcela parcela = opt.get();
 
-        p.setStatus(ParcelaStatus.atrasada);
+        if (parcela.getStatus().equals(ParcelaStatus.paga)) return;
+
+        parcela.setStatus(ParcelaStatus.atrasada);
     }
 
-    public List<Parcela> buscarComVencimentoEm7Dias() {
-        return parcelaRepository.buscarComVencimentoEm7Dias();
+    @Transactional
+    public List<Long> buscarIdsParaCobrar() {
+        return parcelaRepository.buscarComVencimentoEm7Dias().stream()
+                .map(Parcela::getId)
+                .toList();
     }
 }

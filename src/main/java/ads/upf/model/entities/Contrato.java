@@ -105,4 +105,10 @@ public class Contrato extends Auditado {
         this.status = ContratoStatus.cancelado;
     }
 
+    public void encerrarSeQuitado() {
+        if (status != ContratoStatus.ativo) return;
+        boolean quitado = parcelas.stream().allMatch(p -> p.getStatus() == ParcelaStatus.paga);
+        if (quitado) this.status = ContratoStatus.encerrado;
+    }
+
 }

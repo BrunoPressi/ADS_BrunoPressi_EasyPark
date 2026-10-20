@@ -4,7 +4,6 @@ import ads.upf.model.entities.Parcela;
 import ads.upf.model.enums.ParcelaStatus;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.time.LocalDate;
@@ -19,15 +18,9 @@ public class ParcelaRepository implements PanacheRepository<Parcela> {
 
     public List<Parcela> buscarComVencimentoEm7Dias() {
         LocalDate dataVencimento = LocalDate.now().plusDays(7);
-        return find("where dataVencimento = ?1 and status = ?2 and asaasPaymentId is null",
+        return find("where dataVencimento <= ?1 and status = ?2 and asaasPaymentId is null",
                 dataVencimento,
                 ParcelaStatus.pendente)
-                .list();
-    }
-
-    public List<Parcela> buscarTodosPaginado(int first, int pageSize) {
-        return findAll(Sort.by("id"))
-                .range(first, first + pageSize - 1)
                 .list();
     }
 }

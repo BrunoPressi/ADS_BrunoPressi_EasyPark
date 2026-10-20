@@ -2,6 +2,7 @@ package ads.upf.services;
 
 import ads.upf.exceptions.EntityNotFoundException;
 import ads.upf.exceptions.InvalidEditException;
+import ads.upf.integration.asaas.AsaasService;
 import ads.upf.model.DTOs.contrato.ContratoCreateDTO;
 import ads.upf.model.DTOs.contrato.ContratoResponseDTO;
 import ads.upf.model.DTOs.parcela.ParcelaResponseDTO;
@@ -10,6 +11,7 @@ import ads.upf.model.entities.Contrato;
 import ads.upf.model.entities.Parcela;
 import ads.upf.model.entities.Veiculo;
 import ads.upf.model.enums.ContratoStatus;
+import ads.upf.model.enums.ParcelaStatus;
 import ads.upf.model.mappers.ContratoMapper;
 import ads.upf.model.mappers.ParcelaMapper;
 import ads.upf.repositories.ContratoRepository;
@@ -28,19 +30,20 @@ public class ContratoService {
     private final ParcelaService parcelaService;
     private final VeiculoService veiculoService;
     private final ClienteService clienteService;
-    private final DashboardService dashboardService;
+    private final AsaasService asaasService;
 
     @Inject
     public ContratoService(ContratoRepository contratoRepository,
                            ParcelaService parcelaService,
                            VeiculoService veiculoService,
                            ClienteService clienteService,
+                           AsaasService asaasService,
                            DashboardService dashboardService) {
         this.contratoRepository = contratoRepository;
         this.parcelaService = parcelaService;
         this.veiculoService = veiculoService;
         this.clienteService = clienteService;
-        this.dashboardService = dashboardService;
+        this.asaasService = asaasService;
     }
 
     @Transactional
@@ -89,6 +92,10 @@ public class ContratoService {
     public void cancelarContrato(Long id) {
         Contrato contrato = verificarContratoExiste(id);
         contrato.cancelar();
+        List<Parcela> parcelas = contrato.getParcelas().stream().filter(
+                (p) -> p.getStatus() != ParcelaStatus.paga && p.getAsaasPaymentId() != null
+        ).toList();
+        asaasService.deletarCobrancas(parcelas);
     }
 
     public ContratoResponseDTO buscarPorCliente(String cpf) {

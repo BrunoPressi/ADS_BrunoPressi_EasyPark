@@ -35,9 +35,10 @@
                         <p:outputLabel for="meioPagamento" value="Selecione o meio de pagamento"/>
                         <p:selectOneMenu id="meioPagamento" value="#{permanenciaBean.saida.meioPagamento}">
                             <f:selectItem itemLabel="Selecione o meio de pagamento" itemValue=""/>
-                            <f:selectItem itemLabel="Cartão" itemValue="cartao"/>
-                            <f:selectItem itemLabel="Pix" itemValue="pix"/>
-                            <f:selectItem itemLabel="Dinheiro" itemValue="dinheiro"/>
+                            <f:selectItem itemLabel="Cartão de Crédito" itemValue="CREDIT_CARD"/>
+                            <f:selectItem itemLabel="Cartão de Débito" itemValue="DEBIT_CARD"/>
+                            <f:selectItem itemLabel="Pix" itemValue="PIX"/>
+                            <f:selectItem itemLabel="Dinheiro" itemValue="DINHEIRO"/>
                         </p:selectOneMenu>
                         <h:message for="meioPagamento" style="color: red"/>
                     </div>

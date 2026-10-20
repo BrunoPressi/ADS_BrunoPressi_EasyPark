@@ -25,10 +25,9 @@ public class AsaasWebhookResource {
     public Response receber(@HeaderParam("asaas-access-token") String recebido, AsaasWebhookEvent evt) {
         if (!token.equals(recebido)) return Response.status(401).build();
 
-        String paymentId = evt.payment().id();
         switch (evt.event()) {
             case "PAYMENT_RECEIVED", "PAYMENT_CONFIRMED" -> parcelaService.marcarComoPago(evt.payment());
-            case "PAYMENT_OVERDUE" -> parcelaService.marcarComoAtrasada(paymentId);
+            case "PAYMENT_OVERDUE" -> parcelaService.marcarComoAtrasada(evt.payment());
             default -> {} // ignora os outros eventos
         }
         return Response.ok().build();

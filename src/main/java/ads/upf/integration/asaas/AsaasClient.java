@@ -25,6 +25,13 @@ public interface AsaasClient {
     AsaasPaymentResponse criarCobranca(AsaasPaymentRequest req);
 
     @Produces(APPLICATION_JSON)
+    @GET @Path("/payments")
+    AsaasPaymentListResponse buscarCobrancasPorReferencia(@QueryParam("externalReference") String externalReference);
+
+    @DELETE @Path("payments/{id}")
+    void deletarCobranca(@PathParam("id") String id);
+
+    @Produces(APPLICATION_JSON)
     @Consumes(APPLICATION_JSON)
     @GET
     @Path("/payments/{id}/pixQrCode")

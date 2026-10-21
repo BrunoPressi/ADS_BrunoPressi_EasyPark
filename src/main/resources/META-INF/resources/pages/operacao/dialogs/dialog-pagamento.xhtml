@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+<h:body>
+
+    <p:dialog id="dialogPagamento"
+              widgetVar="dialogPagamento"
+              closable="true"
+              modal="true"
+              showEffect="fade"
+              width="370"
+              closeOnEscape="true"
+              header="Visualizando Pagamento...">
+
+        <p:ajax event="close"
+                form="formDialogPagamento"
+                resetValues="true"
+                update="formDialogPagamento"/>
+
+        <p:dataTable id="formDialogPagamento"
+                     value="#{permanenciaBean.pagamentoSelecionado}"
+                     var="pagamento">
+            <div class="ui-fluid">
+                <div>
+                    <p:column headerText="ID">
+                        <h:outputLabel value="#{pagamento.id}"/>
+                    </p:column>
+                </div>
+                <div>
+                    <p:column headerText="Valor">
+                        <h:outputText readonly="true" value="#{pagamento.valor}">
+                            <f:convertNumber type="currency" currencySymbol="R$" locale="pt_BR"/>
+                        </h:outputText>
+                    </p:column>
+                </div>
+                <div>
+                    <p:column headerText="Meio de Pagamento">
+                        <h:outputText readonly="true" value="#{pagamento.meioPagamento.descricao}"/>
+                    </p:column>
+                </div>
+            </div>
+        </p:dataTable>
+    </p:dialog>
+
+</h:body>
+</html>

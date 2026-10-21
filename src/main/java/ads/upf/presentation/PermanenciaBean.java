@@ -1,5 +1,6 @@
 package ads.upf.presentation;
 
+import ads.upf.model.DTOs.pagamento.PagamentoResponseDTO;
 import ads.upf.model.DTOs.permanencia.EntradaCreateDTO;
 import ads.upf.model.DTOs.permanencia.PermanenciaResponseDTO;
 import ads.upf.model.DTOs.permanencia.SaidaCreateDTO;
@@ -49,8 +50,9 @@ public class PermanenciaBean implements Serializable {
 
     private EntradaCreateDTO entrada;
     private SaidaCreateDTO saida;
-    private String chaveUnicaFiltro;
+    private PagamentoResponseDTO pagamentoSelecionado;
 
+    private String chaveUnicaFiltro;
     private List<SortMeta> sortBy;
 
     @PostConstruct
@@ -112,6 +114,23 @@ public class PermanenciaBean implements Serializable {
             saida.setMeioPagamento(null);
             saida.setPlaca(permanencia.getVeiculo().getPlaca());
             processarSaida();
+        }
+    }
+
+    public void selecionarPagamento(PermanenciaResponseDTO permanencia) {
+        if (!permanencia.getIsRotativo()) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(SEVERITY_ERROR,"Não foi possível visualizar o pagamento", "Permanências não rotativas não possuem pagamento."));
+            PrimeFaces.current().ajax().addCallbackParam("sucesso", false);
+        }
+        else if (permanencia.getPagamento() == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(SEVERITY_ERROR,"Erro ao visualizar pagamento", "Pagamento não encontrado"));
+            PrimeFaces.current().ajax().addCallbackParam("sucesso", false);
+        }
+        else {
+            this.pagamentoSelecionado = permanencia.getPagamento();
+            PrimeFaces.current().ajax().addCallbackParam("sucesso", true);
         }
     }
 

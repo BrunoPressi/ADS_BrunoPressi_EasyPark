@@ -17,6 +17,5 @@ public class PagamentoResponseDTO {
     private Long id;
     private BigDecimal valor;
     private PagamentoMeio meioPagamento;
-    private BigDecimal desconto;
 
 }

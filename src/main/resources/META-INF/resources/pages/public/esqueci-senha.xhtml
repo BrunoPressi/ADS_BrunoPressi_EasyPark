@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <f:facet name="first">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+    </f:facet>
+    <title>Esqueci Minha Senha</title>
+    <h:outputStylesheet library="webjars" name="primeflex/3.3.1/primeflex.min.css"/>
+</h:head>
+    <p:growl id="messages"
+             showDetail="true"
+             showSummary="true"
+             globalOnly="true">
+        <p:autoUpdate/>
+    </p:growl>
+
+    <p:panel header="Informe seu E-mail" style="max-width: 320px; margin: 2rem auto; text-align: center;">
+        <h:form id="formSenha">
+            <div class="ui-fluid">
+                <div>
+                    <p:outputLabel for="email" value="E-mail:" />
+                    <p:inputText id="email" value="#{esqueciSenhaBean.senhaDTO.email}" placeholder="Digite seu email..."/>
+                    <h:message for="email" style="color: red"/>
+                </div>
+            </div>
+            <p:commandButton value="Confirmar"
+                             action="#{esqueciSenhaBean.enviarEmail}"
+                             process="@form"
+                             update="@form"
+                             style="margin-top: .9rem"/>
+        </h:form>
+    </p:panel>
+<h:body>
+</h:body>
+</html>

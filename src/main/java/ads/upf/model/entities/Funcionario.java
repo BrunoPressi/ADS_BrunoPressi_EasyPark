@@ -14,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor @NoArgsConstructor
 public class Funcionario extends Usuario{
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String senha;
 
     @Enumerated(EnumType.STRING)

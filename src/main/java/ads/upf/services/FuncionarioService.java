@@ -5,6 +5,8 @@ import ads.upf.exceptions.EntityNotFoundException;
 import ads.upf.model.DTOs.funcionario.FuncionarioCreateDTO;
 import ads.upf.model.DTOs.funcionario.FuncionarioResponseDTO;
 import ads.upf.model.entities.Funcionario;
+import ads.upf.model.entities.SenhaToken;
+import ads.upf.model.enums.UsuarioRole;
 import ads.upf.model.mappers.FuncionarioMapper;
 import ads.upf.repositories.FuncionarioRepository;
 import io.quarkus.panache.common.Sort;
@@ -15,16 +17,20 @@ import jakarta.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 
-import static ads.upf.utils.SenhaGenerator.gerarSenha;
-
 @ApplicationScoped
 public class FuncionarioService {
 
     private final FuncionarioRepository funcionarioRepository;
+    private final TokenService tokenService;
+    private final EmailService emailService;
 
     @Inject
-    public FuncionarioService(FuncionarioRepository funcionarioRepository) {
+    public FuncionarioService(FuncionarioRepository funcionarioRepository,
+                              TokenService tokenService,
+                              EmailService emailService) {
         this.funcionarioRepository = funcionarioRepository;
+        this.tokenService = tokenService;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -38,8 +44,11 @@ public class FuncionarioService {
             );
 
             Funcionario funcionario = FuncionarioMapper.INSTANCE.toFuncionario(funcionarioCreateDTO);
-            funcionario.setSenha(gerarSenha());
+            funcionario.setRole(UsuarioRole.atendente);
             funcionarioRepository.persist(funcionario);
+
+            SenhaToken token = tokenService.criarToken(funcionario);
+            emailService.enviarEmailSenha(token.getToken(), funcionario.getEmail());
         } else {
             checkFuncionarioExists(funcionarioCreateDTO.getId(),
                     funcionarioCreateDTO.getNomeCompleto(),
@@ -118,4 +127,9 @@ public class FuncionarioService {
                 );
     }
 
+    public Funcionario buscarPorEmail(String email) {
+        return funcionarioRepository.buscarPorEmail(email).orElseThrow(
+                () -> new EntityNotFoundException("Funcionário não encontrado.")
+        );
+    }
 }

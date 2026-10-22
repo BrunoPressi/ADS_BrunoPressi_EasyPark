@@ -39,11 +39,17 @@ public class FuncionarioServiceTest {
     @Mock
     private PanacheQuery<Funcionario> panacheQuery;
 
+    @Mock
+    private TokenService tokenService;
+
+    @Mock
+    private EmailService emailService;
+
     private FuncionarioService funcionarioService;
 
     @BeforeEach
     void setUp() {
-        funcionarioService = new FuncionarioService(funcionarioRepository);
+        funcionarioService = new FuncionarioService(funcionarioRepository, tokenService, emailService);
     }
 
     private FuncionarioCreateDTO criarDto(Long id, String nome, String email, String telefone) {
@@ -80,6 +86,9 @@ public class FuncionarioServiceTest {
         void deveSalvarNovoFuncionarioComSucesso() {
             FuncionarioCreateDTO dto = criarDto(null, "Carlos Silva", "carlos@email.com", "54999999999");
             when(funcionarioRepository.existsByEmail("carlos@email.com", null)).thenReturn(false);
+            ads.upf.model.entities.SenhaToken tokenGerado = new ads.upf.model.entities.SenhaToken();
+            tokenGerado.setToken(java.util.UUID.randomUUID());
+            when(tokenService.criarToken(any(Funcionario.class))).thenReturn(tokenGerado);
 
             funcionarioService.salvarFuncionario(dto);
 
@@ -90,7 +99,9 @@ public class FuncionarioServiceTest {
             assertThat(funcionarioSalvo.getNomeCompleto()).isEqualTo("Carlos Silva");
             assertThat(funcionarioSalvo.getEmail()).isEqualTo("carlos@email.com");
             assertThat(funcionarioSalvo.getTelefone()).isEqualTo("54999999999");
-            assertThat(funcionarioSalvo.getSenha()).isNotNull().isNotBlank();
+            assertThat(funcionarioSalvo.getSenha()).isNull();
+            verify(tokenService).criarToken(funcionarioSalvo);
+            verify(emailService).enviarEmailSenha(tokenGerado.getToken(), "carlos@email.com");
         }
 
         @Test

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+<f:metadata>
+    <f:viewParam name="token" value="#{senhaBean.token}" />
+    <f:viewAction action="#{senhaBean.init}" />
+</f:metadata>
+<h:head>
+    <f:facet name="first">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+    </f:facet>
+    <title>Definir Senha</title>
+    <h:outputStylesheet library="webjars" name="primeflex/3.3.1/primeflex.min.css"/>
+</h:head>
+<f:metadata>
+    <f:viewParam name="token" value="#{senhaBean.token}" />
+    <f:viewAction action="#{senhaBean.init}" />
+</f:metadata>
+<h:body>
+
+    <p:growl id="messages"
+             showDetail="true"
+             showSummary="true"
+             globalOnly="true">
+        <p:autoUpdate/>
+    </p:growl>
+
+    <p:panel header="Preencha com sua senha" style="max-width: 320px; margin: 2rem auto; text-align: center;">
+        <h:form id="formSenha">
+            <div class="ui-fluid">
+                <div>
+                    <p:outputLabel for="novaSenha" value="Nova Senha:" />
+                    <p:password id="novaSenha" value="#{senhaBean.senhaDTO.novaSenha}" placeholder="Digite sua nova senha..."/>
+                    <h:message for="novaSenha" style="color: red"/>
+                </div>
+                <div style="margin-top: .5rem">
+                    <p:outputLabel for="novaSenhaConfirmar" value="Confirmar Senha:" />
+                    <p:password id="novaSenhaConfirmar" value="#{senhaBean.senhaDTO.novaSenhaConfirmar}" placeholder="Confirme sua nova senha..."/>
+                    <h:message for="novaSenhaConfirmar" style="color: red"/>
+                </div>
+            </div>
+            <p:commandButton value="Definir minha senha"
+                             action="#{senhaBean.definirSenha}"
+                             process="@form"
+                             update="@form"
+                             style="margin-top: .9rem"/>
+        </h:form>
+    </p:panel>
+</h:body>
+</html>

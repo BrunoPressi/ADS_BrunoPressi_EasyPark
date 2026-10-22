@@ -4,6 +4,7 @@ import ads.upf.model.DTOs.pagamento.PagamentoResponseDTO;
 import ads.upf.model.DTOs.permanencia.EntradaCreateDTO;
 import ads.upf.model.DTOs.permanencia.PermanenciaResponseDTO;
 import ads.upf.model.DTOs.permanencia.SaidaCreateDTO;
+import ads.upf.model.enums.PermanenciaStatus;
 import ads.upf.presentation.lazy.GenericLazyDataModel;
 import ads.upf.services.EntradaUseCase;
 import ads.upf.services.PagamentoService;
@@ -118,20 +119,20 @@ public class PermanenciaBean implements Serializable {
     }
 
     public void selecionarPagamento(PermanenciaResponseDTO permanencia) {
+        if (permanencia.getPagamento() == null && permanencia.getStatus().equals(PermanenciaStatus.em_andamento)) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(SEVERITY_ERROR,"Erro ao visualizar pagamento", "Permanência ainda em andamento!"));
+            PrimeFaces.current().ajax().addCallbackParam("sucesso", false);
+            return;
+        }
         if (!permanencia.getIsRotativo()) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(SEVERITY_ERROR,"Não foi possível visualizar o pagamento", "Permanências não rotativas não possuem pagamento."));
             PrimeFaces.current().ajax().addCallbackParam("sucesso", false);
+            return;
         }
-        else if (permanencia.getPagamento() == null) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(SEVERITY_ERROR,"Erro ao visualizar pagamento", "Pagamento não encontrado"));
-            PrimeFaces.current().ajax().addCallbackParam("sucesso", false);
-        }
-        else {
-            this.pagamentoSelecionado = permanencia.getPagamento();
-            PrimeFaces.current().ajax().addCallbackParam("sucesso", true);
-        }
+        this.pagamentoSelecionado = permanencia.getPagamento();
+        PrimeFaces.current().ajax().addCallbackParam("sucesso", true);
     }
 
     public void pesquisar() {

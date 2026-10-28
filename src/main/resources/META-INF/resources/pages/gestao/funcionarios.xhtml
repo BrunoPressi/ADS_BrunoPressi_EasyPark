@@ -3,42 +3,51 @@
                 xmlns:h="jakarta.faces.html"
                 xmlns:ui="jakarta.faces.facelets"
                 xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="title">EasyPark — Gestão de Funcionários</ui:define>
+
     <ui:define name="content">
-        <!-- Formulário contendo uma data table para listagem dos funcionários -->
+        <!-- Formulário contendo barra de filtro e data table para listagem dos funcionários -->
         <h:form id="dataTableForm">
 
-            <p:commandButton value="Novo Funcionário"
-                             icon="pi pi-plus"
-                             actionListener="#{funcionarioBean.novoFuncionario}"
-                             process="@this"
-                             resetValues="true"
-                             update=":dialogFuncionario"
-                             oncomplete="PF('dialogFuncionario').show()"
-                             style="margin-bottom: .8rem"/>
+            <div class="page-header">
+                <div class="page-header-titles">
+                    <h2 class="page-title">Gestão de Funcionários</h2>
+                    <p class="page-subtitle">Administração da equipe de atendimento e credenciais de acesso</p>
+                </div>
+                <div>
+                    <p:commandButton value="Novo Funcionário"
+                                     icon="pi pi-plus"
+                                     actionListener="#{funcionarioBean.novoFuncionario}"
+                                     process="@this"
+                                     resetValues="true"
+                                     update=":dialogFuncionario"
+                                     oncomplete="PF('dialogFuncionario').show()" />
+                </div>
+            </div>
 
             <!-- Barra de Pesquisa por Chave Única -->
-            <p:toolbar style="margin-bottom: 1rem;">
-
+            <p:toolbar styleClass="mb-3">
                 <p:toolbarGroup>
-                        <span class="ui-input-icon-left" style="margin-right: .5rem;">
-                            <i class="pi pi-key" />
-                            <p:inputText id="inputChave"
-                                         value="#{funcionarioBean.chaveUnicaFiltro}"
-                                         placeholder="Buscar por ID ou Nome..." />
-                        </span>
+                    <span class="ui-input-icon-left mr-2">
+                        <i class="pi pi-search" />
+                        <p:inputText id="inputChave"
+                                     style="width: 280px"
+                                     value="#{funcionarioBean.chaveUnicaFiltro}"
+                                     placeholder="Buscar por ID ou Nome..." />
+                    </span>
 
                     <p:commandButton value="Buscar"
                                      icon="pi pi-search"
                                      action="#{funcionarioBean.pesquisar}"
                                      update="@form"
-                                     style="margin-right: .5rem"
                                      styleClass="mr-2" />
 
                     <p:commandButton value="Limpar"
                                      icon="pi pi-times"
                                      action="#{funcionarioBean.limparFiltro}"
                                      update="@form"
-                                     styleClass="ui-button-secondary" />
+                                     styleClass="ui-button-outlined ui-button-secondary" />
                 </p:toolbarGroup>
             </p:toolbar>
 
@@ -48,6 +57,9 @@
                          var="funcionario"
                          value="#{funcionarioBean.lazyDataModel}"
                          lazy="true"
+                         stripedRows="true"
+                         size="small"
+                         responsiveLayout="scroll"
                          paginator="true"
                          rows="10"
                          rowsPerPageTemplate="5,10,20,50"
@@ -55,22 +67,25 @@
                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                          currentPageReportTemplate="Exibindo {startRecord}-{endRecord} de {totalRecords} registros"
                          rowKey="#{funcionario.id}"
-                         emptyMessage="Nenhum funcionario encontrado.">
+                         emptyMessage="Nenhum funcionário encontrado.">
 
-                <p:column headerText="ID" sortBy="#{funcionario.id}">
+                <p:column headerText="ID" sortBy="#{funcionario.id}" style="width: 90px; text-align: center;">
                     <h:outputText value="#{funcionario.id}" />
                 </p:column>
                 <p:column headerText="Nome Completo" sortBy="#{funcionario.nomeCompleto}">
-                    <h:outputText value="#{funcionario.nomeCompleto}" />
+                    <span class="font-semibold text-900">
+                        <h:outputText value="#{funcionario.nomeCompleto}" />
+                    </span>
                 </p:column>
                 <p:column headerText="Email">
                     <h:outputText value="#{funcionario.email}" />
                 </p:column>
-                <p:column headerText="Telefone">
+                <p:column headerText="Telefone" style="width: 160px;">
                     <h:outputText value="#{funcionario.telefone}" />
                 </p:column>
-                <p:column headerText="Editar">
-                    <p:commandButton icon="pi pi-pencil" styleClass="rounded-button ui-button-help"
+                <p:column headerText="Editar" style="width: 120px; text-align: center;">
+                    <p:commandButton icon="pi pi-pencil"
+                                     styleClass="ui-button-outlined ui-button-secondary ui-button-sm"
                                      actionListener="#{funcionarioBean.selecionarFuncionario(funcionario)}"
                                      oncomplete="PF('dialogFuncionario').show()"
                                      update=":dialogFuncionario"
@@ -80,46 +95,47 @@
             </p:dataTable>
         </h:form>
 
-        <!-- Formulário de cadastro de novo funcionário -->
+        <!-- Formulário de cadastro/edição de funcionário -->
         <p:dialog id="dialogFuncionario"
-                  header="Preencha com os dados do funcionário"
+                  header="Dados do Funcionário"
                   widgetVar="dialogFuncionario"
-                  width="370"
+                  width="440"
                   modal="true"
                   showEffect="fade"
-                  closable="false"
+                  closable="true"
                   closeOnEscape="true">
 
             <h:form id="formDialog">
                 <div class="ui-fluid">
-                    <div>
+                    <div class="field">
                         <p:outputLabel for="nomeCompleto" value="Nome Completo"/>
                         <p:inputText id="nomeCompleto"
                                      value="#{funcionarioBean.funcionario.nomeCompleto}"
-                                     placeholder="Ex: John Doe"/><br/>
-                        <h:message for="nomeCompleto" style="color:red;" />
+                                     placeholder="Ex: João da Silva"/>
+                        <h:message for="nomeCompleto" style="color:red;" styleClass="field-error" />
                     </div>
-                    <div style="margin-top: .5rem">
+                    <div class="field">
                         <p:outputLabel for="email" value="Email"/>
                         <p:inputText id="email"
                                      value="#{funcionarioBean.funcionario.email}"
-                                     placeholder="Ex: johndoe@email.com"/><br/>
-                        <h:message for="email" style="color:red;" />
+                                     placeholder="Ex: joao@email.com"/>
+                        <h:message for="email" style="color:red;" styleClass="field-error" />
                     </div>
-                    <div style="margin-top: .5rem">
+                    <div class="field mb-0">
                         <p:outputLabel for="telefone" value="Telefone"/>
                         <p:inputText id="telefone"
                                      value="#{funcionarioBean.funcionario.telefone}"
-                                     placeholder="Ex: 54 9 96322831"/><br/>
-                        <h:message for="telefone" style="color:red;" />
+                                     placeholder="Ex: 54 9 96322831"/>
+                        <h:message for="telefone" style="color:red;" styleClass="field-error" />
                     </div>
                 </div>
-                <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.5rem;">
+                <div class="dialog-footer">
                     <p:commandButton type="button"
                                      value="Voltar"
                                      onclick="PF('dialogFuncionario').hide()"
-                                     styleClass="ui-button-flat mr-2"/>
+                                     styleClass="ui-button-flat ui-button-secondary"/>
                     <p:commandButton value="Salvar Funcionário"
+                                     icon="pi pi-check"
                                      actionListener="#{funcionarioBean.processarFuncionario}"
                                      process="@form"
                                      update="@form :dataTableForm"/>

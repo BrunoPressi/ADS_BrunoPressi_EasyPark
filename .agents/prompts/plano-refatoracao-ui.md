@@ -127,16 +127,16 @@ Este documento consolida o diagnóstico da camada de apresentação do projeto *
   * Definido `<ui:define name="title">EasyPark — Dashboard</ui:define>` e padronizado o cabeçalho com `.page-header`.
   * Substituído `shadow-5` nos cards e painéis por `.erp-card` com bordas e sombras sutis de ERP, mantendo os destaques laterais coloridos nos KPIs operacionais e adicionando `stripedRows="true"` nas duas tabelas de alertas inferiores.
 
-### Etapa 4 — Telas de Gestão: Cadastros Base (Vagas, Funcionários e Clientes) (`[ ] Pendente`)
+### Etapa 4 — Telas de Gestão: Cadastros Base (Vagas, Funcionários e Clientes) (`[x] Concluída`)
 * **Arquivos:**
-  * `[MODIFICAR]` `src/main/resources/META-INF/resources/pages/gestao/vagas.xhtml`
-  * `[MODIFICAR]` `src/main/resources/META-INF/resources/pages/gestao/funcionarios.xhtml`
-  * `[MODIFICAR]` `src/main/resources/META-INF/resources/pages/gestao/clientes.xhtml`
-  * `[MODIFICAR]` `src/main/resources/META-INF/resources/pages/gestao/dialogs/dialog-cliente.xhtml`
+  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/gestao/vagas.xhtml`
+  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/gestao/funcionarios.xhtml`
+  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/gestao/clientes.xhtml`
+  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/gestao/dialogs/dialog-cliente.xhtml`
 * **Entregas:**
-  * Adicionar cabeçalho de página (`.page-header`) com título, subtítulo e botão primário (`Nova Vaga`, `Novo Funcionário`, `Novo Cliente`).
-  * Padronizar barra de filtro e `<p:dataTable>` (`stripedRows="true"`, `size="small"`, `responsiveLayout="scroll"`, correção de `'Em Manutenção'`, botões de ação padronizados).
-  * Converter `dialog-cliente.xhtml` para `<ui:composition>` e padronizar `dialogVaga`, `dialogFuncionario` e `dialogCliente` (`closable="true"`, `width="440"`, `.field`, `<p:message />`).
+  * Adicionado cabeçalho de página (`.page-header`) com título, subtítulo e botão primário (`Nova Vaga`, `Novo Funcionário`, `Novo Cliente`).
+  * Padronizada barra de filtro e `<p:dataTable>` (`stripedRows="true"`, `size="small"`, `responsiveLayout="scroll"`, correção de `'Em Manutenção'`, botões de ação padronizados).
+  * Convertido `dialog-cliente.xhtml` para `<ui:composition>` e padronizados `dialogVaga`, `dialogFuncionario` e `dialogCliente` (`closable="true"`, `.field`, `.field-error`, `.dialog-footer`).
 
 ### Etapa 5 — Telas de Gestão: Contratos e Sub-diálogos (`[ ] Pendente`)
 * **Arquivos:**

@@ -4,44 +4,52 @@
                 xmlns:f="jakarta.faces.core"
                 xmlns:ui="jakarta.faces.facelets"
                 xmlns:p="http://primefaces.org/ui">
-    <ui:define name="content">
-        <!-- Formulário contendo uma data table para listagem das vagas -->
-        <h:form id="dataTableForm" style="margin-top: .7rem">
 
-            <p:commandButton value="Nova Vaga"
-                             icon="pi pi-plus"
-                             actionListener="#{vagaBean.novaVaga}"
-                             process="@this"
-                             resetValues="true"
-                             update=":dialogVaga"
-                             oncomplete="PF('dialogVaga').show()"
-                             style="margin-bottom: .5rem"/>
+    <ui:define name="title">EasyPark — Gestão de Vagas</ui:define>
+
+    <ui:define name="content">
+        <!-- Formulário contendo barra de filtro e data table para listagem das vagas -->
+        <h:form id="dataTableForm">
+
+            <div class="page-header">
+                <div class="page-header-titles">
+                    <h2 class="page-title">Gestão de Vagas</h2>
+                    <p class="page-subtitle">Cadastro, consulta e controle de disponibilidade das vagas do pátio</p>
+                </div>
+                <div>
+                    <p:commandButton value="Nova Vaga"
+                                     icon="pi pi-plus"
+                                     actionListener="#{vagaBean.novaVaga}"
+                                     process="@this"
+                                     resetValues="true"
+                                     update=":dialogVaga"
+                                     oncomplete="PF('dialogVaga').show()" />
+                </div>
+            </div>
 
             <!-- Barra de Pesquisa por Chave Única -->
-            <p:toolbar style="margin-bottom: 1rem;">
+            <p:toolbar styleClass="mb-3">
                 <p:toolbarGroup>
-                        <span class="ui-input-icon-left" style="margin-right: .5rem;">
-                            <i class="pi pi-key" />
-                            <p:inputText id="inputChave"
-                                         style="width: 240px"
-                                         label="Nome da Vaga"
-                                         value="#{vagaBean.chaveUnicaFiltro}"
-                                         placeholder="Buscar por nome da vaga..." />
-                        </span>
+                    <span class="ui-input-icon-left mr-2">
+                        <i class="pi pi-search" />
+                        <p:inputText id="inputChave"
+                                     style="width: 280px"
+                                     label="Nome da Vaga"
+                                     value="#{vagaBean.chaveUnicaFiltro}"
+                                     placeholder="Buscar por nome da vaga..." />
+                    </span>
                     <p:commandButton value="Buscar"
                                      icon="pi pi-search"
                                      action="#{vagaBean.pesquisar}"
                                      update="@form"
-                                     style="margin-right: .5rem"
                                      styleClass="mr-2" />
 
                     <p:commandButton value="Limpar"
                                      icon="pi pi-times"
                                      action="#{vagaBean.limparFiltro}"
                                      update="@form"
-                                     styleClass="ui-button-secondary" />
+                                     styleClass="ui-button-outlined ui-button-secondary" />
                 </p:toolbarGroup>
-
             </p:toolbar>
 
             <p:dataTable id="listaVagas"
@@ -49,6 +57,9 @@
                          var="vaga"
                          value="#{vagaBean.lazyDataModel}"
                          lazy="true"
+                         stripedRows="true"
+                         size="small"
+                         responsiveLayout="scroll"
                          paginator="true"
                          rows="10"
                          rowsPerPageTemplate="5,10,20,50"
@@ -58,13 +69,14 @@
                          rowKey="#{vaga.id}"
                          emptyMessage="Nenhuma vaga encontrada.">
 
-
-                <p:column headerText="Id">
+                <p:column headerText="ID" style="width: 90px; text-align: center;">
                     <h:outputText value="#{vaga.id}"/>
                 </p:column>
 
                 <p:column headerText="Nome">
-                    <h:outputText value="#{vaga.nome}" />
+                    <span class="font-semibold text-900">
+                        <h:outputText value="#{vaga.nome}" />
+                    </span>
                 </p:column>
 
                 <p:column headerText="Tipo da Vaga">
@@ -76,44 +88,45 @@
                             : 'Indefinido'}" />
                 </p:column>
 
-                <p:column headerText="Status">
+                <p:column headerText="Status" style="width: 150px; text-align: center;">
                     <p:tag severity="#{vaga.status == 'disponivel' ? 'success' : (vaga.status == 'ocupada' ? 'danger' : 'warning')}"
                            value="#{ (vaga.status) == 'disponivel' ? 'Disponível'
                            : (vaga.status == 'ocupada' ? 'Ocupada'
-                           : (vaga.status == 'em_manutencao' ? 'EmManutenção'
+                           : (vaga.status == 'em_manutencao' ? 'Em Manutenção'
                            : 'Não Definido'))}"/>
                 </p:column>
 
-                <p:column headerText="Editar">
+                <p:column headerText="Editar" style="width: 120px; text-align: center;">
                     <p:commandButton oncomplete="PF('dialogVaga').show()"
                                      actionListener="#{vagaBean.selecionarVaga(vaga)}"
                                      update="@form :dialogVaga"
                                      resetValues="true"
                                      value="Editar"
-                                     icon="pi pi-pencil" styleClass="rounded-button ui-button-help">
+                                     icon="pi pi-pencil"
+                                     styleClass="ui-button-outlined ui-button-secondary ui-button-sm">
                     </p:commandButton>
                 </p:column>
             </p:dataTable>
         </h:form>
 
-        <!-- Formulário para cadastrar uma nova vaga -->
+        <!-- Formulário para cadastrar/editar uma vaga -->
         <p:dialog id="dialogVaga"
-                  header="Preencha com os dados da vaga"
+                  header="Dados da Vaga"
                   widgetVar="dialogVaga"
                   modal="true"
-                  width="370"
+                  width="420"
                   showEffect="fade"
-                  closable="false"
+                  closable="true"
                   closeOnEscape="true">
 
             <h:form id="formDialog">
                 <div class="ui-fluid">
-                    <div>
+                    <div class="field">
                         <p:outputLabel for="nomeVaga" value="Nome da Vaga"/>
                         <p:inputText id="nomeVaga" value="#{vagaBean.vaga.nome}" placeholder="Ex: V01"/>
-                        <h:message for="nomeVaga" style="color:red;" />
+                        <h:message for="nomeVaga" style="color:red;" styleClass="field-error" />
                     </div>
-                    <div style="margin-top: .5rem">
+                    <div class="field">
                         <p:outputLabel for="@next" value="Tipo da Vaga"/>
                         <p:selectOneMenu id="tipoVaga" value="#{vagaBean.vaga.tipoVaga}">
                             <f:selectItem itemLabel="Selecione o tipo da vaga" itemValue=""/>
@@ -122,23 +135,26 @@
                             <f:selectItem itemLabel="PNE" itemValue="pne"/>
                             <f:selectItem itemLabel="Idoso" itemValue="idoso"/>
                         </p:selectOneMenu>
-                        <h:message for="tipoVaga" style="color:red;" />
+                        <h:message for="tipoVaga" style="color:red;" styleClass="field-error" />
                     </div>
-                    <div>
-                        <p>Em manutenção?</p>
-                        <p:selectBooleanCheckbox id="booleanCheckBox"
-                                                 value="#{vagaBean.emManutencao}"
-                                                 itemLabel="#{vagaBean.emManutencao == false ? 'Não' : 'Sim'}">
-                            <p:ajax update="@this"/>
-                        </p:selectBooleanCheckbox>
+                    <div class="field mb-0">
+                        <p:outputLabel for="booleanCheckBox" value="Em manutenção?"/>
+                        <div class="mt-1">
+                            <p:selectBooleanCheckbox id="booleanCheckBox"
+                                                     value="#{vagaBean.emManutencao}"
+                                                     itemLabel="#{vagaBean.emManutencao == false ? 'Não' : 'Sim'}">
+                                <p:ajax update="@this"/>
+                            </p:selectBooleanCheckbox>
+                        </div>
                     </div>
                 </div>
-                <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.5rem;">
+                <div class="dialog-footer">
                     <p:commandButton type="button"
                                      value="Voltar"
-                                     styleClass="ui-button-flat mr-2"
+                                     styleClass="ui-button-flat ui-button-secondary"
                                      onclick="PF('dialogVaga').hide()"/>
                     <p:commandButton value="Salvar Vaga"
+                                     icon="pi pi-check"
                                      actionListener="#{vagaBean.processarVaga}"
                                      process="@form"
                                      update="@form :dataTableForm"/>

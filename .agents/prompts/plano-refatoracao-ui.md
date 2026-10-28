@@ -108,17 +108,17 @@ Este documento consolida o diagnóstico da camada de apresentação do projeto *
   * Criado `easypark.css` (focado exclusivamente em Desktops e Notebooks) com variáveis CSS, estrutura `.app-layout`, `.app-sidebar`, `.app-main`, `.page-header`, `.erp-card`, padronização de `<p:dataTable>`, `<p:dialog>`, `.field` e layout de páginas públicas (`.auth-page`, `.auth-card`).
   * Refatorado `layout.xhtml` implementando a Sidebar esquerda fixa, removendo o `<p:panel header="#{viewTitle}">` vazio e mantendo `<p:growl id="messages">`, `<p:confirmDialog global="true">` e `<h:form id="menuForm">`.
 
-### Etapa 2 — Telas Públicas e de Autenticação (`[ ] Pendente`)
+### Etapa 2 — Telas Públicas e de Autenticação (`[x] Concluída`)
 * **Arquivos:**
-  * `[MODIFICAR]` `src/main/resources/META-INF/resources/login.xhtml`
-  * `[MODIFICAR]` `src/main/resources/META-INF/resources/logout.xhtml`
-  * `[MODIFICAR]` `src/main/resources/META-INF/resources/pages/public/esqueci-senha.xhtml`
-  * `[MODIFICAR]` `src/main/resources/META-INF/resources/pages/public/definir-senha.xhtml`
-  * `[MODIFICAR]` `src/main/resources/META-INF/resources/pages/public/nao-encontrado.xhtml`
+  * `[MODIFICADO]` `src/main/resources/META-INF/resources/login.xhtml`
+  * `[MODIFICADO]` `src/main/resources/META-INF/resources/logout.xhtml`
+  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/public/esqueci-senha.xhtml`
+  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/public/definir-senha.xhtml`
+  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/public/nao-encontrado.xhtml`
 * **Entregas:**
-  * Importar PrimeFlex e `easypark.css` em todas as 5 telas, incluindo `<meta name="viewport">`.
-  * Padronizar card centralizado com cabeçalho da marca EasyPark, alinhamento à esquerda para labels e inputs, `<p:message />` padronizado, botão de submissão em largura total e links de retorno ao login/sistema (incluindo botão de cancelar/voltar em `logout.xhtml`).
-  * Manter intacto o `<form method="post" action="#{request.contextPath}/j_security_check">` e campos `j_username`/`j_password` em `login.xhtml`.
+  * Importados PrimeFlex e `easypark.css` em todas as 5 telas, incluindo `<meta name="viewport">`.
+  * Padronizado card centralizado (`.auth-page` / `.auth-card`) com cabeçalho da marca EasyPark, alinhamento à esquerda para labels e inputs, mensagens de erro com `.field-error`, botão de submissão em largura total e links de retorno ao login/sistema (incluindo link de retorno em `logout.xhtml`).
+  * Mantido intacto o `<form method="post" action="#{request.contextPath}/j_security_check">` e os campos `j_username`/`j_password` em `login.xhtml`.
 
 ### Etapa 3 — Refinamento do Dashboard (`[ ] Pendente`)
 * **Arquivos:**

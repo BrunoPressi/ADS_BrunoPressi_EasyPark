@@ -18,9 +18,17 @@
 -->
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
       xmlns:p="http://primefaces.org/ui">
 <h:head>
-    <title>Login - Quarkus Security</title>
+    <f:facet name="first">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </f:facet>
+    <title>EasyPark — Login</title>
+    <h:outputStylesheet library="webjars" name="primeflex/3.3.1/primeflex.min.css"/>
+    <h:outputStylesheet name="css/easypark.css"/>
 </h:head>
 <h:body>
     <!-- Componente Growl para notificações -->
@@ -39,31 +47,50 @@
         </script>
     </h:panelGroup>
 
-    <p:panel header="Entre com suas credenciais" style="max-width: 420px; margin: 2rem auto;">
-        <!-- action aponta para /j_security_check — interceptado pelo Quarkus Form Auth -->
-        <form method="post" action="#{request.contextPath}/j_security_check">
-            <p:panelGrid columns="1" layout="grid" style="width:100%; gap: 0.75rem;">
+    <div class="auth-page">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo-badge">
+                    <i class="pi pi-car"></i>
+                </div>
+                <h1 class="auth-title">EasyPark ERP</h1>
+                <p class="auth-subtitle">Entre com suas credenciais para acessar o sistema</p>
+            </div>
 
-                <label for="j_username" style="display:block; margin-bottom:0.25rem;">Usuário</label>
-                <input id="j_username" name="j_username" type="text" autocomplete="username"
-                       class="ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all"
-                       style="width: 100%; padding: 0.75rem; margin-bottom: .9rem"/>
+            <!-- action aponta para /j_security_check — interceptado pelo Quarkus Form Auth -->
+            <form method="post" action="#{request.contextPath}/j_security_check">
+                <div class="field">
+                    <label for="j_username">E-mail / Usuário</label>
+                    <input id="j_username" name="j_username" type="text" autocomplete="username"
+                           placeholder="Digite seu e-mail..."
+                           class="ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all w-full"
+                           style="padding: 0.65rem 0.75rem;"/>
+                </div>
 
-                <label for="j_password" style="display:block; margin-bottom:0.25rem;">Senha</label>
-                <input id="j_password" name="j_password" type="password" autocomplete="current-password"
-                       class="ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all"
-                       style="width: 100%; padding: 0.75rem;"/>
+                <div class="field">
+                    <label for="j_password">Senha</label>
+                    <input id="j_password" name="j_password" type="password" autocomplete="current-password"
+                           placeholder="Digite sua senha..."
+                           class="ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all w-full"
+                           style="padding: 0.65rem 0.75rem;"/>
+                </div>
 
-                <h:panelGroup>
-                    <button type="submit" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-success" style="width: 90px; height: 40px">
-                        <span class="ui-button-text ui-c">Entrar</span>
+                <div class="mt-4">
+                    <button type="submit"
+                            class="ui-button ui-widget ui-state-default ui-corner-all w-full flex align-items-center justify-content-center gap-2"
+                            style="height: 42px; font-weight: 600;">
+                        <i class="pi pi-sign-in"></i>
+                        <span class="ui-button-text ui-c">Entrar no Sistema</span>
                     </button>
-                </h:panelGroup>
-                <a href="#{request.contextPath}/pages/public/esqueci-senha.xhtml">Esqueci Minha Senha</a>
+                </div>
 
-            </p:panelGrid>
-        </form>
-        <p:divider/>
-    </p:panel>
+                <div class="auth-footer">
+                    <a href="#{request.contextPath}/pages/public/esqueci-senha.xhtml" class="auth-link">
+                        Esqueci Minha Senha
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
 </h:body>
 </html>

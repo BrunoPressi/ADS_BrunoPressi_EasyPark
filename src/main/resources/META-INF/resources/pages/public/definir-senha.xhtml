@@ -12,10 +12,10 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <meta name="apple-mobile-web-app-capable" content="yes" />
     </f:facet>
-    <title>Definir Senha</title>
+    <title>EasyPark — Definir Senha</title>
     <h:outputStylesheet library="webjars" name="primeflex/3.3.1/primeflex.min.css"/>
+    <h:outputStylesheet name="css/easypark.css"/>
 </h:head>
 <h:body>
 
@@ -26,26 +26,45 @@
         <p:autoUpdate/>
     </p:growl>
 
-    <p:panel header="Preencha com sua senha" style="max-width: 320px; margin: 2rem auto; text-align: center;">
-        <h:form id="formSenha">
-            <div class="ui-fluid">
-                <div>
-                    <p:outputLabel for="novaSenha" value="Nova Senha:" />
-                    <p:password id="novaSenha" value="#{senhaBean.senhaDTO.novaSenha}" placeholder="Digite sua nova senha..."/>
-                    <h:message for="novaSenha" style="color: red"/>
+    <div class="auth-page">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo-badge">
+                    <i class="pi pi-lock"></i>
                 </div>
-                <div style="margin-top: .5rem">
-                    <p:outputLabel for="novaSenhaConfirmar" value="Confirmar Senha:" />
-                    <p:password id="novaSenhaConfirmar" value="#{senhaBean.senhaDTO.novaSenhaConfirmar}" placeholder="Confirme sua nova senha..."/>
-                    <h:message for="novaSenhaConfirmar" style="color: red"/>
-                </div>
+                <h1 class="auth-title">Definir Nova Senha</h1>
+                <p class="auth-subtitle">Preencha os campos abaixo para configurar sua senha de acesso</p>
             </div>
-            <p:commandButton value="Definir minha senha"
-                             action="#{senhaBean.definirSenha}"
-                             process="@form"
-                             update="@form"
-                             style="margin-top: .9rem"/>
-        </h:form>
-    </p:panel>
+
+            <h:form id="formSenha">
+                <div class="ui-fluid">
+                    <div class="field">
+                        <p:outputLabel for="novaSenha" value="Nova Senha:" />
+                        <p:password id="novaSenha" value="#{senhaBean.senhaDTO.novaSenha}" placeholder="Digite sua nova senha..."/>
+                        <h:message for="novaSenha" style="color: red" styleClass="field-error"/>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="novaSenhaConfirmar" value="Confirmar Senha:" />
+                        <p:password id="novaSenhaConfirmar" value="#{senhaBean.senhaDTO.novaSenhaConfirmar}" placeholder="Confirme sua nova senha..."/>
+                        <h:message for="novaSenhaConfirmar" style="color: red" styleClass="field-error"/>
+                    </div>
+                </div>
+
+                <div class="mt-3 ui-fluid">
+                    <p:commandButton value="Definir minha senha"
+                                     icon="pi pi-check"
+                                     action="#{senhaBean.definirSenha}"
+                                     process="@form"
+                                     update="@form" />
+                </div>
+
+                <div class="auth-footer">
+                    <a href="#{request.contextPath}/login.xhtml" class="auth-link">
+                        <i class="pi pi-arrow-left mr-1" style="font-size: 0.75rem;"></i>Ir para o login
+                    </a>
+                </div>
+            </h:form>
+        </div>
+    </div>
 </h:body>
 </html>

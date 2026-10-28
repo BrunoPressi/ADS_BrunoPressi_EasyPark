@@ -15,23 +15,46 @@
 -->
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
       xmlns:p="http://primefaces.org/ui">
 <h:head>
-    <title>Logout</title>
+    <f:facet name="first">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </f:facet>
+    <title>EasyPark — Encerrar Sessão</title>
+    <h:outputStylesheet library="webjars" name="primeflex/3.3.1/primeflex.min.css"/>
+    <h:outputStylesheet name="css/easypark.css"/>
 </h:head>
 <h:body>
-    <p:panel header="Encerrar sessão" style="max-width: 520px; margin: 2rem auto;">
-        <p>Deseja realmente sair da sessão atual?</p>
-        <h:form>
-            <h:panelGroup layout="block" style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
-                <!-- ajax="false" garante ciclo completo de navegação JSF após o logout -->
-                <p:commandButton value="Confirmar logout" icon="pi pi-sign-out"
-                                 action="#{logoutBean.logout}" ajax="false"
-                                 styleClass="ui-button-sm"/>
-                <!--<p:button outcome="/private/home.xhtml" value="Cancelar"
-                          icon="pi pi-times" styleClass="ui-button-sm"/>-->
-            </h:panelGroup>
-        </h:form>
-    </p:panel>
+    <div class="auth-page">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo-badge" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);">
+                    <i class="pi pi-sign-out"></i>
+                </div>
+                <h1 class="auth-title">Encerrar Sessão</h1>
+                <p class="auth-subtitle">Deseja realmente sair da sessão atual?</p>
+            </div>
+
+            <h:form>
+                <div class="flex flex-column gap-2">
+                    <!-- ajax="false" garante ciclo completo de navegação JSF após o logout -->
+                    <p:commandButton value="Confirmar logout"
+                                     icon="pi pi-sign-out"
+                                     action="#{logoutBean.logout}"
+                                     ajax="false"
+                                     styleClass="ui-button-danger w-full" />
+                </div>
+
+                <div class="auth-footer">
+                    <a href="#{request.contextPath}/login-success.xhtml" class="auth-link">
+                        <i class="pi pi-arrow-left mr-1" style="font-size: 0.75rem;"></i>Voltar ao sistema
+                    </a>
+                </div>
+            </h:form>
+        </div>
+    </div>
 </h:body>
 </html>

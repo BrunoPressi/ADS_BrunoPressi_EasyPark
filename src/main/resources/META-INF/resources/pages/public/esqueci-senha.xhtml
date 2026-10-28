@@ -8,10 +8,10 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <meta name="apple-mobile-web-app-capable" content="yes" />
     </f:facet>
-    <title>Esqueci Minha Senha</title>
+    <title>EasyPark — Esqueci Minha Senha</title>
     <h:outputStylesheet library="webjars" name="primeflex/3.3.1/primeflex.min.css"/>
+    <h:outputStylesheet name="css/easypark.css"/>
 </h:head>
 <h:body>
     <p:growl id="messages"
@@ -21,21 +21,40 @@
         <p:autoUpdate/>
     </p:growl>
 
-    <p:panel header="Informe seu E-mail" style="max-width: 320px; margin: 2rem auto; text-align: center;">
-        <h:form id="formSenha">
-            <div class="ui-fluid">
-                <div>
-                    <p:outputLabel for="email" value="E-mail:" />
-                    <p:inputText id="email" value="#{esqueciSenhaBean.senhaDTO.email}" placeholder="Digite seu email..."/>
-                    <h:message for="email" style="color: red"/>
+    <div class="auth-page">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo-badge">
+                    <i class="pi pi-envelope"></i>
                 </div>
+                <h1 class="auth-title">Recuperar Senha</h1>
+                <p class="auth-subtitle">Informe seu e-mail cadastrado para receber as instruções</p>
             </div>
-            <p:commandButton value="Confirmar"
-                             action="#{esqueciSenhaBean.enviarEmail}"
-                             process="@form"
-                             update="@form"
-                             style="margin-top: .9rem"/>
-        </h:form>
-    </p:panel>
+
+            <h:form id="formSenha">
+                <div class="ui-fluid">
+                    <div class="field">
+                        <p:outputLabel for="email" value="E-mail:" />
+                        <p:inputText id="email" value="#{esqueciSenhaBean.senhaDTO.email}" placeholder="Digite seu email..."/>
+                        <h:message for="email" style="color: red" styleClass="field-error"/>
+                    </div>
+                </div>
+
+                <div class="mt-3 ui-fluid">
+                    <p:commandButton value="Confirmar"
+                                     icon="pi pi-send"
+                                     action="#{esqueciSenhaBean.enviarEmail}"
+                                     process="@form"
+                                     update="@form" />
+                </div>
+
+                <div class="auth-footer">
+                    <a href="#{request.contextPath}/login.xhtml" class="auth-link">
+                        <i class="pi pi-arrow-left mr-1" style="font-size: 0.75rem;"></i>Voltar para o login
+                    </a>
+                </div>
+            </h:form>
+        </div>
+    </div>
 </h:body>
 </html>

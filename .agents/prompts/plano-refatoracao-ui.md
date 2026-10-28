@@ -120,12 +120,12 @@ Este documento consolida o diagnóstico da camada de apresentação do projeto *
   * Padronizado card centralizado (`.auth-page` / `.auth-card`) com cabeçalho da marca EasyPark, alinhamento à esquerda para labels e inputs, mensagens de erro com `.field-error`, botão de submissão em largura total e links de retorno ao login/sistema (incluindo link de retorno em `logout.xhtml`).
   * Mantido intacto o `<form method="post" action="#{request.contextPath}/j_security_check">` e os campos `j_username`/`j_password` em `login.xhtml`.
 
-### Etapa 3 — Refinamento do Dashboard (`[ ] Pendente`)
+### Etapa 3 — Refinamento do Dashboard (`[x] Concluída`)
 * **Arquivos:**
-  * `[MODIFICAR]` `src/main/resources/META-INF/resources/pages/gestao/dashboard.xhtml`
+  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/gestao/dashboard.xhtml`
 * **Entregas:**
-  * Definir `<ui:define name="title">EasyPark - Dashboard</ui:define>`.
-  * Substituir `shadow-5` nos cards e painéis por classes de card ERP sutis (`erp-card` / `shadow-1`), mantendo a hierarquia de cores de borda esquerda e melhorando a apresentação das duas tabelas de alertas inferiores.
+  * Definido `<ui:define name="title">EasyPark — Dashboard</ui:define>` e padronizado o cabeçalho com `.page-header`.
+  * Substituído `shadow-5` nos cards e painéis por `.erp-card` com bordas e sombras sutis de ERP, mantendo os destaques laterais coloridos nos KPIs operacionais e adicionando `stripedRows="true"` nas duas tabelas de alertas inferiores.
 
 ### Etapa 4 — Telas de Gestão: Cadastros Base (Vagas, Funcionários e Clientes) (`[ ] Pendente`)
 * **Arquivos:**

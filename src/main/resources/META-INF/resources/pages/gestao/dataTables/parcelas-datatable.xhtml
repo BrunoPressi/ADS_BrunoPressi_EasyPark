@@ -18,7 +18,7 @@
                          value="#{contratoBean.parcelas}"
                          lazy="false"
                          var="parcela"
-                         widgetVar="dtContratos"
+                         widgetVar="dtParcelas"
                          paginator="true"
                          rows="5"
                          paginatorPosition="bottom"
@@ -70,7 +70,6 @@
                 </p:column>
 
                 <p:column headerText="Cobrança Enviada?" style="width: 80px; text-align: center;">
-                    <h:outputText  />
                     <p:tag severity="#{ (parcela.cobrancaEnviada ? 'success' : 'warning') }"
                            value="#{ (parcela.cobrancaEnviada) ? 'Sim' : 'Não'}"/>
                 </p:column>
@@ -80,7 +79,7 @@
                                 : (parcela.status) == 'atrasada' ? 'danger'
                                 : (parcela.status) == 'paga' ? 'success'
                                 : (parcela.status) == 'cancelada' ? 'info'
-                                : 'Secondary'}"
+                                : 'secondary'}"
                            value="#{parcela.status.descricao}"  />
                 </p:column>
 

@@ -76,7 +76,7 @@
                 <p:column headerText="Status" style="width: 80px; text-align: center;">
                     <p:tag severity="#{ (permanencia.status) == 'em_andamento' ? 'warning'
                                 : (permanencia.status) == 'concluida' ? 'success'
-                                : 'Não Definido'}"
+                                : 'secondary'}"
                            value="#{ (permanencia.status) == 'em_andamento' ? 'Em Andamento'
                                 : (permanencia.status) == 'concluida' ? 'Concluida'
                                 : 'Não definido'}"  />

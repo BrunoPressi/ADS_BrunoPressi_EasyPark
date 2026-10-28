@@ -23,11 +23,11 @@
                 <div>
                     <div  style="margin-top: .5rem">
                         <p:outputLabel value="Placa do Veículo: " />
-                        <h:outputText readonly="true" value="#{permanenciaBean.saida.placa}"/>
+                        <h:outputText value="#{permanenciaBean.saida.placa}"/>
                     </div>
                     <div  style="margin-top: .5rem">
                         <p:outputLabel value="Valor: " />
-                        <h:outputText readonly="true" value="#{permanenciaBean.saida.valor}">
+                        <h:outputText value="#{permanenciaBean.saida.valor}">
                             <f:convertNumber type="currency" currencySymbol="R$" locale="pt_BR"/>
                         </h:outputText>
                     </div>

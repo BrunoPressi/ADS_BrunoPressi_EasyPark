@@ -9,12 +9,12 @@
     <f:facet name="first">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
-        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </f:facet>
-    <title><ui:insert name="title">EasyPark</ui:insert></title>
-    <ui:insert name="head"/>
+    <title><ui:insert name="title">EasyPark — Gestão de Estacionamento</ui:insert></title>
     <h:outputStylesheet library="webjars" name="primeflex/3.3.1/primeflex.min.css"/>
+    <h:outputStylesheet name="css/easypark.css"/>
+    <ui:insert name="head"/>
 </h:head>
 
 <h:body>
@@ -26,48 +26,103 @@
     </p:growl>
 
     <!-- Diálogo global obrigatório para capturar o p:confirm -->
-    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="380">
         <p:commandButton value="Não" type="button"
-                         styleClass="ui-confirmdialog-no ui-button-secondary"
+                         styleClass="ui-confirmdialog-no ui-button-secondary ui-button-flat"
                          icon="pi pi-times" />
         <p:commandButton value="Sim" type="button"
-                         styleClass="ui-confirmdialog-yes"
+                         styleClass="ui-confirmdialog-yes ui-button-danger"
                          icon="pi pi-check" />
     </p:confirmDialog>
 
-    <div class="layout-wrapper">
-        <div class="layout-topbar" style="margin-bottom: 20px;">
-            <h:form id="menuForm">
-                <p:menubar rendered="#{userSession.gerente}">
-                    <p:menuitem value="Dashboard" icon="pi pi-home" url="/pages/gestao/dashboard.xhtml" />
-                    <p:menuitem value="Vagas" icon="pi pi-book" url="/pages/gestao/vagas.xhtml" />
-                    <p:menuitem value="Funcionários" icon="pi pi-id-card" url="/pages/gestao/funcionarios.xhtml" />
-                    <p:menuitem value="Clientes" icon="pi pi-user" url="/pages/gestao/clientes.xhtml" />
-                    <p:menuitem value="Contratos" icon="pi pi-briefcase" url="/pages/gestao/contratos.xhtml" />
-                    <f:facet name="options">
-                        <p:commandButton value="Sair" icon="pi pi-sign-out" styleClass="ui-button-danger" action="/logout.xhtml?faces-redirect=true" />
-                    </f:facet>
-                </p:menubar>
-                <p:menubar rendered="#{userSession.atendente}">
-                    <p:menuitem value="Entrada e Saídas" icon="pi pi-book" url="/pages/operacao/fluxo.xhtml" />
-                    <f:facet name="options">
-                        <p:commandButton value="Sair" icon="pi pi-sign-out" styleClass="ui-button-danger" action="/logout.xhtml?faces-redirect=true" />
-                    </f:facet>
-                </p:menubar>
-            </h:form>
-        </div>
+    <div class="app-layout">
+        <!-- Menu Lateral Esquerdo (Sidebar Fixa) -->
+        <aside class="app-sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-brand-icon">
+                    <i class="pi pi-car"></i>
+                </div>
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title">EasyPark</span>
+                    <span class="sidebar-brand-subtitle">Sistema de Gestão ERP</span>
+                </div>
+            </div>
 
-        <div class="layout-content">
-            <p:panel header="#{viewTitle}">
+            <h:form id="menuForm" styleClass="sidebar-form">
+                <!-- Navegação do Gerente -->
+                <h:panelGroup layout="block" styleClass="sidebar-nav" rendered="#{userSession.gerente}">
+                    <span class="sidebar-section-label">Monitoramento</span>
+                    <a href="#{request.contextPath}/pages/gestao/dashboard.xhtml"
+                       class="sidebar-link #{view.viewId.contains('/dashboard') ? 'active' : ''}">
+                        <i class="pi pi-chart-bar"></i>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <span class="sidebar-section-label">Cadastros &amp; Pátio</span>
+                    <a href="#{request.contextPath}/pages/gestao/vagas.xhtml"
+                       class="sidebar-link #{view.viewId.contains('/vagas') ? 'active' : ''}">
+                        <i class="pi pi-th-large"></i>
+                        <span>Vagas</span>
+                    </a>
+                    <a href="#{request.contextPath}/pages/gestao/clientes.xhtml"
+                       class="sidebar-link #{view.viewId.contains('/clientes') ? 'active' : ''}">
+                        <i class="pi pi-users"></i>
+                        <span>Clientes</span>
+                    </a>
+                    <a href="#{request.contextPath}/pages/gestao/funcionarios.xhtml"
+                       class="sidebar-link #{view.viewId.contains('/funcionarios') ? 'active' : ''}">
+                        <i class="pi pi-id-card"></i>
+                        <span>Funcionários</span>
+                    </a>
+
+                    <span class="sidebar-section-label">Comercial</span>
+                    <a href="#{request.contextPath}/pages/gestao/contratos.xhtml"
+                       class="sidebar-link #{view.viewId.contains('/contratos') ? 'active' : ''}">
+                        <i class="pi pi-briefcase"></i>
+                        <span>Contratos</span>
+                    </a>
+                </h:panelGroup>
+
+                <!-- Navegação do Atendente -->
+                <h:panelGroup layout="block" styleClass="sidebar-nav" rendered="#{userSession.atendente}">
+                    <span class="sidebar-section-label">Operação de Pátio</span>
+                    <a href="#{request.contextPath}/pages/operacao/fluxo.xhtml"
+                       class="sidebar-link #{view.viewId.contains('/fluxo') ? 'active' : ''}">
+                        <i class="pi pi-arrows-h"></i>
+                        <span>Entrada e Saídas</span>
+                    </a>
+                </h:panelGroup>
+
+                <!-- Rodapé da Sidebar: Sessão do Usuário e Botão Sair -->
+                <div class="sidebar-footer">
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-avatar">
+                            <i class="pi pi-user"></i>
+                        </div>
+                        <div class="sidebar-user-details">
+                            <span class="sidebar-user-name" title="#{userSession.username}">#{userSession.username}</span>
+                            <span class="sidebar-user-role">#{userSession.gerente ? 'Gerente' : (userSession.atendente ? 'Atendente' : userSession.roles)}</span>
+                        </div>
+                    </div>
+                    <p:commandButton value="Encerrar Sessão"
+                                     icon="pi pi-sign-out"
+                                     styleClass="sidebar-logout-btn"
+                                     action="/logout.xhtml?faces-redirect=true" />
+                </div>
+            </h:form>
+        </aside>
+
+        <!-- Área Principal -->
+        <div class="app-main">
+            <main class="app-content">
                 <ui:insert name="content">
                     <!-- Conteúdo das páginas será inserido aqui -->
                 </ui:insert>
-            </p:panel>
-        </div>
+            </main>
 
-        <div class="layout-footer" style="margin-top: 20px; text-align: center; font-size: 0.9em; color: #666;">
-            <hr />
-            <p>&#169; 2026 - Bruno Pressi - Trabalho Final ADS - EasyPark</p>
+            <footer class="app-footer">
+                <span>&#169; 2026 — Bruno Pressi — Trabalho Final ADS — EasyPark ERP</span>
+            </footer>
         </div>
     </div>
 </h:body>

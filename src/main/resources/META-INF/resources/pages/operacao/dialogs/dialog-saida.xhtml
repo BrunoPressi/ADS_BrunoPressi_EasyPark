@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="jakarta.faces.html"
-      xmlns:f="jakarta.faces.core"
-      xmlns:p="http://primefaces.org/ui">
-<h:body>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui">
+
     <p:dialog id="dialogSaida"
               widgetVar="dialogSaida"
               closable="true"
@@ -11,7 +11,7 @@
               showEffect="fade"
               width="440"
               closeOnEscape="true"
-              header="Confirme os dados do pagamento...">
+              header="Confirmação de Pagamento e Saída">
 
         <p:ajax event="close"
                 form="formDialogSaida"
@@ -20,42 +20,46 @@
 
         <h:form id="formDialogSaida">
             <div class="ui-fluid">
-                <div>
-                    <div  style="margin-top: .5rem">
-                        <p:outputLabel value="Placa do Veículo: " />
-                        <h:outputText value="#{permanenciaBean.saida.placa}"/>
+                <div class="payment-summary-box">
+                    <div class="flex align-items-center justify-content-between mb-2">
+                        <span class="text-600 text-sm font-medium">Placa do Veículo</span>
+                        <span class="text-900 font-bold text-base">
+                            <h:outputText value="#{permanenciaBean.saida.placa}"/>
+                        </span>
                     </div>
-                    <div  style="margin-top: .5rem">
-                        <p:outputLabel value="Valor: " />
-                        <h:outputText value="#{permanenciaBean.saida.valor}">
-                            <f:convertNumber type="currency" currencySymbol="R$" locale="pt_BR"/>
-                        </h:outputText>
-                    </div>
-                    <div style="margin-top: .5rem">
-                        <p:outputLabel for="meioPagamento" value="Selecione o meio de pagamento"/>
-                        <p:selectOneMenu id="meioPagamento" value="#{permanenciaBean.saida.meioPagamento}">
-                            <f:selectItem itemLabel="Selecione o meio de pagamento" itemValue=""/>
-                            <f:selectItem itemLabel="Cartão de Crédito" itemValue="CREDIT_CARD"/>
-                            <f:selectItem itemLabel="Cartão de Débito" itemValue="DEBIT_CARD"/>
-                            <f:selectItem itemLabel="Pix" itemValue="PIX"/>
-                            <f:selectItem itemLabel="Dinheiro" itemValue="DINHEIRO"/>
-                        </p:selectOneMenu>
-                        <h:message for="meioPagamento" style="color: red"/>
+                    <div class="flex align-items-center justify-content-between pt-2 border-top-1 surface-border">
+                        <span class="text-600 text-sm font-medium">Valor a Pagar</span>
+                        <span class="text-primary font-bold text-xl">
+                            <h:outputText value="#{permanenciaBean.saida.valor}">
+                                <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR"/>
+                            </h:outputText>
+                        </span>
                     </div>
                 </div>
-                <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.5rem;">
-                    <p:commandButton type="button"
-                                     value="Voltar"
-                                     onclick="PF('dialogSaida').hide()"
-                                     styleClass="ui-button-flat mr-2"
-                                     style="width: 6rem"/>
-                    <p:commandButton value="Salvar"
-                                     actionListener="#{permanenciaBean.processarSaida}"
-                                     process="@form"
-                                     update="@form :formDataTablePermanencias"/>
+
+                <div class="field mb-0">
+                    <p:outputLabel for="meioPagamento" value="Selecione o meio de pagamento"/>
+                    <p:selectOneMenu id="meioPagamento" value="#{permanenciaBean.saida.meioPagamento}">
+                        <f:selectItem itemLabel="Selecione o meio de pagamento" itemValue=""/>
+                        <f:selectItem itemLabel="Cartão de Crédito" itemValue="CREDIT_CARD"/>
+                        <f:selectItem itemLabel="Cartão de Débito" itemValue="DEBIT_CARD"/>
+                        <f:selectItem itemLabel="Pix" itemValue="PIX"/>
+                        <f:selectItem itemLabel="Dinheiro" itemValue="DINHEIRO"/>
+                    </p:selectOneMenu>
+                    <h:message for="meioPagamento" style="color: red" styleClass="field-error"/>
                 </div>
+            </div>
+            <div class="dialog-footer">
+                <p:commandButton type="button"
+                                 value="Voltar"
+                                 onclick="PF('dialogSaida').hide()"
+                                 styleClass="ui-button-flat ui-button-secondary"/>
+                <p:commandButton value="Salvar"
+                                 icon="pi pi-check"
+                                 actionListener="#{permanenciaBean.processarSaida}"
+                                 process="@form"
+                                 update="@form :formDataTablePermanencias"/>
             </div>
         </h:form>
     </p:dialog>
-</h:body>
-</html>
+</ui:composition>

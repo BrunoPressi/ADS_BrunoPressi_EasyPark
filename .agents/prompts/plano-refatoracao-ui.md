@@ -138,29 +138,29 @@ Este documento consolida o diagnóstico da camada de apresentação do projeto *
   * Padronizada barra de filtro e `<p:dataTable>` (`stripedRows="true"`, `size="small"`, `responsiveLayout="scroll"`, correção de `'Em Manutenção'`, botões de ação padronizados).
   * Convertido `dialog-cliente.xhtml` para `<ui:composition>` e padronizados `dialogVaga`, `dialogFuncionario` e `dialogCliente` (`closable="true"`, `.field`, `.field-error`, `.dialog-footer`).
 
-### Etapa 5 — Telas de Gestão: Contratos e Sub-diálogos (`[ ] Pendente`)
+### Etapa 5 — Telas de Gestão: Contratos e Sub-diálogos (`[x] Concluída`)
 * **Arquivos:**
-  * `[MODIFICAR]` `src/main/resources/META-INF/resources/pages/gestao/contratos.xhtml`
-  * `[MODIFICAR]` `src/main/resources/META-INF/resources/pages/gestao/dialogs/dialog-veiculo.xhtml`
-  * `[MODIFICAR]` `src/main/resources/META-INF/resources/pages/gestao/dataTables/cliente-datatable.xhtml`
-  * `[MODIFICAR]` `src/main/resources/META-INF/resources/pages/gestao/dataTables/veiculo-datatable.xhtml`
-  * `[MODIFICAR]` `src/main/resources/META-INF/resources/pages/gestao/dataTables/parcelas-datatable.xhtml`
+  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/gestao/contratos.xhtml`
+  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/gestao/dialogs/dialog-veiculo.xhtml`
+  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/gestao/dataTables/cliente-datatable.xhtml`
+  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/gestao/dataTables/veiculo-datatable.xhtml`
+  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/gestao/dataTables/parcelas-datatable.xhtml`
 * **Entregas:**
-  * Converter os 4 arquivos de include para `<ui:composition>`.
-  * Adicionar cabeçalho de página em `contratos.xhtml`, formatar valores monetários com `<f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR"/>` e organizar os botões de consulta (`Cliente`, `Veículo`, `Parcelas`) e ações (`Editar`, `Cancelar`) de forma compacta e semântica.
-  * Tornar `parcelas-datatable.xhtml`, `cliente-datatable.xhtml` e `veiculo-datatable.xhtml` responsivos para telas de notebooks (removendo `width="1250"` / `width="895"` travados e `width: 80px` forçado nas colunas) e corrigir os rótulos de `dialog-veiculo.xhtml`.
+  * Convertidos os 4 arquivos de include para `<ui:composition>`.
+  * Adicionado cabeçalho de página em `contratos.xhtml`, formatados valores monetários com `<f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR"/>` e organizados os botões de consulta (`Cliente`, `Veículo`, `Parcelas`) e ações (`Editar`, `Cancelar`) de forma compacta e semântica.
+  * Tornados `parcelas-datatable.xhtml`, `cliente-datatable.xhtml` e `veiculo-datatable.xhtml` responsivos para telas de notebooks (removendo `width="1250"` / `width="895"` travados e `width: 80px` forçado nas colunas) e corrigidos os rótulos de `dialog-veiculo.xhtml`.
 
-### Etapa 6 — Módulo Operacional: Fluxo de Pátio (`[ ] Pendente`)
+### Etapa 6 — Módulo Operacional: Fluxo de Pátio (`[x] Concluída`)
 * **Arquivos:**
-  * `[MODIFICAR]` `src/main/resources/META-INF/resources/pages/operacao/fluxo.xhtml`
-  * `[MODIFICAR]` `src/main/resources/META-INF/resources/pages/operacao/dialogs/dialog-entrada.xhtml`
-  * `[MODIFICAR]` `src/main/resources/META-INF/resources/pages/operacao/dialogs/dialog-saida.xhtml`
-  * `[MODIFICAR]` `src/main/resources/META-INF/resources/pages/operacao/dialogs/dialog-pagamento.xhtml`
+  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/operacao/fluxo.xhtml`
+  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/operacao/dialogs/dialog-entrada.xhtml`
+  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/operacao/dialogs/dialog-saida.xhtml`
+  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/operacao/dialogs/dialog-pagamento.xhtml`
 * **Entregas:**
-  * Converter os 3 diálogos para `<ui:composition>`.
-  * Estruturar o cabeçalho operacional em `fluxo.xhtml` integrando o botão `Registrar Entrada` (`#formBotaoEntrada`) de forma alinhada ao topo da página.
-  * Melhorar a tabela de permanências (destaque tipográfico para a placa, tags para tipo `Rotativo`/`Mensalista`, correção de `'Concluída'` e alinhamento das ações).
-  * Criar um card de destaque financeiro dentro de `dialog-saida.xhtml` para exibir claramente a Placa e o Valor a Pagar antes da seleção do meio de pagamento.
+  * Convertidos os 3 diálogos para `<ui:composition>`.
+  * Estruturado o cabeçalho operacional em `fluxo.xhtml` integrando o botão `Registrar Entrada` (`#formBotaoEntrada`) de forma alinhada ao topo da página.
+  * Melhorada a tabela de permanências (destaque tipográfico para a placa, tags para tipo `Rotativo`/`Mensalista`, correção de `'Concluída'` e alinhamento das ações).
+  * Criado um card de destaque financeiro dentro de `dialog-saida.xhtml` para exibir claramente a Placa e o Valor a Pagar antes da seleção do meio de pagamento.
 
-### Etapa 7 — Verificação e Testes (`[ ] Pendente`)
-* Executar `./mvnw test` (ou `mvnw.cmd test`) para garantir que a compilação e a suíte de testes do projeto continuam íntegras e revisar todos os arquivos modificados contra a lista de restrições.
+### Etapa 7 — Verificação e Testes (`[x] Concluída`)
+* Executado `.\mvnw.cmd test` com sucesso (`Tests run: 199, Failures: 0, Errors: 0, Skipped: 0 — BUILD SUCCESS`), garantindo que a compilação e a suíte de testes do projeto continuam íntegras, e revisados todos os arquivos modificados contra a lista de restrições (preservação integral de `id`s, `widgetVar`s, expressões EL, bindings, `action`/`actionListener`, `process`, `update` e validações).

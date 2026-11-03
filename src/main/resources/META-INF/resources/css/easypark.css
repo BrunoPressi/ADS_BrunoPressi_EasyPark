@@ -378,6 +378,14 @@ body .ui-datatable {
     box-shadow: var(--ep-shadow-card);
 }
 
+body .ui-datatable table {
+    table-layout: auto;
+}
+
+body .ui-datatable .ui-button {
+    flex-shrink: 0;
+}
+
 body .ui-datatable .ui-datatable-thead > tr > th {
     background-color: #f8fafc;
     color: var(--ep-text-secondary);

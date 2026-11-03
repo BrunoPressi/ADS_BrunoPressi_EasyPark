@@ -4,43 +4,52 @@
                 xmlns:f="jakarta.faces.core"
                 xmlns:ui="jakarta.faces.facelets"
                 xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="title">EasyPark — Gestão de Contratos</ui:define>
+
     <ui:define name="content">
 
         <!-- Pesquisa de contrato por CPF do cliente -->
         <!-- Tabela possui server side pagination (lazy data model) -->
         <h:form id="dataTableForm">
 
-            <p:commandButton value="Novo Contrato"
-                             icon="pi pi-plus"
-                             actionListener="#{contratoBean.novoContrato}"
-                             process="@this"
-                             resetValues="true"
-                             update=":dialogContrato"
-                             oncomplete="PF('dialogContrato').show()"
-                             style="margin-bottom: .8rem"/>
+            <div class="page-header">
+                <div class="page-header-titles">
+                    <h2 class="page-title">Gestão de Contratos</h2>
+                    <p class="page-subtitle">Administração de contratos mensalistas, veículos vinculados e parcelas</p>
+                </div>
+                <div>
+                    <p:commandButton value="Novo Contrato"
+                                     icon="pi pi-plus"
+                                     actionListener="#{contratoBean.novoContrato}"
+                                     process="@this"
+                                     resetValues="true"
+                                     update=":dialogContrato"
+                                     oncomplete="PF('dialogContrato').show()" />
+                </div>
+            </div>
 
-            <p:toolbar style="margin-bottom: 1rem;">
+            <p:toolbar styleClass="mb-3">
                 <p:toolbarGroup>
-                        <span class="ui-input-icon-left" style="margin-right: .5rem;">
-                            <i class="pi pi-key" />
-                            <p:inputText id="inputChave"
-                                         style="width: 300px"
-                                         value="#{contratoBean.chaveUnicaFiltro}"
-                                         placeholder="Buscar contrato por CPF do cliente..." />
-                        </span>
+                    <span class="ui-input-icon-left mr-2">
+                        <i class="pi pi-search" />
+                        <p:inputText id="inputChave"
+                                     style="width: 300px"
+                                     value="#{contratoBean.chaveUnicaFiltro}"
+                                     placeholder="Buscar contrato por CPF do cliente..." />
+                    </span>
 
                     <p:commandButton value="Buscar"
                                      icon="pi pi-search"
                                      action="#{contratoBean.pesquisar}"
                                      update="@form"
-                                     style="margin-right: .5rem"
                                      styleClass="mr-2" />
 
                     <p:commandButton value="Limpar"
                                      icon="pi pi-times"
                                      action="#{contratoBean.limpar}"
                                      update="@form"
-                                     styleClass="ui-button-secondary" />
+                                     styleClass="ui-button-outlined ui-button-secondary" />
                 </p:toolbarGroup>
             </p:toolbar>
 
@@ -50,64 +59,69 @@
                          var="contrato"
                          value="#{contratoBean.lazyDataModel}"
                          lazy="true"
+                         stripedRows="true"
+                         size="small"
+                         responsiveLayout="scroll"
                          paginator="true"
                          rows="10"
                          rowsPerPageTemplate="5,10,20,50"
                          paginatorPosition="bottom"
-                         paginatorTemplate="{CurrentPageReport} {FirstPageLink}
-                                    {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                          currentPageReportTemplate="Exibindo {startRecord}-{endRecord} de {totalRecords} registros"
                          rowKey="#{contrato.id}"
                          emptyMessage="Nenhum contrato encontrado.">
 
-                <p:column headerText="ID" style="width: 80px; text-align: center;">
+                <p:column headerText="ID" style="width: 70px; text-align: center;">
                     <h:outputText value="#{contrato.id}" />
                 </p:column>
 
-                <p:column headerText="Data de Início">
+                <p:column headerText="Data de Início" style="width: 115px; white-space: nowrap;">
                     <h:outputText value="#{contrato.dataInicio}">
                         <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
                     </h:outputText>
                 </p:column>
 
-                <p:column headerText="Data de Término">
+                <p:column headerText="Data de Término" style="width: 115px; white-space: nowrap;">
                     <h:outputText value="#{contrato.dataTermino}">
                         <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
                     </h:outputText>
                 </p:column>
 
-                <p:column headerText="Valor Contratado">
-                    <h:outputText value="R$#{contrato.valorContratado}/mês" />
+                <p:column headerText="Valor Contratado" style="white-space: nowrap;">
+                    <span class="font-semibold text-900">
+                        <h:outputText value="#{contrato.valorContratado}">
+                            <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR"/>
+                        </h:outputText>
+                    </span>
+                    <span class="text-500 text-xs ml-1">/mês</span>
                 </p:column>
 
-                <p:column headerText="Cliente">
-                    <p:commandButton icon="pi pi-eye"
-                                     value="Cliente"
-                                     action="#{contratoBean.selecionarCliente(contrato)}"
-                                     oncomplete="PF('dialogClienteContrato').show()"
-                                     update=":dialogClienteList"
-                                     styleClass="rounded-button"/>
+                <p:column headerText="Consultas" style="width: 310px; text-align: center; white-space: nowrap;">
+                    <div class="flex align-items-center justify-content-center gap-2 flex-nowrap">
+                        <p:commandButton icon="pi pi-user"
+                                         value="Cliente"
+                                         action="#{contratoBean.selecionarCliente(contrato)}"
+                                         oncomplete="PF('dialogClienteContrato').show()"
+                                         update=":dialogClienteList"
+                                         styleClass="ui-button-outlined ui-button-secondary ui-button-sm"/>
+
+                        <p:commandButton icon="pi pi-car"
+                                         value="Veículo"
+                                         action="#{contratoBean.selecionarVeiculo(contrato)}"
+                                         oncomplete="PF('dialogVeiculoContrato').show()"
+                                         update=":dialogVeiculoList"
+                                         styleClass="ui-button-outlined ui-button-secondary ui-button-sm"/>
+
+                        <p:commandButton icon="pi pi-list"
+                                         value="Parcelas"
+                                         action="#{contratoBean.selecionarParcelas(contrato)}"
+                                         oncomplete="PF('dialogParcelas').show()"
+                                         update=":dialogParcelasList"
+                                         styleClass="ui-button-outlined ui-button-secondary ui-button-sm"/>
+                    </div>
                 </p:column>
 
-                <p:column headerText="Veículo">
-                    <p:commandButton icon="pi pi-eye"
-                                     value="Veículo"
-                                     action="#{contratoBean.selecionarVeiculo(contrato)}"
-                                     oncomplete="PF('dialogVeiculoContrato').show()"
-                                     update=":dialogVeiculoList"
-                                     styleClass="rounded-button ui-button-warning"/>
-                </p:column>
-
-                <p:column headerText="Parcelas">
-                    <p:commandButton icon="pi pi-eye"
-                                     value="Parcelas"
-                                     action="#{contratoBean.selecionarParcelas(contrato)}"
-                                     oncomplete="PF('dialogParcelas').show()"
-                                     update=":dialogParcelasList"
-                                     styleClass="rounded-button ui-button-secondary"/>
-                </p:column>
-
-                <p:column headerText="Status">
+                <p:column headerText="Status" style="width: 130px; text-align: center;">
                     <p:tag severity="#{ (contrato.status) == 'ativo' ? 'success'
                             : (contrato.status) == 'encerrado' ? 'secondary'
                             : (contrato.status) == 'inadimplente' ? 'warning'
@@ -120,128 +134,131 @@
                             : 'Não definido' }"  />
                 </p:column>
 
-                <p:column headerText="Cancelar">
-                    <p:commandButton value="Cancelar"
-                                     disabled="#{ (contrato.status) == 'cancelado' ? true : false}"
-                                     action="#{contratoBean.cancelarContrato(contrato)}"
-                                     update="@form"
-                                     styleClass="mr-2 ui-button-danger rounded-button"
-                                     icon="pi pi-trash">
-                        <p:confirm header="Confirme" message="Tem certeza que deseja cancelar o contrato?"
-                                   icon="pi pi-exclamation-triangle"/>
-                    </p:commandButton>
-                </p:column>
+                <p:column headerText="Ações" style="width: 215px; text-align: center; white-space: nowrap;">
+                    <div class="flex align-items-center justify-content-center gap-2 flex-nowrap">
+                        <p:commandButton value="Editar"
+                                         icon="pi pi-pencil"
+                                         styleClass="ui-button-outlined ui-button-secondary ui-button-sm"
+                                         oncomplete="PF('dialogContrato').show()"
+                                         resetValues="true"
+                                         disabled="#{ (contrato.status) == 'cancelado' ? true : false}"
+                                         actionListener="#{contratoBean.selecionarContrato(contrato)}"
+                                         update=":dialogContrato"/>
 
-                <p:column headerText="Editar">
-                    <p:commandButton value="Editar"
-                                     icon="pi pi-pencil" styleClass="rounded-button ui-button-help"
-                                     oncomplete="PF('dialogContrato').show()"
-                                     resetValues="true"
-                                     disabled="#{ (contrato.status) == 'cancelado' ? true : false}"
-                                     actionListener="#{contratoBean.selecionarContrato(contrato)}"
-                                     update=":dialogContrato"/>
+                        <p:commandButton value="Cancelar"
+                                         disabled="#{ (contrato.status) == 'cancelado' ? true : false}"
+                                         action="#{contratoBean.cancelarContrato(contrato)}"
+                                         update="@form"
+                                         styleClass="ui-button-outlined ui-button-danger ui-button-sm"
+                                         icon="pi pi-trash">
+                            <p:confirm header="Confirme" message="Tem certeza que deseja cancelar o contrato?"
+                                       icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+                    </div>
                 </p:column>
             </p:dataTable>
         </h:form>
 
         <!-- Formulário para cadastrar um novo contrato -->
         <p:dialog id="dialogContrato"
-                  header="Preencha com os dados do contrato"
+                  header="Dados do Contrato"
                   widgetVar="dialogContrato"
-                  width="370"
-                  closable="false"
+                  width="460"
+                  closable="true"
                   modal="true"
                   showEffect="fade"
                   closeOnEscape="true">
             <h:form id="formContrato" >
-                    <div class="ui-fluid">
-                        <div>
-                            <p:outputLabel for="cliente" value="Cliente (CPF):" />
-                            <div class="ui-inputgroup">
-                                <p:autoComplete id="cliente"
-                                                value="#{contratoBean.contrato.cliente}"
-                                                converter="#{clienteConverter}"
-                                                completeMethod="#{contratoBean.buscarClientePorCpf}"
-                                                var="cliente"
-                                                itemLabel="#{cliente.nomeCompleto}"
-                                                itemValue="#{cliente}"
-                                                minQueryLength="11"
-                                                maxResults="1"
-                                                emptyMessage="Nenhum cliente encontrado com esse CPF."
-                                                placeholder="Digite o CPF do cliente..."
-                                                forceSelection="true" />
-                                <p:commandButton icon="pi pi-plus"
-                                                 update=":dialogCliente"
-                                                 oncomplete="PF('dialogCliente').show()"
-                                                 styleClass="button ui-button" />
-                            </div>
-                            <h:message for="cliente" style="color:red;" />
+                <div class="ui-fluid">
+                    <div class="field">
+                        <p:outputLabel for="cliente" value="Cliente (CPF)" />
+                        <div class="ui-inputgroup">
+                            <p:autoComplete id="cliente"
+                                            value="#{contratoBean.contrato.cliente}"
+                                            converter="#{clienteConverter}"
+                                            completeMethod="#{contratoBean.buscarClientePorCpf}"
+                                            var="cliente"
+                                            itemLabel="#{cliente.nomeCompleto}"
+                                            itemValue="#{cliente}"
+                                            minQueryLength="11"
+                                            maxResults="1"
+                                            emptyMessage="Nenhum cliente encontrado com esse CPF."
+                                            placeholder="Digite o CPF do cliente..."
+                                            forceSelection="true" />
+                            <p:commandButton icon="pi pi-plus"
+                                             update=":dialogCliente"
+                                             oncomplete="PF('dialogCliente').show()"
+                                             styleClass="button ui-button" />
                         </div>
-                        <div style="margin-top: .5rem">
-                            <p:outputLabel for="veiculo" value="Placa do veículo"/>
-                            <div class="ui-inputgroup">
-                                <p:autoComplete id="veiculo"
-                                                value="#{contratoBean.contrato.veiculo}"
-                                                converter="#{veiculoConverter}"
-                                                completeMethod="#{contratoBean.buscarVeiculoPelaPlaca}"
-                                                var="veiculo"
-                                                itemLabel="#{veiculo.placa}"
-                                                itemValue="#{veiculo}"
-                                                minQueryLength="7"
-                                                maxResults="1"
-                                                emptyMessage="Nenhum veículo encontrado com essa placa."
-                                                placeholder="Digite a placa do veículo..."
-                                                forceSelection="true" />
-                                <p:commandButton icon="pi pi-plus"
-                                                 update=":dialogVeiculo"
-                                                 oncomplete="PF('dialogVeiculo').show()"
-                                                 styleClass="button ui-button" />
-                            </div>
-                            <h:message for="veiculo" style="color:red;" />
+                        <h:message for="cliente" style="color:red;" styleClass="field-error" />
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="veiculo" value="Placa do Veículo"/>
+                        <div class="ui-inputgroup">
+                            <p:autoComplete id="veiculo"
+                                            value="#{contratoBean.contrato.veiculo}"
+                                            converter="#{veiculoConverter}"
+                                            completeMethod="#{contratoBean.buscarVeiculoPelaPlaca}"
+                                            var="veiculo"
+                                            itemLabel="#{veiculo.placa}"
+                                            itemValue="#{veiculo}"
+                                            minQueryLength="7"
+                                            maxResults="1"
+                                            emptyMessage="Nenhum veículo encontrado com essa placa."
+                                            placeholder="Digite a placa do veículo..."
+                                            forceSelection="true" />
+                            <p:commandButton icon="pi pi-plus"
+                                             update=":dialogVeiculo"
+                                             oncomplete="PF('dialogVeiculo').show()"
+                                             styleClass="button ui-button" />
                         </div>
-                        <div style="margin-top: .5rem">
+                        <h:message for="veiculo" style="color:red;" styleClass="field-error" />
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col-6">
                             <p:outputLabel for="dataInicio" value="Data de Início"/>
                             <p:datePicker id="dataInicio"
                                           focusOnSelect="true"
                                           placeholder="DD/MM/YYYY"
                                           value="#{contratoBean.contrato.dataInicio}"
-                                          showIcon="true" showOnFocus="false"  />
-                            <h:message for="dataInicio" style="color:red;" />
+                                          showIcon="true" showOnFocus="false" />
+                            <h:message for="dataInicio" style="color:red;" styleClass="field-error" />
                         </div>
-                        <div style="margin-top: .5rem">
+                        <div class="field col-6">
                             <p:outputLabel for="dataTermino" value="Data de Término"/>
                             <p:datePicker id="dataTermino"
                                           focusOnSelect="true"
                                           placeholder="DD/MM/YYYY"
                                           value="#{contratoBean.contrato.dataTermino}"
-                                          showIcon="true" showOnFocus="false"  />
-                            <h:message for="dataTermino" style="color:red;" />
-                        </div>
-                        <div style="margin-top: .5rem">
-                            <p:outputLabel for="valorContratado" value="Valor Contratado"/>
-                            <p:inputText id="valorContratado" placeholder="R$ 180,00" value="#{contratoBean.contrato.valorContratado}"/>
-                            <h:message for="valorContratado" style="color: red"/>
-                        </div>
-                        <div style="margin-top: .5rem">
-                            <p:outputLabel for="tipoContrato" value="Tipo do Contrato"/>
-                            <p:selectOneMenu id="tipoContrato" value="#{contratoBean.contrato.contratoTipo}">
-                                <f:selectItem itemLabel="Selecione o tipo do contrato" itemValue=""/>
-                                <f:selectItem itemLabel="Mensal" itemValue="mensal"/>
-                            </p:selectOneMenu>
-                            <h:message for="tipoContrato" style="color: red"/>
-                        </div>
-                        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.5rem;">
-                            <p:commandButton type="button"
-                                             value="Voltar"
-                                             onclick="PF('dialogContrato').hide()"
-                                             styleClass="ui-button-flat mr-2"
-                                             style="width: 6rem"/>
-                            <p:commandButton value="Salvar Contrato"
-                                             actionListener="#{contratoBean.processarContrato}"
-                                             process="@form"
-                                             update="@form :dataTableForm"/>
+                                          showIcon="true" showOnFocus="false" />
+                            <h:message for="dataTermino" style="color:red;" styleClass="field-error" />
                         </div>
                     </div>
+                    <div class="field">
+                        <p:outputLabel for="valorContratado" value="Valor Contratado"/>
+                        <p:inputText id="valorContratado" placeholder="Ex: 180.00" value="#{contratoBean.contrato.valorContratado}"/>
+                        <h:message for="valorContratado" style="color: red" styleClass="field-error"/>
+                    </div>
+                    <div class="field mb-0">
+                        <p:outputLabel for="tipoContrato" value="Tipo do Contrato"/>
+                        <p:selectOneMenu id="tipoContrato" value="#{contratoBean.contrato.contratoTipo}">
+                            <f:selectItem itemLabel="Selecione o tipo do contrato" itemValue=""/>
+                            <f:selectItem itemLabel="Mensal" itemValue="mensal"/>
+                        </p:selectOneMenu>
+                        <h:message for="tipoContrato" style="color: red" styleClass="field-error"/>
+                    </div>
+                </div>
+                <div class="dialog-footer">
+                    <p:commandButton type="button"
+                                     value="Voltar"
+                                     onclick="PF('dialogContrato').hide()"
+                                     styleClass="ui-button-flat ui-button-secondary"/>
+                    <p:commandButton value="Salvar Contrato"
+                                     icon="pi pi-check"
+                                     actionListener="#{contratoBean.processarContrato}"
+                                     process="@form"
+                                     update="@form :dataTableForm"/>
+                </div>
             </h:form>
         </p:dialog>
 

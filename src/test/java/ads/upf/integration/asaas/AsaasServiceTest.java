@@ -6,7 +6,9 @@ import ads.upf.integration.asaas.DTOs.AsaasPaymentResponse;
 import ads.upf.model.entities.Cliente;
 import ads.upf.model.entities.Contrato;
 import ads.upf.model.entities.Parcela;
+import ads.upf.model.enums.ParcelaStatus;
 import ads.upf.repositories.ParcelaRepository;
+import ads.upf.services.ParcelaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,12 +25,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-@DisplayName("AsaasService - cobrança de parcelas")
+@DisplayName("AsaasService - cobrança, exclusão e reconciliação de parcelas")
 class AsaasServiceTest {
 
     private static final Long PARCELA_ID = 42L;
@@ -38,6 +41,9 @@ class AsaasServiceTest {
 
     @Mock
     ParcelaRepository parcelaRepository;
+
+    @Mock
+    ParcelaService parcelaService;
 
     @InjectMocks
     AsaasService asaasService;
@@ -58,6 +64,7 @@ class AsaasServiceTest {
         parcela.setValor(BigDecimal.valueOf(180));
         parcela.setDataVencimento(LocalDate.of(2026, 11, 10));
         parcela.setCobrancaEnviada(false);
+        parcela.setStatus(ParcelaStatus.pendente);
         contrato.adicionarParcela(parcela);
 
         when(parcelaRepository.findById(PARCELA_ID)).thenReturn(parcela);
@@ -129,5 +136,67 @@ class AsaasServiceTest {
         asaasService.cobrarParcela(99L);
 
         verify(asaas, never()).criarCobranca(any());
+    }
+
+    @Test
+    @DisplayName("deletarCobrancas não lança exceção se o Asaas estiver fora do ar e preserva asaasPaymentId para reprocessamento")
+    void deletarCobrancasResilienteQuandoAsaasIndisponivel() {
+        parcela.setAsaasPaymentId("pay_1");
+        parcela.setInvoiceUrl("https://asaas/1");
+        parcela.setCobrancaEnviada(true);
+        parcela.setStatus(ParcelaStatus.cancelada);
+
+        doThrow(new RuntimeException("Asaas fora do ar")).when(asaas).deletarCobranca("pay_1");
+
+        assertThatCode(() -> asaasService.deletarCobrancas(List.of(parcela)))
+                .doesNotThrowAnyException();
+
+        assertThat(parcela.getAsaasPaymentId()).isEqualTo("pay_1");
+    }
+
+    @Test
+    @DisplayName("deletarCobrancas limpa asaasPaymentId e invoiceUrl quando deleta com sucesso")
+    void deletarCobrancasLimpaDadosQuandoSucesso() {
+        parcela.setAsaasPaymentId("pay_1");
+        parcela.setInvoiceUrl("https://asaas/1");
+        parcela.setCobrancaEnviada(true);
+        parcela.setStatus(ParcelaStatus.cancelada);
+
+        asaasService.deletarCobrancas(List.of(parcela));
+
+        verify(asaas).deletarCobranca("pay_1");
+        assertThat(parcela.getAsaasPaymentId()).isNull();
+        assertThat(parcela.getInvoiceUrl()).isNull();
+        assertThat(parcela.getCobrancaEnviada()).isFalse();
+    }
+
+    @Test
+    @DisplayName("sincronizarParcela marca como paga quando status no Asaas é RECEIVED ou CONFIRMED")
+    void sincronizarParcelaMarcaComoPaga() {
+        parcela.setAsaasPaymentId("pay_42");
+        when(asaas.consultarCobranca("pay_42")).thenReturn(new AsaasPaymentResponse(
+                "pay_42", "RECEIVED", "https://asaas/42", "PIX",
+                LocalDate.of(2026, 11, 5), LocalDate.of(2026, 11, 5), BigDecimal.valueOf(180)
+        ));
+
+        boolean atualizada = asaasService.sincronizarParcela(PARCELA_ID);
+
+        assertThat(atualizada).isTrue();
+        verify(parcelaService).marcarComoPago(any());
+    }
+
+    @Test
+    @DisplayName("sincronizarParcela marca como atrasada quando status no Asaas é OVERDUE")
+    void sincronizarParcelaMarcaComoAtrasada() {
+        parcela.setAsaasPaymentId("pay_42");
+        when(asaas.consultarCobranca("pay_42")).thenReturn(new AsaasPaymentResponse(
+                "pay_42", "OVERDUE", "https://asaas/42", "BOLETO",
+                null, null, BigDecimal.valueOf(180)
+        ));
+
+        boolean atualizada = asaasService.sincronizarParcela(PARCELA_ID);
+
+        assertThat(atualizada).isTrue();
+        verify(parcelaService).marcarComoAtrasada(any());
     }
 }

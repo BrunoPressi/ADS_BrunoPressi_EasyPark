@@ -46,6 +46,7 @@ public class ContratoBean implements Serializable {
     private GenericLazyDataModel<ContratoResponseDTO> lazyDataModel;
     private ContratoCreateDTO contrato;
 
+    private Long contratoSelecionadoId;
     private List<ParcelaResponseDTO> parcelas = new ArrayList<>();
     private ClienteResponseDTO cliente;
     private VeiculoResponseDTO veiculo;
@@ -76,7 +77,29 @@ public class ContratoBean implements Serializable {
 
     public void selecionarParcelas(ContratoResponseDTO contratoResponseDTO) {
         resetarTabela();
+        this.contratoSelecionadoId = contratoResponseDTO.getId();
         this.parcelas = contratoService.buscarParcelasDoContrato(contratoResponseDTO.getId());
+    }
+
+    public void sincronizarParcelasComAsaas() {
+        if (this.contratoSelecionadoId == null) {
+            return;
+        }
+        try {
+            int alteradas = contratoService.sincronizarParcelasDoContrato(this.contratoSelecionadoId);
+            this.parcelas = contratoService.buscarParcelasDoContrato(this.contratoSelecionadoId);
+
+            String detalhe = alteradas > 0
+                    ? alteradas + " parcela(s) sincronizada(s) com o Asaas."
+                    : "Nenhuma alteração pendente encontrada no Asaas.";
+            FacesContext.getCurrentInstance()
+                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Sincronização concluída", detalhe));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance()
+                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Erro ao sincronizar com o Asaas",
+                            "Não foi possível comunicar com a API do Asaas no momento."));
+        }
     }
 
     public void selecionarCliente(ContratoResponseDTO contratoResponseDTO) {

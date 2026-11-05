@@ -98,6 +98,36 @@ public class ContratoService {
         asaasService.deletarCobrancas(parcelas);
     }
 
+    /**
+     * Sincroniza sob demanda as parcelas de um contrato junto ao Asaas:
+     * 1) Emite cobranças pendentes com vencimento em até 7 dias que ainda não possuam asaasPaymentId;
+     * 2) Consulta o status atual no Asaas das parcelas em aberto já emitidas (reconciliando pagamentos/atrasos).
+     *
+     * @return quantidade de parcelas que tiveram cobrança emitida ou status atualizado
+     */
+    public int sincronizarParcelasDoContrato(Long contratoId) {
+        if (contratoId == null || contratoId <= 0) {
+            throw new IllegalArgumentException("ID do contrato inválido.");
+        }
+
+        int alteradas = 0;
+
+        List<Long> idsParaCobrar = parcelaService.buscarIdsParaCobrarPorContrato(contratoId);
+        for (Long parcelaId : idsParaCobrar) {
+            asaasService.cobrarParcela(parcelaId);
+            alteradas++;
+        }
+
+        List<Long> idsParaSincronizar = parcelaService.buscarIdsAbertasParaSincronizarPorContrato(contratoId);
+        for (Long parcelaId : idsParaSincronizar) {
+            if (asaasService.sincronizarParcela(parcelaId)) {
+                alteradas++;
+            }
+        }
+
+        return alteradas;
+    }
+
     public ContratoResponseDTO buscarPorCliente(String cpf) {
         String cpfHash = SecurityUtil.generateBlindIndex(cpf);
         Contrato contrato = contratoRepository.buscarPeloCpf(cpfHash).orElse(null);

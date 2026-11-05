@@ -15,6 +15,17 @@
               showEffect="fade"
               closeOnEscape="true">
         <h:form id="formDialogParcelasList">
+            <div class="flex align-items-center justify-content-between mb-3">
+                <span class="text-600 text-sm">Consulte ou sincronize o status atualizado das cobranças junto ao Asaas.</span>
+                <p:commandButton id="btnSincronizarAsaas"
+                                 value="Sincronizar com Asaas"
+                                 icon="pi pi-sync"
+                                 styleClass="ui-button-outlined ui-button-secondary ui-button-sm"
+                                 actionListener="#{contratoBean.sincronizarParcelasComAsaas}"
+                                 process="@this"
+                                 update="tabelaParcelas :dataTableForm:tabelaContratos :messages" />
+            </div>
+
             <p:dataTable id="tabelaParcelas"
                          value="#{contratoBean.parcelas}"
                          lazy="false"

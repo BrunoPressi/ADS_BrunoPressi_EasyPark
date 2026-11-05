@@ -20,6 +20,12 @@ public class CobrancaService {
     ParcelaService parcelaService;
 
     @Scheduled(cron = "0 0 2 * * ?")
+    public void executarRotinaDiaria() {
+        enviarCobranca();
+        sincronizarPagamentosPendentes();
+        removerCobrancasCanceladas();
+    }
+
     public void enviarCobranca() {
         Log.info("Enviando cobrança a parcelas que vencem em 7 dias...");
         List<Long> ids = parcelaService.buscarIdsParaCobrar();
@@ -41,9 +47,52 @@ public class CobrancaService {
         }
     }
 
+    public void sincronizarPagamentosPendentes() {
+        Log.info("Sincronizando status de parcelas em aberto junto ao Asaas...");
+        List<Long> ids = parcelaService.buscarIdsAbertasParaSincronizar();
+
+        int atualizadas = 0;
+        int falhas = 0;
+        for (Long id : ids) {
+            try {
+                if (asaasService.sincronizarParcela(id)) {
+                    atualizadas++;
+                }
+            } catch (Exception e) {
+                falhas++;
+                Log.errorf(e, "Falha ao sincronizar status da parcela %d no Asaas", id);
+            }
+        }
+
+        if (!ids.isEmpty()) {
+            Log.infof("Sincronização finalizada: %d atualizadas de %d verificadas (%d com falha).",
+                    atualizadas, ids.size(), falhas);
+        }
+    }
+
+    public void removerCobrancasCanceladas() {
+        List<Long> ids = parcelaService.buscarIdsCanceladasParaExcluirNoAsaas();
+        if (ids.isEmpty()) return;
+
+        Log.infof("Removendo no Asaas %d cobrança(s) de parcelas canceladas pendentes de exclusão...", ids.size());
+        int removidas = 0;
+        int falhas = 0;
+        for (Long id : ids) {
+            try {
+                asaasService.removerCobrancaCancelada(id);
+                removidas++;
+            } catch (Exception e) {
+                falhas++;
+                Log.errorf(e, "Falha ao remover no Asaas cobrança da parcela cancelada %d", id);
+            }
+        }
+
+        Log.infof("Remoção de cobranças canceladas finalizada: %d removidas, %d com falha.", removidas, falhas);
+    }
+
     void onStart(@Observes StartupEvent ev) {
-        Log.info("Startup da aplicação: enviando cobrança de parcelas com vencimento em 7 dias...");
-        enviarCobranca();
+        Log.info("Startup da aplicação: executando rotina de cobrança e reconciliação com o Asaas...");
+        executarRotinaDiaria();
     }
 
 }

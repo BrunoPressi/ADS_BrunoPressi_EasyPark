@@ -91,9 +91,20 @@ public class ParcelaService {
 
         parcela.setStatus(ParcelaStatus.paga);
         parcela.setDataPagamento(payment.paymentDate());
-        parcela.setMeioPagamento(ParcelaMeiosPagamento.valueOf(payment.billingType()));
+        parcela.setMeioPagamento(resolverMeioPagamento(payment.billingType()));
 
         parcela.getContrato().encerrarSeQuitado();
+    }
+
+    private ParcelaMeiosPagamento resolverMeioPagamento(String billingType) {
+        if (billingType == null || billingType.isBlank()) {
+            return ParcelaMeiosPagamento.UNDEFINED;
+        }
+        try {
+            return ParcelaMeiosPagamento.valueOf(billingType);
+        } catch (IllegalArgumentException e) {
+            return ParcelaMeiosPagamento.UNDEFINED;
+        }
     }
 
     @Transactional
@@ -115,6 +126,34 @@ public class ParcelaService {
     @Transactional
     public List<Long> buscarIdsParaCobrar() {
         return parcelaRepository.buscarComVencimentoEm7Dias().stream()
+                .map(Parcela::getId)
+                .toList();
+    }
+
+    @Transactional
+    public List<Long> buscarIdsParaCobrarPorContrato(Long contratoId) {
+        return parcelaRepository.buscarComVencimentoEm7DiasPorContrato(contratoId).stream()
+                .map(Parcela::getId)
+                .toList();
+    }
+
+    @Transactional
+    public List<Long> buscarIdsAbertasParaSincronizar() {
+        return parcelaRepository.buscarAbertasParaSincronizar().stream()
+                .map(Parcela::getId)
+                .toList();
+    }
+
+    @Transactional
+    public List<Long> buscarIdsAbertasParaSincronizarPorContrato(Long contratoId) {
+        return parcelaRepository.buscarAbertasParaSincronizarPorContrato(contratoId).stream()
+                .map(Parcela::getId)
+                .toList();
+    }
+
+    @Transactional
+    public List<Long> buscarIdsCanceladasParaExcluirNoAsaas() {
+        return parcelaRepository.buscarCanceladasComCobrancaPendenteExclusao().stream()
                 .map(Parcela::getId)
                 .toList();
     }

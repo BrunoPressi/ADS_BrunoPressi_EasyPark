@@ -1,10 +1,10 @@
-version: '3.8'
-
 services:
   postgres:
-    image: postgres:15
+    image: postgres:15-alpine
     container_name: easy-park-db
+    restart: unless-stopped
     environment:
+      TZ: America/Sao_Paulo
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
@@ -12,6 +12,46 @@ services:
       - "5433:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    mem_limit: 256m
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: easy-park-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${APP_HTTP_PORT:-80}:8080"
+      - "8080:8080"
+    environment:
+      TZ: America/Sao_Paulo
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_SCHEMA_STRATEGY: ${DB_SCHEMA_STRATEGY:-update}
+      DB_SQL_LOAD_SCRIPT: ${DB_SQL_LOAD_SCRIPT:-import.sql}
+      APP_BASE_URL: ${APP_BASE_URL:-http://localhost:8080}
+      SECRET_KEY: ${SECRET_KEY}
+      HMAC_SECRET: ${HMAC_SECRET}
+      ASAAS_URL: ${ASAAS_URL:-https://api-sandbox.asaas.com/v3}
+      ASAAS_API_KEY: ${ASAAS_API_KEY}
+      ASAAS_WEBHOOK_TOKEN: ${ASAAS_WEBHOOK_TOKEN}
+      MAILER_HOST: ${MAILER_HOST}
+      MAILER_PORT: ${MAILER_PORT}
+      MAILER_USERNAME: ${MAILER_USERNAME}
+      MAILER_PASSWORD: ${MAILER_PASSWORD}
+      MAILER_FROM: ${MAILER_FROM}
+    mem_limit: 600m
 
 volumes:
   pg_data:

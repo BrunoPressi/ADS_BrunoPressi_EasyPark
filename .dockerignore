@@ -1,5 +1,9 @@
-*
-!target/*-runner
-!target/*-runner.jar
-!target/lib/*
-!target/quarkus-app/*
+.git
+.github
+.idea
+.agents
+.gemini
+.env
+target/
+!target/quarkus-app/
+*.iml

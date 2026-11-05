@@ -7,6 +7,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Status;
 import jakarta.transaction.Synchronization;
 import jakarta.transaction.TransactionSynchronizationRegistry;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.time.Duration;
 import java.util.UUID;
@@ -17,9 +18,12 @@ public class EmailService {
     @Inject
     TransactionSynchronizationRegistry txRegistry;
 
+    @ConfigProperty(name = "app.base-url", defaultValue = "http://localhost:8080")
+    String baseUrl;
+
     @CheckedTemplate(basePath = "emails")
     static class Emails {
-        public static native MailTemplate.MailTemplateInstance definirSenhaEmail(UUID token, String emailUsuario);
+        public static native MailTemplate.MailTemplateInstance definirSenhaEmail(UUID token, String emailUsuario, String baseUrl);
     }
 
     /**
@@ -46,7 +50,7 @@ public class EmailService {
     }
 
     private void enviar(UUID token, String emailUsuario) {
-        Emails.definirSenhaEmail(token, emailUsuario)
+        Emails.definirSenhaEmail(token, emailUsuario, baseUrl)
                 .to(emailUsuario)
                 .subject("EasyPark - Defina sua Senha!")
                 .send()

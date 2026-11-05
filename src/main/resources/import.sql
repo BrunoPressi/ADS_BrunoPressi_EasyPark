@@ -10,37 +10,45 @@ BEGIN;
 -- Gerente 1: John Doe (Senha: john123)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
-VALUES (9997, 'John Doe', 'John@email.com', '54996322831');
+VALUES (9997, 'John Doe', 'John@email.com', '54996322831')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO funcionarios (usuarioId, senha, role)
-VALUES (9997,'$2a$12$p9/pzh1.aeR7HOxNql0UdOC1GgfdHTzOeynhaGfHNPPQxMg/YKE4u', 'gerente');
+VALUES (9997,'$2a$12$p9/pzh1.aeR7HOxNql0UdOC1GgfdHTzOeynhaGfHNPPQxMg/YKE4u', 'gerente')
+ON CONFLICT (usuarioId) DO NOTHING;
 
 -- =========================================================================
 -- Funcionário 2: Alex Green (Senha: alex123)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
-VALUES (9998, 'Alex Green', 'Alex@email.com', '54999726854');
+VALUES (9998, 'Alex Green', 'Alex@email.com', '54999726854')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO funcionarios (usuarioId, senha, role)
-VALUES (9998,'$2a$12$dT/KMvGXDfgag7CvOjDcme/hXA6LrZtGBml0IBLVa3UKyBJ9Sb7NK', 'atendente');
+VALUES (9998,'$2a$12$dT/KMvGXDfgag7CvOjDcme/hXA6LrZtGBml0IBLVa3UKyBJ9Sb7NK', 'atendente')
+ON CONFLICT (usuarioId) DO NOTHING;
 
 -- =========================================================================
 -- Cliente 1: Carlos Eduardo Silva (CPF original: 179.253.352-70)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
-VALUES (9995, 'Carlos Eduardo Silva', 'carlos.silva@email.com', '54991234567');
+VALUES (9995, 'Carlos Eduardo Silva', 'carlos.silva@email.com', '54991234567')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO clientes (usuarioId, cpf, cpfHash, role)
-VALUES (9995, 'mO2A9htsuP4y/tte3q9L0gGQePoh22ZaurRearkl+jAyYqbGXfgp', 'anjl8Q0juNi/3emb2WIgCXLJcbjYuNcO+i3otvPoPN0=', 'cliente');
+VALUES (9995, 'mO2A9htsuP4y/tte3q9L0gGQePoh22ZaurRearkl+jAyYqbGXfgp', 'anjl8Q0juNi/3emb2WIgCXLJcbjYuNcO+i3otvPoPN0=', 'cliente')
+ON CONFLICT (usuarioId) DO NOTHING;
 
 -- =========================================================================
 -- Cliente 2: Mariana Souza Lima (CPF original: 179.364.218-40)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
-VALUES (9996, 'Mariana Souza Lima', 'mariana.lima@email.com', '54998765432');
+VALUES (9996, 'Mariana Souza Lima', 'mariana.lima@email.com', '54998765432')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO clientes (usuarioId, cpf, cpfHash, role)
-VALUES (9996, 'WaniAjOHXsOSQ4DkRfgCSdqgMHV5abSl8nQf2IWCdJSWFEYXVr4Y', 'O/yb7WuWUaMqxVFLh8HhJRnT15zVlSxZRK2RJrlk22E=', 'cliente');
+VALUES (9996, 'WaniAjOHXsOSQ4DkRfgCSdqgMHV5abSl8nQf2IWCdJSWFEYXVr4Y', 'O/yb7WuWUaMqxVFLh8HhJRnT15zVlSxZRK2RJrlk22E=', 'cliente')
+ON CONFLICT (usuarioId) DO NOTHING;
 
 -- -----------------------------------------------------------------------------
 -- 1. VAGAS (Capacidade total: 25 vagas diversificadas)
@@ -71,9 +79,7 @@ INSERT INTO vagas (id, nome, status, tipovaga, criado_em, criado_por) VALUES
     (123, 'P01', 'disponivel',    'pne',   CURRENT_TIMESTAMP, 'seed'),
     (124, 'P02', 'disponivel',    'pne',   CURRENT_TIMESTAMP, 'seed'),
     (125, 'V00', 'disponivel',    'comum', CURRENT_TIMESTAMP, 'seed')
-ON CONFLICT (id) DO UPDATE SET 
-    status = EXCLUDED.status, 
-    tipovaga = EXCLUDED.tipovaga;
+ON CONFLICT (id) DO NOTHING;
 
 -- =============================================================================
 -- 2. CLIENTES MENSALISTAS ADICIONAIS (COM CPF CRIPTOGRAFADO E BLIND INDEX)
@@ -83,73 +89,89 @@ ON CONFLICT (id) DO UPDATE SET
 -- Cliente 201: Ana Clara Vasconcelos (CPF original: 101.900.560-29)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
-VALUES (201, 'Ana Clara Vasconcelos', 'ana.vasconcelos@email.com', '54996322831');
+VALUES (201, 'Ana Clara Vasconcelos', 'ana.vasconcelos@email.com', '54996322831')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO clientes (usuarioId, cpf, cpfHash, role)
-VALUES (201, 'LdAqVux+S311UC8DEcUsTaRlZ2ppEsG5eJtbaE/QHOUavEk08yoP', 'v2w5ZnoP4Cs0mu4heQMlz0sdtr0V5j6jsFQ7G1Nb8+E=', 'cliente');
+VALUES (201, 'LdAqVux+S311UC8DEcUsTaRlZ2ppEsG5eJtbaE/QHOUavEk08yoP', 'v2w5ZnoP4Cs0mu4heQMlz0sdtr0V5j6jsFQ7G1Nb8+E=', 'cliente')
+ON CONFLICT (usuarioId) DO NOTHING;
 
 -- =========================================================================
 -- Cliente 202: Bruno Henrique Silveira (CPF original: 102.011.426-60)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
-VALUES (202, 'Bruno Henrique Silveira', 'bruno.silveira@email.com', '54982223344');
+VALUES (202, 'Bruno Henrique Silveira', 'bruno.silveira@email.com', '54982223344')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO clientes (usuarioId, cpf, cpfHash, role)
-VALUES (202, 'mhCM5sVyfOhPwBtQlZnrUp4inadv7M0FyJp05retI1ziaankkpot', 'g6j9vI8nUbODOV1cJy7kwVIo6BftqtmdLe3PWW1pIyI=', 'cliente');
+VALUES (202, 'mhCM5sVyfOhPwBtQlZnrUp4inadv7M0FyJp05retI1ziaankkpot', 'g6j9vI8nUbODOV1cJy7kwVIo6BftqtmdLe3PWW1pIyI=', 'cliente')
+ON CONFLICT (usuarioId) DO NOTHING;
 
 -- =========================================================================
 -- Cliente 203: Camila Rodrigues Duarte (CPF original: 102.122.292-57)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
-VALUES (203, 'Camila Rodrigues Duarte', 'camila.duarte@email.com', '54983334455');
+VALUES (203, 'Camila Rodrigues Duarte', 'camila.duarte@email.com', '54983334455')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO clientes (usuarioId, cpf, cpfHash, role)
-VALUES (203, 'YkDqhQvPBfYmIguuEGkxyROki2iSoN3wt5TKJmYBUdE9Iw84WUmF', 'kduR264XguGWHVZPhSIpaQQMYDM1NGXZnQOcePTeQ+w=', 'cliente');
+VALUES (203, 'YkDqhQvPBfYmIguuEGkxyROki2iSoN3wt5TKJmYBUdE9Iw84WUmF', 'kduR264XguGWHVZPhSIpaQQMYDM1NGXZnQOcePTeQ+w=', 'cliente')
+ON CONFLICT (usuarioId) DO NOTHING;
 
 -- =========================================================================
 -- Cliente 204: Diego Fernandes Costa (CPF original: 102.233.158-26)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
-VALUES (204, 'Diego Fernandes Costa', 'diego.costa@email.com', '54984445566');
+VALUES (204, 'Diego Fernandes Costa', 'diego.costa@email.com', '54984445566')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO clientes (usuarioId, cpf, cpfHash, role)
-VALUES (204, 'Xpe9gQ/4uIAqW+01egtXGyMYWfimUj5rJDKRx6GlnMgUjon8j0cK', 'L/a6cxVykTHD0LEnrbZdOnrw2rSBLVF+Aqghc1gsc4U=', 'cliente');
+VALUES (204, 'Xpe9gQ/4uIAqW+01egtXGyMYWfimUj5rJDKRx6GlnMgUjon8j0cK', 'L/a6cxVykTHD0LEnrbZdOnrw2rSBLVF+Aqghc1gsc4U=', 'cliente')
+ON CONFLICT (usuarioId) DO NOTHING;
 
 -- =========================================================================
 -- Cliente 205: Eduarda Martins Rios (CPF original: 102.344.024-58)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
-VALUES (205, 'Eduarda Martins Rios', 'eduarda.rios@email.com', '54985556677');
+VALUES (205, 'Eduarda Martins Rios', 'eduarda.rios@email.com', '54985556677')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO clientes (usuarioId, cpf, cpfHash, role)
-VALUES (205, 'Uj1xJu9iPJXxZpETJAlf25w8I13dMh+UFgmP+XtngLLV8EII1mT9', 'qrE1i/VFJSxyy1A8rDq9Xxcty7YINHgC3dMVgTIbois=', 'cliente');
+VALUES (205, 'Uj1xJu9iPJXxZpETJAlf25w8I13dMh+UFgmP+XtngLLV8EII1mT9', 'qrE1i/VFJSxyy1A8rDq9Xxcty7YINHgC3dMVgTIbois=', 'cliente')
+ON CONFLICT (usuarioId) DO NOTHING;
 
 -- =========================================================================
 -- Cliente 206: Fabio Junior de Castro (CPF original: 102.454.890-29)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
-VALUES (206, 'Fabio Junior de Castro', 'fabio.castro@email.com', '54986667788');
+VALUES (206, 'Fabio Junior de Castro', 'fabio.castro@email.com', '54986667788')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO clientes (usuarioId, cpf, cpfHash, role)
-VALUES (206, 'jj+pzvsS5w03r7Lu0ZtsiLif2I7/JX2dNuZ/HtejELFcq4K/+v62', 'Aga6my9argdIIvO18uIbuPCpVxsdZeeOFF5Q92vG9Kw=', 'cliente');
+VALUES (206, 'jj+pzvsS5w03r7Lu0ZtsiLif2I7/JX2dNuZ/HtejELFcq4K/+v62', 'Aga6my9argdIIvO18uIbuPCpVxsdZeeOFF5Q92vG9Kw=', 'cliente')
+ON CONFLICT (usuarioId) DO NOTHING;
 
 -- =========================================================================
 -- Cliente 207: Gabriela Meireles Santos (CPF original: 102.565.756-06)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
-VALUES (207, 'Gabriela Meireles Santos', 'gabriela.santos@email.com', '54987778899');
+VALUES (207, 'Gabriela Meireles Santos', 'gabriela.santos@email.com', '54987778899')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO clientes (usuarioId, cpf, cpfHash, role)
-VALUES (207, 'gXuGmXfW8YxzKRAHax34vZBThsGL6c/q3YShjiFUh08z/kJcwpxP', 'cSqAoJOc1o1TglFp7Nl6Yl0iWjbDXMsV1aZLwTJrkrI=', 'cliente');
+VALUES (207, 'gXuGmXfW8YxzKRAHax34vZBThsGL6c/q3YShjiFUh08z/kJcwpxP', 'cSqAoJOc1o1TglFp7Nl6Yl0iWjbDXMsV1aZLwTJrkrI=', 'cliente')
+ON CONFLICT (usuarioId) DO NOTHING;
 
 -- =========================================================================
 -- Cliente 208: Helio Ferreira Lima (CPF original: 102.676.622-20)
 -- =========================================================================
 INSERT INTO usuarios (id, nomeCompleto, email, telefone)
-VALUES (208, 'Helio Ferreira Lima', 'helio.lima@email.com', '54988889900');
+VALUES (208, 'Helio Ferreira Lima', 'helio.lima@email.com', '54988889900')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO clientes (usuarioId, cpf, cpfHash, role)
-VALUES (208, 'c29HANDGRUPJBJWuWD2GOtRckaH6aTdgfrPCssHHQJZDeBzRBMZb', 'uEZgW9sBjpvjU1UGxlSDIJI5r6aocAcQ3Vf+/J/v6R8=', 'cliente');
+VALUES (208, 'c29HANDGRUPJBJWuWD2GOtRckaH6aTdgfrPCssHHQJZDeBzRBMZb', 'uEZgW9sBjpvjU1UGxlSDIJI5r6aocAcQ3Vf+/J/v6R8=', 'cliente')
+ON CONFLICT (usuarioId) DO NOTHING;
 
 -- -----------------------------------------------------------------------------
 -- 3. VEÍCULOS (Mensalistas e Rotativos)
@@ -319,13 +341,13 @@ ON CONFLICT (id) DO NOTHING;
 -- -----------------------------------------------------------------------------
 -- 8. VINCULAÇÃO BIDIRECIONAL (permanencias.pagamento_id)
 -- -----------------------------------------------------------------------------
-UPDATE permanencias SET pagamento_id = 701 WHERE id = 602;
-UPDATE permanencias SET pagamento_id = 702 WHERE id = 603;
-UPDATE permanencias SET pagamento_id = 703 WHERE id = 604;
-UPDATE permanencias SET pagamento_id = 704 WHERE id = 605;
-UPDATE permanencias SET pagamento_id = 705 WHERE id = 607;
-UPDATE permanencias SET pagamento_id = 706 WHERE id = 608;
-UPDATE permanencias SET pagamento_id = 707 WHERE id = 610;
+UPDATE permanencias SET pagamento_id = 701 WHERE id = 602 AND pagamento_id IS NULL;
+UPDATE permanencias SET pagamento_id = 702 WHERE id = 603 AND pagamento_id IS NULL;
+UPDATE permanencias SET pagamento_id = 703 WHERE id = 604 AND pagamento_id IS NULL;
+UPDATE permanencias SET pagamento_id = 704 WHERE id = 605 AND pagamento_id IS NULL;
+UPDATE permanencias SET pagamento_id = 705 WHERE id = 607 AND pagamento_id IS NULL;
+UPDATE permanencias SET pagamento_id = 706 WHERE id = 608 AND pagamento_id IS NULL;
+UPDATE permanencias SET pagamento_id = 707 WHERE id = 610 AND pagamento_id IS NULL;
 
 -- Atualizar sequências do PostgreSQL para evitar conflitos futuros com novos inserts pela aplicação
 SELECT setval(pg_get_serial_sequence('usuarios', 'id'), COALESCE(MAX(id), 1)) FROM usuarios;

@@ -1,6 +1,7 @@
 package ads.upf.services;
 
 import ads.upf.model.entities.Pagamento;
+import ads.upf.model.entities.Tarifa;
 import ads.upf.model.enums.PagamentoMeio;
 import ads.upf.model.enums.PagamentoStatus;
 import ads.upf.repositories.PagamentoRepository;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("PagamentoService - Suíte de Testes Unitários")
@@ -29,6 +31,9 @@ class PagamentoServiceTest {
 
     @Mock
     private PagamentoRepository pagamentoRepository;
+
+    @Mock
+    private TarifaService tarifaService;
 
     @InjectMocks
     private PagamentoService pagamentoService;
@@ -43,6 +48,15 @@ class PagamentoServiceTest {
     @Nested
     @DisplayName("Cálculo de permanência - Cenários de sucesso")
     class CalculoPermanenciaSucesso {
+
+        @BeforeEach
+        void configurarTarifaPadrao() {
+            Tarifa tarifa = new Tarifa();
+            tarifa.setValorHora(BigDecimal.valueOf(70.00));
+            tarifa.setValorFracaoHora(BigDecimal.valueOf(35.00));
+            tarifa.setAtivo(true);
+            when(tarifaService.buscarTarifaAtiva()).thenReturn(tarifa);
+        }
 
         @Test
         @DisplayName("Deve cobrar taxa mínima da 1ª hora (R$ 70,00) quando saída for no mesmo instante (0 segundos)")

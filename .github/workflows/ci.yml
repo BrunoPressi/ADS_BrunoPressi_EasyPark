@@ -1,12 +1,15 @@
-## A basic GitHub Actions workflow for your Quarkus application.
+## GitHub Actions CI/CD workflow for Quarkus application (Build + Auto Deploy to EC2)
 
-name: CI build
+name: CI/CD Pipeline
 
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -21,5 +24,29 @@ jobs:
           distribution: temurin
           cache: maven
 
-      - name: Build
+      - name: Build & Verify
         run: ./mvnw verify -B
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to AWS EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script_stop: true
+          script: |
+            cd ${{ secrets.EC2_PROJECT_PATH }}
+            git fetch https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main
+            git reset --hard FETCH_HEAD
+            if docker compose version >/dev/null 2>&1; then
+              docker compose up -d --build app
+            else
+              docker-compose up -d --build app
+            fi
+            docker image prune -f
+

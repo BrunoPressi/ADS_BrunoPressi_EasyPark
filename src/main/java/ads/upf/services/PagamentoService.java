@@ -1,7 +1,6 @@
 package ads.upf.services;
 
 import ads.upf.model.entities.Pagamento;
-import ads.upf.model.entities.Tarifa;
 import ads.upf.model.enums.PagamentoMeio;
 import ads.upf.model.enums.PagamentoStatus;
 import ads.upf.repositories.PagamentoRepository;
@@ -21,10 +20,12 @@ public class PagamentoService {
     private static final long SEGUNDOS_POR_FRACAO = 1800L;    // 30 minutos
 
     private final PagamentoRepository pagamentoRepository;
+    private final TarifaService tarifaService;
 
     @Inject
-    public PagamentoService(PagamentoRepository pagamentoRepository) {
+    public PagamentoService(PagamentoRepository pagamentoRepository, TarifaService tarifaService) {
         this.pagamentoRepository = pagamentoRepository;
+        this.tarifaService = tarifaService;
     }
 
     @Transactional
@@ -61,8 +62,8 @@ public class PagamentoService {
         Duration duracao = Duration.between(dataEntrada, dataSaida);
         long segundosTotais = duracao.getSeconds();
 
-        BigDecimal valorHora = Tarifa.getValorHora();
-        BigDecimal valorFracao = Tarifa.getValorFracaoHora();
+        BigDecimal valorHora = tarifaService.buscarTarifaAtiva().getValorHora();
+        BigDecimal valorFracao = tarifaService.buscarTarifaAtiva().getValorFracaoHora();
 
         // Até 60 minutos (inclusive 0s, pois qualquer permanência inicia a cobrança da 1ª hora)
         if (segundosTotais <= SEGUNDOS_PRIMEIRA_HORA) {

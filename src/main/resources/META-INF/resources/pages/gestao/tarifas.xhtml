@@ -1,0 +1,149 @@
+<ui:composition template="/templates/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <ui:define name="title">EasyPark — Gestão de Tarifas</ui:define>
+
+    <ui:define name="content">
+
+        <h:form id="dataTableTarifas">
+
+            <div class="page-header">
+                <div class="page-header-titles">
+                    <h2 class="page-title">Gestão de Tarifas</h2>
+                    <p class="page-subtitle">Configuração de valores de cobrança por hora e fração para veículos rotativos</p>
+                </div>
+                <div>
+                    <p:commandButton value="Nova Tarifa"
+                                     icon="pi pi-plus"
+                                     actionListener="#{tarifaBean.prepararNovaTarifa}"
+                                     process="@this"
+                                     resetValues="true"
+                                     update=":dialogTarifa"
+                                     oncomplete="PF('dialogTarifa').show()" />
+                </div>
+            </div>
+
+            <p:dataTable id="tabelaTarifas"
+                         widgetVar="dtTarifas"
+                         var="tarifa"
+                         value="#{tarifaBean.tarifasList}"
+                         lazy="false"
+                         stripedRows="true"
+                         size="small"
+                         responsiveLayout="scroll"
+                         paginator="true"
+                         rows="10"
+                         rowsPerPageTemplate="5,10,20,50"
+                         paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="Exibindo {startRecord}-{endRecord} de {totalRecords} registros"
+                         rowKey="#{tarifa.id}"
+                         emptyMessage="Nenhuma tarifa encontrada.">
+
+                <p:column headerText="ID" sortBy="#{tarifa.id}" style="width: 90px; text-align: center;">
+                    <h:outputText value="#{tarifa.id}" />
+                </p:column>
+
+                <p:column headerText="Valor Hora" sortBy="#{tarifa.valorHora}">
+                    <span class="font-semibold text-900">
+                        <h:outputText value="#{tarifa.valorHora}">
+                            <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR"/>
+                        </h:outputText>
+                    </span>
+                    <span class="text-500 text-xs ml-1">/hora</span>
+                </p:column>
+
+                <p:column headerText="Valor Fração Hora" sortBy="#{tarifa.valorFracaoHora}">
+                    <span class="font-semibold text-900">
+                        <h:outputText value="#{tarifa.valorFracaoHora}">
+                            <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR"/>
+                        </h:outputText>
+                    </span>
+                    <span class="text-500 text-xs ml-1">/30 min</span>
+                </p:column>
+
+                <p:column headerText="Status" style="width: 140px; text-align: center;">
+                    <p:tag severity="#{tarifa.ativo ? 'success' : 'secondary'}"
+                           value="#{tarifa.ativo ? 'Ativa' : 'Inativa'}" />
+                </p:column>
+
+                <p:column headerText="Ações" style="width: 220px; text-align: center; white-space: nowrap;">
+                    <div class="flex align-items-center justify-content-center gap-2 flex-nowrap">
+                        <p:commandButton value="Editar"
+                                         icon="pi pi-pencil"
+                                         styleClass="ui-button-outlined ui-button-secondary ui-button-sm"
+                                         oncomplete="PF('dialogTarifa').show()"
+                                         resetValues="true"
+                                         disabled="#{!tarifa.ativo}"
+                                         actionListener="#{tarifaBean.selecionarTarifa(tarifa)}"
+                                         update=":dialogTarifa" />
+
+                        <p:commandButton value="Desativar"
+                                         icon="pi pi-ban"
+                                         styleClass="ui-button-outlined ui-button-danger ui-button-sm"
+                                         disabled="#{!tarifa.ativo}"
+                                         action="#{tarifaBean.desativarTarifa(tarifa)}"
+                                         update="@form">
+                            <p:confirm header="Confirme"
+                                       message="Tem certeza que deseja desativar esta tarifa?"
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </div>
+                </p:column>
+
+            </p:dataTable>
+        </h:form>
+
+        <!-- Formulário de cadastro/edição de tarifa -->
+        <p:dialog id="dialogTarifa"
+                  header="Dados da Tarifa"
+                  widgetVar="dialogTarifa"
+                  width="420"
+                  modal="true"
+                  showEffect="fade"
+                  closable="true"
+                  closeOnEscape="true">
+
+            <h:form id="formDialog">
+                <div class="ui-fluid">
+                    <div class="field">
+                        <p:outputLabel for="valorHora" value="Valor da Hora (R$)" />
+                        <p:inputText id="valorHora"
+                                     value="#{tarifaBean.novaTarifa.valorHora}"
+                                     placeholder="Ex: 70.00">
+                            <p:ajax event="keyup"
+                                    listener="#{tarifaBean.atualizarFracaoHora}"
+                                    update="valorFracaoHora" />
+                        </p:inputText>
+                        <h:message for="valorHora" style="color:red;" styleClass="field-error" />
+                    </div>
+
+                    <div class="field mb-0">
+                        <p:outputLabel for="valorFracaoHora" value="Valor da Fração Hora (50% - Automático)" />
+                        <p:inputText id="valorFracaoHora"
+                                     value="#{tarifaBean.novaTarifa.valorFracaoHora}"
+                                     readonly="true"
+                                     placeholder="Calculado automaticamente (metade do valor hora)" />
+                    </div>
+                </div>
+
+                <div class="dialog-footer">
+                    <p:commandButton type="button"
+                                     value="Voltar"
+                                     onclick="PF('dialogTarifa').hide()"
+                                     styleClass="ui-button-flat ui-button-secondary" />
+                    <p:commandButton value="Salvar Tarifa"
+                                     icon="pi pi-check"
+                                     actionListener="#{tarifaBean.processarTarifa}"
+                                     process="@form"
+                                     update="@form :dataTableTarifas" />
+                </div>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

@@ -358,4 +358,12 @@ SELECT setval(pg_get_serial_sequence('parcelas', 'id'), COALESCE(MAX(id), 1)) FR
 SELECT setval(pg_get_serial_sequence('permanencias', 'id'), COALESCE(MAX(id), 1)) FROM permanencias;
 SELECT setval(pg_get_serial_sequence('pagamentos', 'id'), COALESCE(MAX(id), 1)) FROM pagamentos;
 
+insert into tarifas (id, ativo, valorhora, valorfracaohora,
+                     criado_em, criado_por, atualizado_em, atualizado_por)
+values (1, true, 70.00, 35.00, current_date, 'system',
+        null, null)
+ON CONFLICT (id) DO NOTHING;
+
+SELECT setval(pg_get_serial_sequence('tarifas', 'id'), COALESCE(MAX(id), 1)) FROM tarifas;
+
 COMMIT;

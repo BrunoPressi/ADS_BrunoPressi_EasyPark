@@ -1,28 +1,50 @@
 package ads.upf.model.entities;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import ads.upf.exceptions.InvalidEditException;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
-public class Tarifa extends PanacheEntity {
+@Entity
+@Table(name = "tarifas")
+@AllArgsConstructor @NoArgsConstructor
+@Getter @Setter
+public class Tarifa extends Auditado {
 
-    private static BigDecimal valorHora = BigDecimal.valueOf(70.00);
-    private static BigDecimal valorFracaoHora = BigDecimal.valueOf(35.00);
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public static BigDecimal getValorHora() {
-        return valorHora;
+    @Column(nullable = false)
+    private BigDecimal valorHora = BigDecimal.valueOf(70.00);
+
+    @Column(nullable = false)
+    private BigDecimal valorFracaoHora = BigDecimal.valueOf(35.00);
+
+    @Column(nullable = false)
+    private boolean ativo;
+
+    @Override
+    protected void prePersist() {
+        super.prePersist();
+        this.ativo = true;
     }
 
-    public static void setValorHora(BigDecimal valorHora) {
-        Tarifa.valorHora = valorHora;
+    public void editar() {
+        if (!this.ativo) {
+            throw new InvalidEditException("Tarifas desativadas não podem ser editadas.");
+        }
     }
 
-    public static BigDecimal getValorFracaoHora() {
-        return valorFracaoHora;
-    }
-
-    public static void setValorFracaoHora(BigDecimal valorFracaoHora) {
-        Tarifa.valorFracaoHora = valorFracaoHora;
+    public void desativar() {
+        if (!this.ativo) {
+            throw new InvalidEditException("Esta tarifa já está desativada.");
+        }
+        this.ativo = false;
     }
 
 }

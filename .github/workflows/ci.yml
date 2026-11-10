@@ -48,5 +48,15 @@ jobs:
             else
               docker-compose up -d --build app
             fi
+            for i in $(seq 1 30); do
+              if docker logs --tail 50 easy-park-app 2>&1 | grep -q "started in"; then
+                break
+              fi
+              sleep 2
+            done
+            set -a && . ./.env && set +a
+            docker exec -i easy-park-db psql -U "$DB_USER" -d "$DB_NAME" -c "TRUNCATE TABLE pagamentos, permanencias, parcelas, contratos, veiculos, vagas, senha_token, clientes, funcionarios, usuarios, tarifas RESTART IDENTITY CASCADE;"
+            docker exec -i easy-park-db psql -U "$DB_USER" -d "$DB_NAME" < src/main/resources/import.sql
+            docker restart easy-park-app
             docker image prune -f
 

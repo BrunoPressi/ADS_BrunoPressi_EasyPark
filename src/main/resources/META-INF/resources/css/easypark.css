@@ -483,6 +483,292 @@ form span[style*="color: red"],
     margin-bottom: 1rem;
 }
 
+.checkout-info-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    background-color: #f8fafc;
+    border: 1px solid var(--ep-border-color);
+    border-radius: var(--ep-radius-md);
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.checkout-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.checkout-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ep-text-muted);
+}
+
+.checkout-value {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--ep-text-primary);
+}
+
+.checkout-plate-badge {
+    display: inline-flex;
+    align-items: center;
+    background-color: #0f172a;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.92rem;
+    letter-spacing: 0.06em;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--ep-radius-sm);
+}
+
+.checkout-time-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 0.6rem;
+    margin-bottom: 0.85rem;
+}
+
+.checkout-time-box {
+    background-color: #ffffff;
+    border: 1px solid var(--ep-border-color);
+    border-radius: var(--ep-radius-md);
+    padding: 0.6rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.checkout-time-highlight {
+    background-color: var(--ep-primary-light);
+    border-color: #bfdbfe;
+}
+
+.checkout-time-value {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ep-text-primary);
+}
+
+.checkout-duration-badge {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--ep-primary);
+    display: inline-flex;
+    align-items: center;
+}
+
+.checkout-section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ep-text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.checkout-calc-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--ep-text-secondary);
+    padding: 0.25rem 0;
+}
+
+.checkout-total-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    padding-top: 0.6rem;
+    border-top: 1px dashed #cbd5e1;
+}
+
+.checkout-change-box {
+    background-color: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: var(--ep-radius-md);
+    padding: 0.75rem 0.9rem;
+    margin-top: 0.65rem;
+}
+
+.checkout-change-result {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.45rem 0.65rem;
+    border-radius: var(--ep-radius-sm);
+    font-size: 0.85rem;
+}
+
+.checkout-change-ok {
+    background-color: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.checkout-change-warn {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+    justify-content: flex-start;
+}
+
+/* Recibo / Comprovante de Pagamento Imprimível (RF09 / RNF01) */
+.receipt-ticket {
+    background-color: #fffef8;
+    border: 1px solid #cbd5e1;
+    border-radius: var(--ep-radius-md);
+    padding: 0.85rem 1.25rem;
+    font-family: "Courier New", Courier, monospace;
+    color: #0f172a;
+    line-height: 1.3;
+    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.03);
+}
+
+.receipt-header {
+    text-align: center;
+    margin-bottom: 0.45rem;
+}
+
+.receipt-brand {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #0f172a;
+}
+
+.receipt-subtitle {
+    font-size: 0.9rem;
+    color: #475569;
+    margin-top: 0.1rem;
+}
+
+.receipt-meta {
+    font-size: 0.86rem;
+    color: #64748b;
+    margin-top: 0.2rem;
+}
+
+.receipt-divider {
+    border-top: 1px dashed #94a3b8;
+    margin: 0.45rem 0;
+}
+
+.receipt-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.receipt-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    gap: 0.5rem;
+}
+
+.receipt-label {
+    color: #334155;
+}
+
+.receipt-value {
+    color: #0f172a;
+    text-align: right;
+}
+
+.receipt-total-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-top: 0.25rem;
+    padding-top: 0.35rem;
+    border-top: 1px solid #cbd5e1;
+}
+
+.receipt-status-paid {
+    background-color: #dcfce7;
+    color: #166534;
+    font-weight: 700;
+    font-size: 0.84rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 4px;
+}
+
+.receipt-footer {
+    text-align: center;
+    font-size: 0.86rem;
+    color: #475569;
+    margin-top: 0.5rem;
+    padding-top: 0.45rem;
+    border-top: 1px dashed #94a3b8;
+}
+
+#dialogPagamento .ui-dialog-content,
+#dialogSaida .ui-dialog-content {
+    padding: 0.85rem 1.1rem;
+}
+
+#dialogPagamento .dialog-footer,
+#dialogSaida .dialog-footer {
+    margin-top: 0.7rem;
+    padding-top: 0.6rem;
+}
+
+/* Configuração de impressão no formato Cupom / Bobina Térmica (80mm) */
+@media print {
+    @page {
+        size: 80mm auto;
+        margin: 4mm;
+    }
+
+    html,
+    body {
+        background: #ffffff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .receipt-ticket {
+        width: 72mm !important;
+        max-width: 300px !important;
+        margin: 0 auto !important;
+        padding: 0.65rem 0.75rem !important;
+        border: 1px dashed #64748b !important;
+        box-shadow: none !important;
+        background-color: #ffffff !important;
+        font-size: 12px !important;
+    }
+
+    .receipt-brand {
+        font-size: 14px !important;
+    }
+
+    .receipt-subtitle,
+    .receipt-meta,
+    .receipt-footer {
+        font-size: 11px !important;
+    }
+
+    .receipt-row {
+        font-size: 12px !important;
+    }
+
+    .receipt-total-row {
+        font-size: 14px !important;
+    }
+}
+
 /* --------------------------------------------------------------------------
    5. Páginas Públicas e de Autenticação
    -------------------------------------------------------------------------- */

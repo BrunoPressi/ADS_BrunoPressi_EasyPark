@@ -147,6 +147,21 @@ class PagamentoServiceTest {
 
             assertThat(valor).isEqualByComparingTo("1680.00");
         }
+
+        @Test
+        @DisplayName("Deve detalhar memória de cálculo completa com tempo formatado e frações discriminadas")
+        void deveDetalharMemoriaDeCalculoCompleta() {
+            LocalDateTime saida = entradaBase.plusHours(1).plusMinutes(25);
+
+            var resumo = pagamentoService.detalharCalculoPermanencia(entradaBase, saida);
+
+            assertThat(resumo.getTempoFormatado()).isEqualTo("1h 25min");
+            assertThat(resumo.getValorPrimeiraHora()).isEqualByComparingTo("70.00");
+            assertThat(resumo.getValorUnitarioFracao()).isEqualByComparingTo("35.00");
+            assertThat(resumo.getQuantidadeFracoesAdicionais()).isEqualTo(1L);
+            assertThat(resumo.getValorTotalFracoes()).isEqualByComparingTo("35.00");
+            assertThat(resumo.getValorTotal()).isEqualByComparingTo("105.00");
+        }
     }
 
     @Nested

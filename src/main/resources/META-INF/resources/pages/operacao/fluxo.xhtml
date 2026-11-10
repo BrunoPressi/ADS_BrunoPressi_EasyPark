@@ -122,9 +122,9 @@
                                 : 'Não definido'}" />
                 </p:column>
 
-                <p:column headerText="Pagamento" style="width: 155px; text-align: center; white-space: nowrap;">
-                    <p:commandButton value="Ver Pagamento"
-                                     icon="pi pi-eye"
+                <p:column headerText="Comprovante" style="width: 165px; text-align: center; white-space: nowrap;">
+                    <p:commandButton value="Comprovante"
+                                     icon="pi pi-print"
                                      styleClass="ui-button-outlined ui-button-secondary ui-button-sm"
                                      actionListener="#{permanenciaBean.selecionarPagamento(permanencia)}"
                                      oncomplete="if (args &amp;&amp; args.sucesso) { PF('dialogPagamento').show(); }"

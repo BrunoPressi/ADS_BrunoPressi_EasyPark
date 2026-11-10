@@ -1,9 +1,11 @@
 package ads.upf.presentation;
 
 import ads.upf.model.DTOs.pagamento.PagamentoResponseDTO;
+import ads.upf.model.DTOs.pagamento.ResumoCalculoPermanenciaDTO;
 import ads.upf.model.DTOs.permanencia.EntradaCreateDTO;
 import ads.upf.model.DTOs.permanencia.PermanenciaResponseDTO;
 import ads.upf.model.DTOs.permanencia.SaidaCreateDTO;
+import ads.upf.model.enums.PagamentoMeio;
 import ads.upf.model.enums.PermanenciaStatus;
 import ads.upf.presentation.lazy.GenericLazyDataModel;
 import ads.upf.services.EntradaUseCase;
@@ -51,7 +53,16 @@ public class PermanenciaBean implements Serializable {
 
     private EntradaCreateDTO entrada;
     private SaidaCreateDTO saida;
+
+    // Estado para o modal de Checkout / Saída Rotativa
+    private PermanenciaResponseDTO permanenciaSelecionada;
+    private ResumoCalculoPermanenciaDTO resumoCalculo;
+    private BigDecimal valorRecebido;
+
+    // Estado para o modal de Comprovante de Pagamento
+    private PermanenciaResponseDTO permanenciaComprovante;
     private PagamentoResponseDTO pagamentoSelecionado;
+    private ResumoCalculoPermanenciaDTO resumoComprovante;
 
     private String chaveUnicaFiltro;
     private List<SortMeta> sortBy;
@@ -62,7 +73,7 @@ public class PermanenciaBean implements Serializable {
         this.saida = new SaidaCreateDTO();
         this.lazyDataModel = new GenericLazyDataModel<>(
                 () -> permanenciaService.contar(),
-                ( first, pageSize) -> permanenciaService.listarPaginado(first, pageSize),
+                (first, pageSize) -> permanenciaService.listarPaginado(first, pageSize),
                 PermanenciaResponseDTO::getId,
                 (placa) -> permanenciaService.buscarPermanenciaPelaPlaca(placa)
         );
@@ -77,43 +88,66 @@ public class PermanenciaBean implements Serializable {
         }
         catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(SEVERITY_ERROR,"Erro ao registrar entrada", e.getMessage()));
+                    new FacesMessage(SEVERITY_ERROR, "Erro ao registrar entrada", e.getMessage()));
         }
     }
 
     public void processarSaida() {
         try {
-            saidaService.novaSaida(saida);
+            if (saida.getMeioPagamento() == PagamentoMeio.DINHEIRO
+                    && valorRecebido != null
+                    && saida.getValor() != null
+                    && valorRecebido.compareTo(saida.getValor()) < 0) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(SEVERITY_ERROR, "Valor insuficiente",
+                                "O valor recebido em dinheiro é menor que o total a pagar."));
+                return;
+            }
+
+            PermanenciaResponseDTO permanenciaConcluida = saidaService.novaSaida(saida);
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage("Sucesso", "Saída registrada!"));
-            PrimeFaces.current().executeScript("PF('dialogSaida').hide()");
+                    new FacesMessage("Sucesso", "Saída registrada e ocupação finalizada com sucesso!"));
+
+            if (Boolean.TRUE.equals(permanenciaConcluida.getIsRotativo())
+                    && permanenciaConcluida.getPagamento() != null) {
+                carregarDadosComprovante(permanenciaConcluida);
+                PrimeFaces.current().ajax().update("dialogPagamento");
+                PrimeFaces.current().executeScript("PF('dialogSaida').hide(); PF('dialogPagamento').show();");
+            } else {
+                PrimeFaces.current().executeScript("PF('dialogSaida').hide()");
+            }
+
             this.saida = new SaidaCreateDTO();
+            this.valorRecebido = null;
         }
         catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(SEVERITY_ERROR,"Erro ao registrar saída", e.getMessage()));
+                    new FacesMessage(SEVERITY_ERROR, "Erro ao registrar saída", e.getMessage()));
         }
     }
 
     public void novaSaida(PermanenciaResponseDTO permanencia) {
-        // Se for rotativo gera dados para o pagamento
         if (permanencia.getIsRotativo()) {
-            PrimeFaces.current().executeScript("PF('dialogSaida').show()");
-            LocalDateTime dataSaida= LocalDateTime.now();
-            BigDecimal valor = pagamentoService.calcularValorPermanencia(
+            this.permanenciaSelecionada = permanencia;
+            this.valorRecebido = null;
+            LocalDateTime dataSaida = LocalDateTime.now();
+            this.resumoCalculo = pagamentoService.detalharCalculoPermanencia(
                     permanencia.getDataEntrada(),
                     dataSaida);
-            saida.setValor(valor);
-            saida.setPlaca(permanencia.getVeiculo().getPlaca());
 
-            // É setado no dialogSaida
-            // saida.setMeioPagamento(null);
+            this.saida = new SaidaCreateDTO();
+            this.saida.setValor(resumoCalculo.getValorTotal());
+            this.saida.setPlaca(permanencia.getVeiculo().getPlaca());
+            this.saida.setMeioPagamento(null);
+
+            PrimeFaces.current().executeScript("PF('dialogSaida').show()");
         }
         else {
-            // Nulls são tratados no Use Case de saída
-            saida.setValor(null);
-            saida.setMeioPagamento(null);
-            saida.setPlaca(permanencia.getVeiculo().getPlaca());
+            this.permanenciaSelecionada = permanencia;
+            this.saida = new SaidaCreateDTO();
+            this.saida.setValor(null);
+            this.saida.setMeioPagamento(null);
+            this.saida.setPlaca(permanencia.getVeiculo().getPlaca());
             processarSaida();
         }
     }
@@ -121,18 +155,42 @@ public class PermanenciaBean implements Serializable {
     public void selecionarPagamento(PermanenciaResponseDTO permanencia) {
         if (permanencia.getPagamento() == null && permanencia.getStatus().equals(PermanenciaStatus.em_andamento)) {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(SEVERITY_ERROR,"Erro ao visualizar pagamento", "Permanência ainda em andamento!"));
+                    new FacesMessage(SEVERITY_ERROR, "Erro ao visualizar comprovante", "Permanência ainda em andamento!"));
             PrimeFaces.current().ajax().addCallbackParam("sucesso", false);
             return;
         }
         if (!permanencia.getIsRotativo()) {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(SEVERITY_ERROR,"Não foi possível visualizar o pagamento", "Permanências não rotativas não possuem pagamento."));
+                    new FacesMessage(SEVERITY_ERROR, "Não foi possível visualizar o comprovante", "Permanências de mensalistas não geram cobrança avulsa."));
             PrimeFaces.current().ajax().addCallbackParam("sucesso", false);
             return;
         }
-        this.pagamentoSelecionado = permanencia.getPagamento();
+        carregarDadosComprovante(permanencia);
         PrimeFaces.current().ajax().addCallbackParam("sucesso", true);
+    }
+
+    private void carregarDadosComprovante(PermanenciaResponseDTO permanencia) {
+        this.permanenciaComprovante = permanencia;
+        this.pagamentoSelecionado = permanencia.getPagamento();
+        this.resumoComprovante = pagamentoService.gerarResumoComprovante(permanencia);
+    }
+
+    public boolean isPagamentoEmDinheiro() {
+        return saida != null && saida.getMeioPagamento() == PagamentoMeio.DINHEIRO;
+    }
+
+    public BigDecimal getTroco() {
+        if (valorRecebido == null || saida == null || saida.getValor() == null) {
+            return BigDecimal.ZERO;
+        }
+        return valorRecebido.subtract(saida.getValor());
+    }
+
+    public boolean isValorRecebidoInsuficiente() {
+        return valorRecebido != null
+                && saida != null
+                && saida.getValor() != null
+                && valorRecebido.compareTo(saida.getValor()) < 0;
     }
 
     public void pesquisar() {

@@ -4,9 +4,6 @@ import ads.upf.model.enums.VeiculoTipo;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Table(name = "veiculos")
 @AllArgsConstructor @NoArgsConstructor
@@ -32,8 +29,5 @@ public class Veiculo extends  Auditado {
 
     @Enumerated(EnumType.STRING)
     private VeiculoTipo tipo;
-
-    @OneToMany(mappedBy = "veiculo", fetch = FetchType.LAZY)
-    private List<Permanencia> permanenciaList = new ArrayList<>();
 
 }

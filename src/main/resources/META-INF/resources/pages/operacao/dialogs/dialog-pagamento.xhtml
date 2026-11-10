@@ -10,34 +10,154 @@
               responsive="true"
               modal="true"
               showEffect="fade"
-              width="480"
+              width="520"
               closeOnEscape="true"
-              header="Detalhes do Pagamento">
+              header="Comprovante de Pagamento e Saída">
 
-        <p:ajax event="close"
-                form="formDialogPagamento"
-                resetValues="true"
-                update="formDialogPagamento"/>
+        <h:form id="formDialogPagamento">
+            <h:panelGroup id="painelComprovante"
+                          layout="block"
+                          styleClass="receipt-ticket"
+                          rendered="#{permanenciaBean.pagamentoSelecionado != null}">
 
-        <p:dataTable id="formDialogPagamento"
-                     value="#{permanenciaBean.pagamentoSelecionado}"
-                     var="pagamento"
-                     stripedRows="true"
-                     size="small"
-                     responsiveLayout="scroll">
-            <p:column headerText="ID" style="width: 80px; text-align: center;">
-                <h:outputLabel value="#{pagamento.id}"/>
-            </p:column>
-            <p:column headerText="Valor">
-                <span class="font-semibold text-900">
-                    <h:outputText value="#{pagamento.valor}">
-                        <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR"/>
-                    </h:outputText>
-                </span>
-            </p:column>
-            <p:column headerText="Meio de Pagamento">
-                <h:outputText value="#{pagamento.meioPagamento.descricao}"/>
-            </p:column>
-        </p:dataTable>
+                <!-- Cabeçalho do Comprovante -->
+                <div class="receipt-header">
+                    <div class="receipt-brand">EASYPARK ESTACIONAMENTO</div>
+                    <div class="receipt-subtitle">Comprovante de Permanência e Pagamento</div>
+                    <div class="receipt-meta">
+                        Recibo #<h:outputText value="#{permanenciaBean.pagamentoSelecionado.id}"/>
+                        &#160;|&#160;
+                        Permanência #<h:outputText value="#{permanenciaBean.permanenciaComprovante.id}"/>
+                    </div>
+                </div>
+
+                <div class="receipt-divider"></div>
+
+                <!-- Dados do Veículo e Vaga -->
+                <div class="receipt-section">
+                    <div class="receipt-row">
+                        <span class="receipt-label">Placa do Veículo:</span>
+                        <span class="receipt-value font-bold">
+                            <h:outputText value="#{permanenciaBean.permanenciaComprovante.veiculo.placa}"/>
+                        </span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Veículo:</span>
+                        <span class="receipt-value">
+                            <h:outputText value="#{not empty permanenciaBean.permanenciaComprovante.veiculo.modelo
+                                ? permanenciaBean.permanenciaComprovante.veiculo.marca.concat(' ').concat(permanenciaBean.permanenciaComprovante.veiculo.modelo)
+                                : 'Rotativo Avulso'}"/>
+                        </span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Vaga Utilizada:</span>
+                        <span class="receipt-value">
+                            <h:outputText value="#{permanenciaBean.permanenciaComprovante.vaga.nome}"/>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="receipt-divider"></div>
+
+                <!-- Horários e Tempo de Permanência -->
+                <div class="receipt-section">
+                    <div class="receipt-row">
+                        <span class="receipt-label">Data/Hora Entrada:</span>
+                        <span class="receipt-value">
+                            <h:outputText value="#{permanenciaBean.permanenciaComprovante.dataEntrada}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" type="localDateTime"/>
+                            </h:outputText>
+                        </span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Data/Hora Saída:</span>
+                        <span class="receipt-value">
+                            <h:outputText value="#{permanenciaBean.permanenciaComprovante.dataSaida}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" type="localDateTime"/>
+                            </h:outputText>
+                        </span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Tempo Permanência:</span>
+                        <span class="receipt-value font-semibold">
+                            <h:outputText value="#{permanenciaBean.resumoComprovante.tempoFormatado}"/>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="receipt-divider"></div>
+
+                <!-- Discriminação Financeira -->
+                <div class="receipt-section">
+                    <div class="receipt-row">
+                        <span class="receipt-label">1ª Hora (mínimo 60m):</span>
+                        <span class="receipt-value">
+                            <h:outputText value="#{permanenciaBean.resumoComprovante.valorPrimeiraHora}">
+                                <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR"/>
+                            </h:outputText>
+                        </span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">
+                            Frações de 30m (<h:outputText value="#{permanenciaBean.resumoComprovante.quantidadeFracoesAdicionais}"/>x):
+                        </span>
+                        <span class="receipt-value">
+                            <h:outputText value="#{permanenciaBean.resumoComprovante.valorTotalFracoes}">
+                                <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR"/>
+                            </h:outputText>
+                        </span>
+                    </div>
+                    <div class="receipt-total-row">
+                        <span>VALOR TOTAL PAGO</span>
+                        <span>
+                            <h:outputText value="#{permanenciaBean.pagamentoSelecionado.valor}">
+                                <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR"/>
+                            </h:outputText>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="receipt-divider"></div>
+
+                <!-- Dados da Transação -->
+                <div class="receipt-section">
+                    <div class="receipt-row">
+                        <span class="receipt-label">Meio de Pagamento:</span>
+                        <span class="receipt-value font-semibold">
+                            <h:outputText value="#{permanenciaBean.pagamentoSelecionado.meioPagamento.descricao}"/>
+                        </span>
+                    </div>
+                    <div class="receipt-row" rendered="#{permanenciaBean.pagamentoSelecionado.dataPagamento != null}">
+                        <span class="receipt-label">Data Confirmação:</span>
+                        <span class="receipt-value">
+                            <h:outputText value="#{permanenciaBean.pagamentoSelecionado.dataPagamento}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" type="localDateTime"/>
+                            </h:outputText>
+                        </span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Situação:</span>
+                        <span class="receipt-status-paid">PAGO / QUITADO</span>
+                    </div>
+                </div>
+
+                <div class="receipt-footer">
+                    Obrigado pela preferência! Guarde este comprovante.
+                </div>
+            </h:panelGroup>
+
+            <div class="dialog-footer">
+                <p:commandButton type="button"
+                                 value="Fechar"
+                                 onclick="PF('dialogPagamento').hide()"
+                                 styleClass="ui-button-flat ui-button-secondary"/>
+                <p:commandButton type="button"
+                                 value="Imprimir Comprovante"
+                                 icon="pi pi-print"
+                                 styleClass="ui-button-primary">
+                    <p:printer target="painelComprovante"/>
+                </p:commandButton>
+            </div>
+        </h:form>
     </p:dialog>
 </ui:composition>

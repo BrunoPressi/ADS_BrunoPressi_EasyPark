@@ -52,6 +52,7 @@ public class Parcela extends Auditado {
 
     @Override
     protected void prePersist() {
+        super.prePersist();
         this.valor = BigDecimal.valueOf(180.00);
     }
 

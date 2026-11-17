@@ -843,6 +843,100 @@ form span[style*="color: red"],
     color: var(--ep-primary-hover);
 }
 
+/* Barra de Filtros da Central de Relatórios (Alinhamento Uniforme de Alturas) */
+.report-filter-grid > [class*="col-"] {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.report-filter-label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--ep-text-secondary);
+    line-height: 1.2rem;
+    height: 1.2rem;
+    margin-bottom: 0.4rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.report-filter-grid .p-datepicker {
+    display: flex !important;
+    align-items: stretch;
+    width: 100%;
+    height: 38px;
+}
+
+.report-filter-grid .p-datepicker .ui-inputfield {
+    flex: 1 1 auto;
+    width: 1% !important;
+    min-width: 0;
+    height: 38px !important;
+    margin: 0 !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.report-filter-grid .p-datepicker .ui-datepicker-trigger.ui-button {
+    height: 38px !important;
+    width: 2.35rem !important;
+    flex-shrink: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+}
+
+.report-filter-grid .ui-selectonemenu {
+    display: flex !important;
+    align-items: center;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 38px !important;
+    margin: 0 !important;
+}
+
+.report-filter-grid .ui-selectonemenu .ui-selectonemenu-label {
+    flex: 1 1 auto;
+    display: flex !important;
+    align-items: center;
+    height: 100% !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.report-filter-grid .ui-selectonemenu .ui-selectonemenu-trigger {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    height: 100% !important;
+}
+
+.report-filter-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 38px;
+    width: 100%;
+}
+
+.report-filter-actions .ui-button {
+    height: 38px !important;
+    margin: 0 !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
 /* Adaptação de espaçamento para notebooks (1280px - 1366px) */
 @media (max-width: 1366px) {
     :root {

@@ -1,0 +1,744 @@
+<ui:composition template="/templates/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <ui:define name="title">EasyPark — Relatórios Gerenciais</ui:define>
+
+    <ui:define name="content">
+        <h:form id="formRelatorios">
+
+            <!-- CABEÇALHO DA PÁGINA -->
+            <div class="page-header">
+                <div class="page-header-titles">
+                    <h2 class="page-title">Central de Relatórios Gerenciais</h2>
+                    <p class="page-subtitle">Auditoria financeira, histórico de ocupação e exportação de documentos em PDF e CSV</p>
+                </div>
+                <div class="flex align-items-center gap-2 flex-wrap">
+                    <p:commandButton value="Hoje (Dia)"
+                                     icon="pi pi-calendar"
+                                     action="#{relatorioBean.aplicarAtalhoHoje}"
+                                     process="@this"
+                                     update="@form"
+                                     styleClass="ui-button-sm #{relatorioBean.atalhoAtivo == 'DIA' ? '' : 'ui-button-outlined ui-button-secondary'}" />
+
+                    <p:commandButton value="Últimos 7 Dias (Semana)"
+                                     icon="pi pi-calendar-plus"
+                                     action="#{relatorioBean.aplicarAtalhoSemana}"
+                                     process="@this"
+                                     update="@form"
+                                     styleClass="ui-button-sm #{relatorioBean.atalhoAtivo == 'SEMANA' ? '' : 'ui-button-outlined ui-button-secondary'}" />
+
+                    <p:commandButton value="Mês Atual"
+                                     icon="pi pi-calendar-times"
+                                     action="#{relatorioBean.aplicarAtalhoMes}"
+                                     process="@this"
+                                     update="@form"
+                                     styleClass="ui-button-sm #{relatorioBean.atalhoAtivo == 'MES' ? '' : 'ui-button-outlined ui-button-secondary'}" />
+
+                    <p:commandButton value="Ano Atual"
+                                     icon="pi pi-chart-line"
+                                     action="#{relatorioBean.aplicarAtalhoAno}"
+                                     process="@this"
+                                     update="@form"
+                                     styleClass="ui-button-sm #{relatorioBean.atalhoAtivo == 'ANO' ? '' : 'ui-button-outlined ui-button-secondary'}" />
+                </div>
+            </div>
+
+            <!-- BARRA DE PARÂMETROS E FILTROS GERAIS -->
+            <div class="erp-card mb-3">
+                <div class="grid report-filter-grid">
+
+                    <div class="col-12 md:col-4 lg:col-2">
+                        <label for="dataInicio" class="report-filter-label">Data Inicial</label>
+                        <p:datePicker id="dataInicio"
+                                      value="#{relatorioBean.filtro.dataInicio}"
+                                      pattern="dd/MM/yyyy"
+                                      showIcon="true"
+                                      showOnFocus="false" />
+                    </div>
+
+                    <div class="col-12 md:col-4 lg:col-2">
+                        <label for="dataFim" class="report-filter-label">Data Final</label>
+                        <p:datePicker id="dataFim"
+                                      value="#{relatorioBean.filtro.dataFim}"
+                                      pattern="dd/MM/yyyy"
+                                      showIcon="true"
+                                      showOnFocus="false" />
+                    </div>
+
+                    <div class="col-12 md:col-4 lg:col-2">
+                        <label for="agrupamento" class="report-filter-label">Agrupar Período Por</label>
+                        <p:selectOneMenu id="agrupamento"
+                                         value="#{relatorioBean.filtro.agrupamento}">
+                            <f:selectItems value="#{relatorioBean.tiposAgrupamento}"
+                                           var="agrup"
+                                           itemLabel="#{agrup.descricao}"
+                                           itemValue="#{agrup}" />
+                        </p:selectOneMenu>
+                    </div>
+
+                    <div class="col-12 md:col-4 lg:col-2">
+                        <label for="origemReceita" class="report-filter-label">Origem (Financeiro)</label>
+                        <p:selectOneMenu id="origemReceita"
+                                         value="#{relatorioBean.filtro.origemReceita}">
+                            <f:selectItem itemLabel="Todas as Origens" itemValue="TODAS" />
+                            <f:selectItem itemLabel="Apenas Rotativo" itemValue="ROTATIVO" />
+                            <f:selectItem itemLabel="Apenas Mensalistas" itemValue="MENSALISTA" />
+                        </p:selectOneMenu>
+                    </div>
+
+                    <div class="col-12 md:col-4 lg:col-2">
+                        <label for="modalidadeOcupacao" class="report-filter-label">Modalidade (Ocupação)</label>
+                        <p:selectOneMenu id="modalidadeOcupacao"
+                                         value="#{relatorioBean.filtro.modalidadeOcupacao}">
+                            <f:selectItem itemLabel="Todas" itemValue="TODAS" />
+                            <f:selectItem itemLabel="Rotativo" itemValue="ROTATIVO" />
+                            <f:selectItem itemLabel="Mensalista" itemValue="MENSALISTA" />
+                        </p:selectOneMenu>
+                    </div>
+
+                    <div class="col-12 md:col-4 lg:col-2">
+                        <span class="report-filter-label" aria-hidden="true">&#160;</span>
+                        <div class="report-filter-actions">
+                            <p:commandButton value="Filtrar"
+                                             icon="pi pi-filter"
+                                             action="#{relatorioBean.pesquisar}"
+                                             process="@form"
+                                             update="@form"
+                                             styleClass="flex-1" />
+
+                            <p:commandButton value="Limpar"
+                                             icon="pi pi-refresh"
+                                             action="#{relatorioBean.limparFiltros}"
+                                             process="@this"
+                                             update="@form"
+                                             styleClass="ui-button-outlined ui-button-secondary" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ABAS DE RELATÓRIOS GERENCIAIS (HU23 E HU24) -->
+            <p:tabView id="tabRelatorios" activeIndex="#{relatorioBean.abaAtiva}">
+                <p:ajax event="tabChange" process="@this" />
+
+                <!-- ========================================================================= -->
+                <!-- ABA 1: RELATÓRIO FINANCEIRO (HU23)                                        -->
+                <!-- ========================================================================= -->
+                <p:tab title="Relatório Financeiro">
+
+                    <!-- BARRA DE EXPORTAÇÃO FINANCEIRA -->
+                    <div class="flex justify-content-between align-items-center flex-wrap gap-2 mb-3 pb-2 border-bottom-1 surface-border">
+                        <div>
+                            <span class="font-bold text-900 text-base">Desempenho Financeiro e Auditoria de Receitas</span>
+                            <span class="text-500 text-xs block">
+                                Consolidação de pagamentos rotativos e mensalidades quitadas no período filtrado
+                            </span>
+                        </div>
+                        <div class="flex gap-2">
+                            <p:commandButton value="Exportar CSV (Lançamentos)"
+                                             icon="pi pi-file-excel"
+                                             ajax="false"
+                                             styleClass="ui-button-outlined ui-button-secondary ui-button-sm">
+                                <p:dataExporter type="csv"
+                                                target="tabelaLancamentosFinanceiros"
+                                                fileName="lancamentos-financeiros-easypark" />
+                            </p:commandButton>
+
+                            <p:commandButton value="Baixar Relatório em PDF"
+                                             icon="pi pi-file-pdf"
+                                             ajax="false"
+                                             styleClass="ui-button-danger ui-button-sm">
+                                <p:fileDownload value="#{relatorioBean.arquivoPdfFinanceiro}" />
+                            </p:commandButton>
+                        </div>
+                    </div>
+
+                    <!-- CARDS EXECUTIVOS FINANCEIROS (HU23) -->
+                    <div class="grid mb-3">
+
+                        <!-- CARD 1: FATURAMENTO TOTAL -->
+                        <div class="col-12 md:col-6 lg:col-3">
+                            <div class="erp-card border-left-3 border-green-500 h-full flex flex-column justify-content-between">
+                                <div>
+                                    <div class="flex justify-content-between align-items-center mb-2">
+                                        <span class="text-600 font-semibold text-sm">Faturamento Total no Período</span>
+                                        <div class="flex align-items-center justify-content-center bg-green-50 border-round" style="width:2.25rem; height:2.25rem">
+                                            <i class="pi pi-dollar text-green-600 text-lg"></i>
+                                        </div>
+                                    </div>
+                                    <div class="font-bold text-2xl mb-2 text-green-700">
+                                        <h:outputText value="#{relatorioBean.resumoFinanceiro.receitaTotal}">
+                                            <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                        </h:outputText>
+                                    </div>
+                                </div>
+                                <div class="flex flex-column gap-1 pt-2 border-top-1 surface-border text-xs text-700">
+                                    <div class="flex justify-content-between">
+                                        <span>Rotativo (#{relatorioBean.resumoFinanceiro.percentualRotativo}%):</span>
+                                        <b>
+                                            <h:outputText value="#{relatorioBean.resumoFinanceiro.receitaRotativo}">
+                                                <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                            </h:outputText>
+                                        </b>
+                                    </div>
+                                    <div class="flex justify-content-between">
+                                        <span>Mensalistas (#{relatorioBean.resumoFinanceiro.percentualMensalista}%):</span>
+                                        <b>
+                                            <h:outputText value="#{relatorioBean.resumoFinanceiro.receitaMensalista}">
+                                                <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                            </h:outputText>
+                                        </b>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CARD 2: MÉDIA POR SUBPERÍODO -->
+                        <div class="col-12 md:col-6 lg:col-3">
+                            <div class="erp-card border-left-3 border-blue-500 h-full flex flex-column justify-content-between">
+                                <div>
+                                    <div class="flex justify-content-between align-items-center mb-2">
+                                        <span class="text-600 font-semibold text-sm">
+                                            Média (#{relatorioBean.filtro.agrupamento.descricao})
+                                        </span>
+                                        <div class="flex align-items-center justify-content-center bg-blue-50 border-round" style="width:2.25rem; height:2.25rem">
+                                            <i class="pi pi-chart-bar text-blue-600 text-lg"></i>
+                                        </div>
+                                    </div>
+                                    <div class="text-900 font-bold text-2xl mb-2">
+                                        <h:outputText value="#{relatorioBean.resumoFinanceiro.receitaMediaPorPeriodo}">
+                                            <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                        </h:outputText>
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap justify-content-between pt-2 border-top-1 surface-border text-xs text-700">
+                                    <span>Transações: <b>#{relatorioBean.resumoFinanceiro.totalTransacoes}</b></span>
+                                    <span>Ticket Médio:
+                                        <b>
+                                            <h:outputText value="#{relatorioBean.resumoFinanceiro.ticketMedioGeral}">
+                                                <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                            </h:outputText>
+                                        </b>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CARD 3: PERÍODO DE MAIOR FATURAMENTO -->
+                        <div class="col-12 md:col-6 lg:col-3">
+                            <div class="erp-card border-left-3 border-teal-500 h-full flex flex-column justify-content-between">
+                                <div>
+                                    <div class="flex justify-content-between align-items-center mb-2">
+                                        <span class="text-600 font-semibold text-sm">Maior Faturamento</span>
+                                        <div class="flex align-items-center justify-content-center bg-teal-50 border-round" style="width:2.25rem; height:2.25rem">
+                                            <i class="pi pi-arrow-up-right text-teal-600 text-lg"></i>
+                                        </div>
+                                    </div>
+                                    <div class="text-teal-700 font-bold text-2xl mb-2">
+                                        <h:outputText value="#{relatorioBean.resumoFinanceiro.valorMaiorReceita}">
+                                            <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                        </h:outputText>
+                                    </div>
+                                </div>
+                                <div class="pt-2 border-top-1 surface-border text-xs text-700">
+                                    <span>Período recorde: <b>#{relatorioBean.resumoFinanceiro.periodoMaiorReceita}</b></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CARD 4: PERÍODO DE MENOR FATURAMENTO -->
+                        <div class="col-12 md:col-6 lg:col-3">
+                            <div class="erp-card border-left-3 border-orange-500 h-full flex flex-column justify-content-between">
+                                <div>
+                                    <div class="flex justify-content-between align-items-center mb-2">
+                                        <span class="text-600 font-semibold text-sm">Menor Faturamento</span>
+                                        <div class="flex align-items-center justify-content-center bg-orange-50 border-round" style="width:2.25rem; height:2.25rem">
+                                            <i class="pi pi-arrow-down-right text-orange-600 text-lg"></i>
+                                        </div>
+                                    </div>
+                                    <div class="text-orange-700 font-bold text-2xl mb-2">
+                                        <h:outputText value="#{relatorioBean.resumoFinanceiro.valorMenorReceita}">
+                                            <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                        </h:outputText>
+                                    </div>
+                                </div>
+                                <div class="pt-2 border-top-1 surface-border text-xs text-700">
+                                    <span>Período com menor receita: <b>#{relatorioBean.resumoFinanceiro.periodoMenorReceita}</b></span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- TABELAS DE ANÁLISE FINANCEIRA (POR PERÍODO E POR MEIO DE PAGAMENTO) -->
+                    <div class="grid mb-3">
+
+                        <div class="col-12 lg:col-8">
+                            <p:panel header="Série Consolidada por Período (#{relatorioBean.filtro.agrupamento.descricao})"
+                                     toggleable="false">
+                                <p:dataTable id="tabelaFinanceiroPeriodo"
+                                             value="#{relatorioBean.financeiroPorPeriodo}"
+                                             var="fp"
+                                             stripedRows="true"
+                                             size="small"
+                                             paginator="true"
+                                             rows="10"
+                                             paginatorPosition="bottom"
+                                             responsiveLayout="scroll"
+                                             emptyMessage="Nenhuma movimentação financeira encontrada no período selecionado.">
+
+                                    <p:column headerText="Período">
+                                        <span class="font-bold text-900">#{fp.periodoLabel}</span>
+                                    </p:column>
+
+                                    <p:column headerText="Rotativo" style="text-align: right;">
+                                        <h:outputText value="#{fp.valorRotativo}">
+                                            <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                        </h:outputText>
+                                        <small class="text-500 ml-1">(#{fp.qtdRotativo})</small>
+                                    </p:column>
+
+                                    <p:column headerText="Mensalistas" style="text-align: right;">
+                                        <h:outputText value="#{fp.valorMensalista}">
+                                            <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                        </h:outputText>
+                                        <small class="text-500 ml-1">(#{fp.qtdMensalista})</small>
+                                    </p:column>
+
+                                    <p:column headerText="Transações" style="text-align: center; width: 100px;">
+                                        #{fp.totalTransacoes}
+                                    </p:column>
+
+                                    <p:column headerText="Ticket Médio" style="text-align: right;">
+                                        <h:outputText value="#{fp.ticketMedio}">
+                                            <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column headerText="Receita Total" style="text-align: right;">
+                                        <span class="font-bold text-green-700">
+                                            <h:outputText value="#{fp.valorTotal}">
+                                                <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                            </h:outputText>
+                                        </span>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panel>
+                        </div>
+
+                        <div class="col-12 lg:col-4">
+                            <p:panel header="Receita por Meio de Pagamento"
+                                     toggleable="false">
+                                <p:dataTable id="tabelaMeiosPagamento"
+                                             value="#{relatorioBean.financeiroPorMeioPagamento}"
+                                             var="mp"
+                                             stripedRows="true"
+                                             size="small"
+                                             responsiveLayout="scroll"
+                                             emptyMessage="Sem pagamentos registrados.">
+
+                                    <p:column headerText="Meio">
+                                        <span class="font-semibold">#{mp.meioPagamento}</span>
+                                    </p:column>
+
+                                    <p:column headerText="Qtd." style="text-align: center; width: 65px;">
+                                        #{mp.quantidade}
+                                    </p:column>
+
+                                    <p:column headerText="Total" style="text-align: right;">
+                                        <span class="font-semibold">
+                                            <h:outputText value="#{mp.valorTotal}">
+                                                <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                            </h:outputText>
+                                        </span>
+                                    </p:column>
+
+                                    <p:column headerText="%" style="text-align: right; width: 70px;">
+                                        <p:tag severity="info" value="#{mp.percentual}%" />
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panel>
+                        </div>
+
+                    </div>
+
+                    <!-- TABELA ANALÍTICA DE LANÇAMENTOS FINANCEIROS -->
+                    <p:panel header="Detalhamento Auditável de Lançamentos Financeiros"
+                             toggleable="false">
+                        <p:dataTable id="tabelaLancamentosFinanceiros"
+                                     value="#{relatorioBean.lancamentosFinanceiros}"
+                                     var="lanc"
+                                     stripedRows="true"
+                                     size="small"
+                                     paginator="true"
+                                     rows="10"
+                                     rowsPerPageTemplate="10,20,50"
+                                     paginatorPosition="bottom"
+                                     responsiveLayout="scroll"
+                                     emptyMessage="Nenhum lançamento financeiro registrado no período.">
+
+                            <p:column headerText="Referência" style="width: 170px;">
+                                <h:outputText value="#{lanc.codigoReferencia}" styleClass="font-semibold text-900" />
+                            </p:column>
+
+                            <p:column headerText="Data Pagamento" style="width: 150px;">
+                                <h:outputText value="#{lanc.dataPagamentoFormatada}" />
+                            </p:column>
+
+                            <p:column headerText="Origem" style="width: 120px; text-align: center;">
+                                <p:tag severity="#{lanc.origem == 'Rotativo' ? 'info' : 'success'}"
+                                       value="#{lanc.origem}" />
+                            </p:column>
+
+                            <p:column headerText="Placa / Cliente">
+                                <h:outputText value="#{lanc.identificacao}" />
+                            </p:column>
+
+                            <p:column headerText="Meio de Pagamento" style="width: 160px;">
+                                <h:outputText value="#{lanc.meioPagamento}" />
+                            </p:column>
+
+                            <p:column headerText="Valor Pago" style="width: 140px; text-align: right;">
+                                <span class="font-bold text-900">
+                                    <h:outputText value="#{lanc.valor}">
+                                        <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                    </h:outputText>
+                                </span>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+
+                </p:tab>
+
+                <!-- ========================================================================= -->
+                <!-- ABA 2: RELATÓRIO DE OCUPAÇÃO E FLUXO DE PÁTIO (HU24)                      -->
+                <!-- ========================================================================= -->
+                <p:tab title="Relatório de Ocupação">
+                    <h:panelGroup id="painelOcupacao" layout="block">
+
+                    <!-- BARRA DE EXPORTAÇÃO DE OCUPAÇÃO -->
+                    <div class="flex justify-content-between align-items-center flex-wrap gap-2 mb-3 pb-2 border-bottom-1 surface-border">
+                        <div>
+                            <span class="font-bold text-900 text-base">Histórico de Ocupação, Fluxo de Veículos e Utilização de Vagas</span>
+                            <span class="text-500 text-xs block">
+                                Monitoramento de entradas, saídas, tempo médio de permanência e concentração horária
+                            </span>
+                        </div>
+                        <div class="flex gap-2 align-items-center">
+                            <p:selectOneMenu id="filtroTipoVaga"
+                                             value="#{relatorioBean.filtro.tipoVaga}"
+                                             style="width: 170px;">
+                                <f:selectItem itemLabel="Todas as Vagas" itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems value="#{relatorioBean.tiposVaga}"
+                                               var="tv"
+                                               itemLabel="Vaga: #{tv.name().toUpperCase()}"
+                                               itemValue="#{tv}" />
+                                <p:ajax listener="#{relatorioBean.filtrarPorTipoVaga}"
+                                        process="@this"
+                                        update="painelOcupacao" />
+                            </p:selectOneMenu>
+
+                            <p:commandButton value="Exportar CSV (Ocupação)"
+                                             icon="pi pi-file-excel"
+                                             ajax="false"
+                                             styleClass="ui-button-outlined ui-button-secondary ui-button-sm">
+                                <p:dataExporter type="csv"
+                                                target="tabelaDetalhesOcupacao"
+                                                fileName="historico-ocupacao-easypark" />
+                            </p:commandButton>
+
+                            <p:commandButton value="Baixar Relatório em PDF"
+                                             icon="pi pi-file-pdf"
+                                             ajax="false"
+                                             styleClass="ui-button-danger ui-button-sm">
+                                <p:fileDownload value="#{relatorioBean.arquivoPdfOcupacao}" />
+                            </p:commandButton>
+                        </div>
+                    </div>
+
+                    <!-- CARDS EXECUTIVOS DE OCUPAÇÃO (HU24) -->
+                    <div class="grid mb-3">
+
+                        <!-- CARD 1: TOTAL DE VEÍCULOS ESTACIONADOS -->
+                        <div class="col-12 md:col-6 lg:col-3">
+                            <div class="erp-card border-left-3 border-purple-500 h-full flex flex-column justify-content-between">
+                                <div>
+                                    <div class="flex justify-content-between align-items-center mb-2">
+                                        <span class="text-600 font-semibold text-sm">Veículos Estacionados</span>
+                                        <div class="flex align-items-center justify-content-center bg-purple-50 border-round" style="width:2.25rem; height:2.25rem">
+                                            <i class="pi pi-car text-purple-600 text-lg"></i>
+                                        </div>
+                                    </div>
+                                    <div class="text-900 font-bold text-2xl mb-2">
+                                        #{relatorioBean.resumoOcupacao.totalEntradas}
+                                        <span class="text-sm font-normal text-600">entradas</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap justify-content-between pt-2 border-top-1 surface-border text-xs text-700">
+                                    <span>Rotativos: <b>#{relatorioBean.resumoOcupacao.entradasRotativo} (#{relatorioBean.resumoOcupacao.percentualRotativo}%)</b></span>
+                                    <span>Mensalistas: <b>#{relatorioBean.resumoOcupacao.entradasMensalista} (#{relatorioBean.resumoOcupacao.percentualMensalista}%)</b></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CARD 2: MÉDIA DE VEÍCULOS E TEMPO MÉDIO -->
+                        <div class="col-12 md:col-6 lg:col-3">
+                            <div class="erp-card border-left-3 border-blue-500 h-full flex flex-column justify-content-between">
+                                <div>
+                                    <div class="flex justify-content-between align-items-center mb-2">
+                                        <span class="text-600 font-semibold text-sm">
+                                            Média (#{relatorioBean.filtro.agrupamento.descricao})
+                                        </span>
+                                        <div class="flex align-items-center justify-content-center bg-blue-50 border-round" style="width:2.25rem; height:2.25rem">
+                                            <i class="pi pi-clock text-blue-600 text-lg"></i>
+                                        </div>
+                                    </div>
+                                    <div class="text-900 font-bold text-2xl mb-2">
+                                        #{relatorioBean.resumoOcupacao.mediaVeiculosPorPeriodo}
+                                        <span class="text-sm font-normal text-600">veículos / período</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap justify-content-between pt-2 border-top-1 surface-border text-xs text-700">
+                                    <span>Permanência Média: <b>#{relatorioBean.resumoOcupacao.tempoMedioFormatado}</b></span>
+                                    <span>Concluídas: <b>#{relatorioBean.resumoOcupacao.saidasConcluidas}</b></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CARD 3: PERÍODO DE MAIOR MOVIMENTO -->
+                        <div class="col-12 md:col-6 lg:col-3">
+                            <div class="erp-card border-left-3 border-teal-500 h-full flex flex-column justify-content-between">
+                                <div>
+                                    <div class="flex justify-content-between align-items-center mb-2">
+                                        <span class="text-600 font-semibold text-sm">Maior Movimento</span>
+                                        <div class="flex align-items-center justify-content-center bg-teal-50 border-round" style="width:2.25rem; height:2.25rem">
+                                            <i class="pi pi-angle-double-up text-teal-600 text-lg"></i>
+                                        </div>
+                                    </div>
+                                    <div class="text-teal-700 font-bold text-2xl mb-2">
+                                        #{relatorioBean.resumoOcupacao.qtdMaiorMovimento}
+                                        <span class="text-sm font-normal text-600">entradas</span>
+                                    </div>
+                                </div>
+                                <div class="pt-2 border-top-1 surface-border text-xs text-700">
+                                    <span>Pico de ocupação: <b>#{relatorioBean.resumoOcupacao.periodoMaiorMovimento}</b></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CARD 4: PERÍODO DE MENOR MOVIMENTO -->
+                        <div class="col-12 md:col-6 lg:col-3">
+                            <div class="erp-card border-left-3 border-orange-500 h-full flex flex-column justify-content-between">
+                                <div>
+                                    <div class="flex justify-content-between align-items-center mb-2">
+                                        <span class="text-600 font-semibold text-sm">Menor Movimento</span>
+                                        <div class="flex align-items-center justify-content-center bg-orange-50 border-round" style="width:2.25rem; height:2.25rem">
+                                            <i class="pi pi-angle-double-down text-orange-600 text-lg"></i>
+                                        </div>
+                                    </div>
+                                    <div class="text-orange-700 font-bold text-2xl mb-2">
+                                        #{relatorioBean.resumoOcupacao.qtdMenorMovimento}
+                                        <span class="text-sm font-normal text-600">entradas</span>
+                                    </div>
+                                </div>
+                                <div class="pt-2 border-top-1 surface-border text-xs text-700">
+                                    <span>Menor fluxo registrado: <b>#{relatorioBean.resumoOcupacao.periodoMenorMovimento}</b></span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- TABELAS DE ANÁLISE DE OCUPAÇÃO (POR PERÍODO, POR TIPO DE VAGA E FAIXA HORÁRIA) -->
+                    <div class="grid mb-3">
+
+                        <div class="col-12 lg:col-6">
+                            <p:panel header="Ocupação Consolidada por Período (#{relatorioBean.filtro.agrupamento.descricao})"
+                                     toggleable="false">
+                                <p:dataTable id="tabelaOcupacaoPeriodo"
+                                             value="#{relatorioBean.ocupacaoPorPeriodo}"
+                                             var="op"
+                                             stripedRows="true"
+                                             size="small"
+                                             paginator="true"
+                                             rows="8"
+                                             paginatorPosition="bottom"
+                                             responsiveLayout="scroll"
+                                             emptyMessage="Nenhuma entrada registrada no período.">
+
+                                    <p:column headerText="Período">
+                                        <span class="font-bold text-900">#{op.periodoLabel}</span>
+                                    </p:column>
+
+                                    <p:column headerText="Entradas" style="text-align: center;">
+                                        <span class="font-bold text-purple-700">#{op.totalEntradas}</span>
+                                    </p:column>
+
+                                    <p:column headerText="Rotativos" style="text-align: center;">
+                                        #{op.entradasRotativo}
+                                    </p:column>
+
+                                    <p:column headerText="Mensalistas" style="text-align: center;">
+                                        #{op.entradasMensalista}
+                                    </p:column>
+
+                                    <p:column headerText="Saídas" style="text-align: center;">
+                                        #{op.saidasConcluidas}
+                                    </p:column>
+
+                                    <p:column headerText="Tempo Médio" style="text-align: center;">
+                                        <span class="font-semibold">#{op.tempoMedioFormatado}</span>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panel>
+                        </div>
+
+                        <div class="col-12 lg:col-6">
+                            <div class="grid">
+                                <!-- UTILIZAÇÃO POR CATEGORIA DE VAGA -->
+                                <div class="col-12">
+                                    <p:panel header="Utilização por Categoria de Vaga"
+                                             toggleable="false">
+                                        <p:dataTable id="tabelaOcupacaoTipoVaga"
+                                                     value="#{relatorioBean.ocupacaoPorTipoVaga}"
+                                                     var="vt"
+                                                     stripedRows="true"
+                                                     size="small"
+                                                     responsiveLayout="scroll"
+                                                     emptyMessage="Sem registros de vagas.">
+
+                                            <p:column headerText="Categoria">
+                                                <span class="font-semibold">#{vt.tipoVaga}</span>
+                                            </p:column>
+
+                                            <p:column headerText="Capacidade" style="text-align: center;">
+                                                #{vt.totalVagasCadastradas} vagas
+                                            </p:column>
+
+                                            <p:column headerText="Usos no Período" style="text-align: center;">
+                                                <span class="font-bold">#{vt.totalUtilizacoes}</span>
+                                            </p:column>
+
+                                            <p:column headerText="Tempo Médio" style="text-align: center;">
+                                                #{vt.tempoMedioFormatado}
+                                            </p:column>
+
+                                            <p:column headerText="%" style="text-align: right; width: 75px;">
+                                                <p:tag severity="info" value="#{vt.percentualUtilizacao}%" />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:panel>
+                                </div>
+
+                                <!-- HORÁRIOS DE MAIOR MOVIMENTO -->
+                                <div class="col-12">
+                                    <p:panel header="Horários de Maior Movimento (Faixa Horária)"
+                                             toggleable="false">
+                                        <p:dataTable id="tabelaFaixasHorarias"
+                                                     value="#{relatorioBean.ocupacaoPorFaixaHoraria}"
+                                                     var="fh"
+                                                     stripedRows="true"
+                                                     size="small"
+                                                     rows="5"
+                                                     paginator="true"
+                                                     paginatorPosition="bottom"
+                                                     responsiveLayout="scroll"
+                                                     emptyMessage="Sem entradas registradas para cálculo de faixa horária.">
+
+                                            <p:column headerText="Faixa Horária">
+                                                <span class="font-semibold">#{fh.faixaHoraria}</span>
+                                            </p:column>
+
+                                            <p:column headerText="Total Entradas" style="text-align: center;">
+                                                <span class="font-bold">#{fh.totalEntradas}</span>
+                                            </p:column>
+
+                                            <p:column headerText="Rotativos" style="text-align: center;">
+                                                #{fh.entradasRotativo}
+                                            </p:column>
+
+                                            <p:column headerText="Mensalistas" style="text-align: center;">
+                                                #{fh.entradasMensalista}
+                                            </p:column>
+
+                                            <p:column headerText="Concentração" style="text-align: right; width: 95px;">
+                                                <p:tag severity="warning" value="#{fh.percentualMovimento}%" />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:panel>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- TABELA ANALÍTICA DE VEÍCULOS ESTACIONADOS NO PERÍODO -->
+                    <p:panel header="Registro Histórico de Veículos Estacionados no Período"
+                             toggleable="false">
+                        <p:dataTable id="tabelaDetalhesOcupacao"
+                                     value="#{relatorioBean.detalhesOcupacao}"
+                                     var="det"
+                                     stripedRows="true"
+                                     size="small"
+                                     paginator="true"
+                                     rows="10"
+                                     rowsPerPageTemplate="10,20,50"
+                                     paginatorPosition="bottom"
+                                     responsiveLayout="scroll"
+                                     emptyMessage="Nenhum veículo estacionado no período selecionado.">
+
+                            <p:column headerText="Placa" style="width: 110px;">
+                                <h:outputText value="#{det.placa}" styleClass="font-bold text-900" />
+                            </p:column>
+
+                            <p:column headerText="Veículo">
+                                <h:outputText value="#{det.veiculoDescricao}" />
+                            </p:column>
+
+                            <p:column headerText="Vaga" style="width: 120px; text-align: center;">
+                                <h:outputText value="#{det.vagaNome} (#{det.tipoVaga})" styleClass="font-semibold" />
+                            </p:column>
+
+                            <p:column headerText="Modalidade" style="width: 125px; text-align: center;">
+                                <p:tag severity="#{det.rotativo ? 'info' : 'secondary'}"
+                                       value="#{det.rotativo ? 'Rotativo' : 'Mensalista'}" />
+                            </p:column>
+
+                            <p:column headerText="Entrada" style="width: 145px;">
+                                <h:outputText value="#{det.dataEntradaFormatada}" />
+                            </p:column>
+
+                            <p:column headerText="Saída" style="width: 145px;">
+                                <h:outputText value="#{det.dataSaidaFormatada}" />
+                            </p:column>
+
+                            <p:column headerText="Duração" style="width: 105px; text-align: center;">
+                                <h:outputText value="#{det.duracaoFormatada}" styleClass="font-semibold" />
+                            </p:column>
+
+                            <p:column headerText="Status" style="width: 130px; text-align: center;">
+                                <p:tag severity="#{det.status == 'Concluída' ? 'success' : 'warning'}"
+                                       value="#{det.status}" />
+                            </p:column>
+
+                            <p:column headerText="Valor Pago" style="width: 120px; text-align: right;">
+                                <h:outputText value="#{det.valorPago}">
+                                    <f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+
+                    </h:panelGroup>
+                </p:tab>
+
+            </p:tabView>
+
+        </h:form>
+    </ui:define>
+</ui:composition>

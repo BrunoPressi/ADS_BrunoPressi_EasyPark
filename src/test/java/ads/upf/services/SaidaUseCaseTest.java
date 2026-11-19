@@ -47,7 +47,7 @@ class SaidaUseCaseTest {
 
         SaidaCreateDTO saida = new SaidaCreateDTO();
         saida.setPlaca("ABC1D23");
-        saida.setValor(BigDecimal.valueOf(70.00));
+        saida.setValor(BigDecimal.ONE); // valor adulterado pelo cliente deve ser ignorado
         saida.setMeioPagamento(PagamentoMeio.DINHEIRO);
 
         Vaga vaga = new Vaga();
@@ -68,6 +68,7 @@ class SaidaUseCaseTest {
         permanencia.setPagamento(pagamento);
 
         when(permanenciaRepository.verificarVeiculoEstacionado(saida.getPlaca())).thenReturn(Optional.of(permanencia));
+        when(pagamentoService.calcularValorPermanencia(any(), any())).thenReturn(BigDecimal.valueOf(70.00));
         when(pagamentoService.gerarPagamento(BigDecimal.valueOf(70.00), PagamentoMeio.DINHEIRO))
                 .thenReturn(pagamento);
 

@@ -17,7 +17,7 @@ public class SaidaCreateDTO {
     @NotNull(message = "O pagamento é obrigatório")
     private PagamentoMeio meioPagamento;
 
-    @NotNull(message = "O valor é obrigatório")
+    // Informativo: o valor cobrado é recalculado no servidor.
     private BigDecimal valor;
 
     @NotNull(message = "A placa do veículo é obrigatória")

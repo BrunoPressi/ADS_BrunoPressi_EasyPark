@@ -24,7 +24,7 @@ public class TokenService {
         SenhaToken token = new SenhaToken();
 
         token.setToken(UUID.randomUUID());
-        token.setExpirationDate(LocalDateTime.now().plusHours(2));
+        token.setExpirationDate(LocalDateTime.now().plusMinutes(15));
         token.setFuncionario(funcionario);
 
         tokenRepository.persist(token);

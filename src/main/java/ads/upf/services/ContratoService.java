@@ -57,7 +57,8 @@ public class ContratoService {
 
         List<Parcela> parcelas = parcelaService.gerarParcelas(
                 contratoCreateDTO.getDataInicio(),
-                contratoCreateDTO.getDataTermino()
+                contratoCreateDTO.getDataTermino(),
+                contratoCreateDTO.getValorContratado()
         );
 
         if (contratoCreateDTO.getContratoId() == null) {
@@ -81,10 +82,25 @@ public class ContratoService {
 
             contrato.setCliente(cliente);
             contrato.setVeiculo(veiculo);
+            contrato.setValorContratado(contratoCreateDTO.getValorContratado());
+
+            // Cobranças já emitidas no Asaas para as parcelas que serão substituídas
+            List<Parcela> parcelasAntigasComCobranca = contrato.getParcelas().stream()
+                    .filter(p -> p.getAsaasPaymentId() != null)
+                    .toList();
+
+            // Valida as regras de edição antes de qualquer chamada externa
             contrato.atualizarVigenciaEParcelas(
                     contratoCreateDTO.getDataInicio(),
                     contratoCreateDTO.getDataTermino(),
                     parcelas);
+
+            asaasService.deletarCobrancas(parcelasAntigasComCobranca);
+            if (parcelasAntigasComCobranca.stream().anyMatch(p -> p.getAsaasPaymentId() != null)) {
+                // Aborta (rollback) para não deixar cobranças órfãs que ainda poderiam ser pagas
+                throw new IllegalStateException(
+                        "Não foi possível cancelar as cobranças anteriores no Asaas. Tente novamente.");
+            }
         }
     }
 

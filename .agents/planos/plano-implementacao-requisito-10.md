@@ -9,19 +9,19 @@ Este documento consolida o diagnóstico técnico, as decisões de negócio valid
 ### Stack e Tecnologias
 * **Runtime & Framework Web:** Quarkus `3.39.1` (Java 21) + **Apache MyFaces `4.1.3`** (Jakarta Faces 4.0 / Jakarta EE 10).
 * **Persistência & Banco de Dados:** Hibernate ORM with Panache + **PostgreSQL `15`** (consultas analíticas via `EntityManager.createNativeQuery` em repositórios `@ApplicationScoped`).
-* **Componentes UI & Estilo:** **PrimeFaces `15.0.7`** (`quarkus-primefaces 4.15.17`), **PrimeFlex `3.3.1`** e folha de estilo centralizada `src/main/resources/META-INF/resources/css/easypark.css`.
+* **Componentes UI & Estilo:** **PrimeFaces `15.0.7`** (`quarkus-primefaces 4.15.17`), **PrimeFlex `3.3.1`** e folha de estilo centralizada `../../src/main/resources/META-INF/resources/css/easypark.css`.
 * **Exportação de Documentos:** **OpenPDF** (`com.github.librepdf:openpdf`, biblioteca oficial integrada ao PrimeFaces para geração de documentos PDF em memória via `DefaultStreamedContent` / `<p:fileDownload>`) + exportação tabular CSV nativa do PrimeFaces (`<p:dataExporter type="csv" />`).
-* **Segurança:** Rota `/pages/gestao/*` protegida pela política `policy-gerente` (`roles-allowed=gerente`) em `src/main/resources/application.properties`.
+* **Segurança:** Rota `/pages/gestao/*` protegida pela política `policy-gerente` (`roles-allowed=gerente`) em `../../src/main/resources/application.properties`.
 
 ### Entidades e Tabelas Fontes de Dados
 * **Financeiro (HU23):**
-  * `src/main/java/ads/upf/model/entities/Pagamento.java` (`pagamentos`): `id`, `valor`, `dataPagamento`, `status` (`pago`, `pendente`), `meioPagamento` (`PIX`, `CREDIT_CARD`, `DEBIT_CARD`, `DINHEIRO`), `permanencia_id`.
-  * `src/main/java/ads/upf/model/entities/Parcela.java` (`Parcelas`): `id`, `numeroParcela`, `dataVencimento`, `dataPagamento`, `valor`, `meioPagamento` (`PIX`, `BOLETO`, `CREDIT_CARD`, `DEBIT_CARD`, `UNDEFINED`), `status` (`paga`, `pendente`, `atrasada`, `cancelada`), `contrato_id`.
-  * `src/main/java/ads/upf/model/entities/Contrato.java` (`contratos`), `Cliente.java` (`clientes`) e `Usuario.java` (`usuarios`).
+  * `../../src/main/java/ads/upf/model/entities/Pagamento.java` (`pagamentos`): `id`, `valor`, `dataPagamento`, `status` (`pago`, `pendente`), `meioPagamento` (`PIX`, `CREDIT_CARD`, `DEBIT_CARD`, `DINHEIRO`), `permanencia_id`.
+  * `../../src/main/java/ads/upf/model/entities/Parcela.java` (`Parcelas`): `id`, `numeroParcela`, `dataVencimento`, `dataPagamento`, `valor`, `meioPagamento` (`PIX`, `BOLETO`, `CREDIT_CARD`, `DEBIT_CARD`, `UNDEFINED`), `status` (`paga`, `pendente`, `atrasada`, `cancelada`), `contrato_id`.
+  * `../../src/main/java/ads/upf/model/entities/Contrato.java` (`contratos`), `Cliente.java` (`clientes`) e `Usuario.java` (`usuarios`).
 * **Ocupação e Fluxo de Pátio (HU24):**
-  * `src/main/java/ads/upf/model/entities/Permanencia.java` (`permanencias`): `id`, `dataEntrada`, `dataSaida`, `status` (`em_andamento`, `concluida`), `isRotativo`, `veiculo_id`, `vaga_id`, `pagamento_id`.
-  * `src/main/java/ads/upf/model/entities/Vaga.java` (`vagas`): `id`, `nome` (padrão `LNN`), `status` (`disponivel`, `ocupada`, `em_manutencao`, `reservada`), `tipoVaga` (`comum`, `moto`, `pne`, `idoso`).
-  * `src/main/java/ads/upf/model/entities/Veiculo.java` (`veiculos`): `id`, `placa`, `marca`, `modelo`, `cor`, `tipo` (`carro`, `moto`, `van`).
+  * `../../src/main/java/ads/upf/model/entities/Permanencia.java` (`permanencias`): `id`, `dataEntrada`, `dataSaida`, `status` (`em_andamento`, `concluida`), `isRotativo`, `veiculo_id`, `vaga_id`, `pagamento_id`.
+  * `../../src/main/java/ads/upf/model/entities/Vaga.java` (`vagas`): `id`, `nome` (padrão `LNN`), `status` (`disponivel`, `ocupada`, `em_manutencao`, `reservada`), `tipoVaga` (`comum`, `moto`, `pne`, `idoso`).
+  * `../../src/main/java/ads/upf/model/entities/Veiculo.java` (`veiculos`): `id`, `placa`, `marca`, `modelo`, `cor`, `tipo` (`carro`, `moto`, `van`).
 
 ---
 
@@ -39,7 +39,7 @@ Este documento consolida o diagnóstico técnico, as decisões de negócio valid
    * Atalhos rápidos de período: `Hoje (Dia)`, `Esta Semana`, `Este Mês`, `Este Ano`, além de seleção livre de `Data Inicial` e `Data Final` (`<p:datePicker>`).
    * Seletor de agrupamento temporal (`PeriodoRelatorioTipo`): `DIA` (Diário), `SEMANA` (Semanal), `MES` (Mensal) e `ANO` (Anual).
 5. **Escopo de Interface e Exportação (Critérios de Aceite HU23, HU24 e RNF03):**
-   * Página única em `src/main/resources/META-INF/resources/pages/gestao/relatorios.xhtml` estruturada em **duas abas (`<p:tabView>`)**: **Relatório Financeiro** e **Relatório de Ocupação**, compartilhando a barra superior de filtros.
+   * Página única em `../../src/main/resources/META-INF/resources/pages/gestao/relatorios.xhtml` estruturada em **duas abas (`<p:tabView>`)**: **Relatório Financeiro** e **Relatório de Ocupação**, compartilhando a barra superior de filtros.
    * Estilo visual limpo baseado exclusivamente em cards `.erp-card` e tabelas `<p:dataTable>` (sem gráficos adicionais), mantendo 100% de padronização com `dashboard.xhtml` e `easypark.css`.
    * Exportação server-side para **PDF** (via OpenPDF com layout institucional executivo em menos de 10 segundos) e exportação tabular para **CSV** (`<p:dataExporter type="csv" />`).
 
@@ -62,26 +62,26 @@ Este documento consolida o diagnóstico técnico, as decisões de negócio valid
 
 ### Etapa 1 — Dependência OpenPDF, Enum e DTOs de Relatório (`[x] Concluída`)
 * **Arquivos:**
-  * `[MODIFICADO]` `pom.xml`
-  * `[CRIADO]` `src/main/java/ads/upf/model/enums/PeriodoRelatorioTipo.java`
-  * `[CRIADO]` `src/main/java/ads/upf/model/DTOs/relatorio/RelatorioFiltroDTO.java`
-  * `[CRIADO]` `src/main/java/ads/upf/model/DTOs/relatorio/RelatorioFinanceiroResumoDTO.java`
-  * `[CRIADO]` `src/main/java/ads/upf/model/DTOs/relatorio/RelatorioFinanceiroPeriodoDTO.java`
-  * `[CRIADO]` `src/main/java/ads/upf/model/DTOs/relatorio/RelatorioFinanceiroMeioPagamentoDTO.java`
-  * `[CRIADO]` `src/main/java/ads/upf/model/DTOs/relatorio/RelatorioFinanceiroLancamentoDTO.java`
-  * `[CRIADO]` `src/main/java/ads/upf/model/DTOs/relatorio/RelatorioOcupacaoResumoDTO.java`
-  * `[CRIADO]` `src/main/java/ads/upf/model/DTOs/relatorio/RelatorioOcupacaoPeriodoDTO.java`
-  * `[CRIADO]` `src/main/java/ads/upf/model/DTOs/relatorio/RelatorioOcupacaoVagaTipoDTO.java`
-  * `[CRIADO]` `src/main/java/ads/upf/model/DTOs/relatorio/RelatorioOcupacaoFaixaHorariaDTO.java`
-  * `[CRIADO]` `src/main/java/ads/upf/model/DTOs/relatorio/RelatorioOcupacaoDetalheDTO.java`
+  * `[MODIFICADO]` `../../pom.xml`
+  * `[CRIADO]` `../../src/main/java/ads/upf/model/enums/PeriodoRelatorioTipo.java`
+  * `[CRIADO]` `../../src/main/java/ads/upf/model/DTOs/relatorio/RelatorioFiltroDTO.java`
+  * `[CRIADO]` `../../src/main/java/ads/upf/model/DTOs/relatorio/RelatorioFinanceiroResumoDTO.java`
+  * `[CRIADO]` `../../src/main/java/ads/upf/model/DTOs/relatorio/RelatorioFinanceiroPeriodoDTO.java`
+  * `[CRIADO]` `../../src/main/java/ads/upf/model/DTOs/relatorio/RelatorioFinanceiroMeioPagamentoDTO.java`
+  * `[CRIADO]` `../../src/main/java/ads/upf/model/DTOs/relatorio/RelatorioFinanceiroLancamentoDTO.java`
+  * `[CRIADO]` `../../src/main/java/ads/upf/model/DTOs/relatorio/RelatorioOcupacaoResumoDTO.java`
+  * `[CRIADO]` `../../src/main/java/ads/upf/model/DTOs/relatorio/RelatorioOcupacaoPeriodoDTO.java`
+  * `[CRIADO]` `../../src/main/java/ads/upf/model/DTOs/relatorio/RelatorioOcupacaoVagaTipoDTO.java`
+  * `[CRIADO]` `../../src/main/java/ads/upf/model/DTOs/relatorio/RelatorioOcupacaoFaixaHorariaDTO.java`
+  * `[CRIADO]` `../../src/main/java/ads/upf/model/DTOs/relatorio/RelatorioOcupacaoDetalheDTO.java`
 * **Entregas:**
-  * Declarada a dependência `com.github.librepdf:openpdf` (`2.2.5`) no `pom.xml`.
+  * Declarada a dependência `com.github.librepdf:openpdf` (`2.2.5`) no `../../pom.xml`.
   * Criado o enum `PeriodoRelatorioTipo` (`DIA`, `SEMANA`, `MES`, `ANO`) com rótulos amigáveis e unidade correspondente para `DATE_TRUNC` no PostgreSQL (`day`, `week`, `month`, `year`).
   * Criados os DTOs de transporte para filtros, KPIs de resumo, séries agrupadas por período e listagens analíticas dos relatórios Financeiro e de Ocupação.
 
 ### Etapa 2 — Camada de Persistência: `RelatorioRepository` (`[x] Concluída`)
 * **Arquivos:**
-  * `[CRIADO]` `src/main/java/ads/upf/repositories/RelatorioRepository.java`
+  * `[CRIADO]` `../../src/main/java/ads/upf/repositories/RelatorioRepository.java`
 * **Entregas:**
   * Implementadas consultas nativas para o **Relatório Financeiro (HU23)**:
     * Agregação por subperíodo (`DIA`, `SEMANA`, `MES`, `ANO`) unificando `pagamentos` (`status = 'pago'`) e `parcelas` (`status = 'paga'`), respeitando o filtro de intervalo de datas e de origem (`TODAS`, `ROTATIVO`, `MENSALISTA`).
@@ -94,17 +94,17 @@ Este documento consolida o diagnóstico técnico, as decisões de negócio valid
 
 ### Etapa 3 — Camada de Serviço e Geração de PDF (`RelatorioService` e `RelatorioPdfGenerator`) (`[x] Concluída`)
 * **Arquivos:**
-  * `[CRIADO]` `src/main/java/ads/upf/services/RelatorioService.java`
-  * `[CRIADO]` `src/main/java/ads/upf/services/RelatorioPdfGenerator.java`
+  * `[CRIADO]` `../../src/main/java/ads/upf/services/RelatorioService.java`
+  * `[CRIADO]` `../../src/main/java/ads/upf/services/RelatorioPdfGenerator.java`
 * **Entregas:**
   * Implementada em `RelatorioService` a validação de datas (`dataInicio <= dataFim`) e o cálculo consolidado dos resumos executivos (Total, Média por subperíodo ativo, Maior e Menor subperíodo com movimento conforme **Opção A**).
   * Implementada em `RelatorioPdfGenerator` a geração dos documentos PDF A4 para o **Relatório Financeiro** e para o **Relatório de Ocupação**, formatados com cabeçalho institucional do EasyPark, metadados de auditoria (período, agrupamento, data/hora de geração e usuário logado), blocos de indicadores de resumo e tabelas completas.
 
 ### Etapa 4 — Camada de Apresentação: `RelatorioBean`, `relatorios.xhtml` e Menu Lateral (`[x] Concluída`)
 * **Arquivos:**
-  * `[CRIADO]` `src/main/java/ads/upf/presentation/RelatorioBean.java`
-  * `[CRIADO]` `src/main/resources/META-INF/resources/pages/gestao/relatorios.xhtml`
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/templates/layout.xhtml`
+  * `[CRIADO]` `../../src/main/java/ads/upf/presentation/RelatorioBean.java`
+  * `[CRIADO]` `../../src/main/resources/META-INF/resources/pages/gestao/relatorios.xhtml`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/templates/layout.xhtml`
 * **Entregas:**
   * Criado `RelatorioBean` (`@ViewScoped @Named("relatorioBean")`) com carregamento inicial automático do mês corrente, ações de atalho rápido (`aplicarAtalhoHoje`, `aplicarAtalhoSemana`, `aplicarAtalhoMes`, `aplicarAtalhoAno`), ação de filtragem e métodos de download de PDF (`DefaultStreamedContent`) para as duas abas.
   * Criada `pages/gestao/relatorios.xhtml` com cabeçalho `.page-header`, barra de filtros de período e agrupamento, `<p:tabView>` contendo a **Aba 1 (Relatório Financeiro)** e a **Aba 2 (Relatório de Ocupação)**, cards `.erp-card` com bordas laterais semânticas (`border-left-3`), tabelas `<p:dataTable>` compactas e botões de exportação **PDF** (`<p:fileDownload>`) e **CSV** (`<p:dataExporter type="csv" />`).
@@ -112,7 +112,7 @@ Este documento consolida o diagnóstico técnico, as decisões de negócio valid
 
 ### Etapa 5 — Testes Unitários e Verificação Final (`[x] Concluída`)
 * **Arquivos:**
-  * `[CRIADO]` `src/test/java/ads/upf/services/RelatorioServiceTest.java`
+  * `[CRIADO]` `../../src/test/java/ads/upf/services/RelatorioServiceTest.java`
 * **Entregas:**
   * Criados 8 testes unitários validando as regras de cálculo de resumo financeiro e de ocupação (totais, médias, identificação do maior e menor período com movimento segundo a Opção A, validação de datas inválidas, preenchimento de filtros padrão, delegação ao repositório) e a geração binária dos arquivos PDF (`%PDF-`).
   * Executada a suíte completa de testes unitários com sucesso (`Tests run: 214, Failures: 0, Errors: 0, Skipped: 0 — BUILD SUCCESS`), garantindo que todos os testes do projeto passam sem regressões.

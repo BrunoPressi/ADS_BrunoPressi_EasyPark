@@ -19,6 +19,7 @@ public class ParcelaResponseDTO {
     private LocalDate dataPagamento;
     private Integer numeroParcela;
     private BigDecimal valor;
+    private BigDecimal valorMulta;
     private ParcelaMeiosPagamento meioPagamento;
     private Boolean cobrancaEnviada;
     private ParcelaStatus status;

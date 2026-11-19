@@ -37,6 +37,10 @@ public class Parcela extends Auditado {
     @Column(nullable = false)
     private BigDecimal valor;
 
+    /** Multa por atraso (0,15% do valor), preenchida quando a parcela fica atrasada. */
+    @Column
+    private BigDecimal valorMulta;
+
     @Enumerated(EnumType.STRING)
     private ParcelaMeiosPagamento meioPagamento;
 

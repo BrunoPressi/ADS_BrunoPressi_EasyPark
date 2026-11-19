@@ -67,7 +67,8 @@ public class AsaasService {
                     p.getValor(),
                     p.getDataVencimento().toString(),
                     "Cobrança da parcela: " + p.getNumeroParcela(),
-                    referencia
+                    referencia,
+                    new AsaasPaymentRequest.Fine(ParcelaService.MULTA_PERCENTUAL)
             ));
         }
 

@@ -12,6 +12,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @ApplicationScoped
@@ -35,21 +36,24 @@ public class SaidaUseCase {
 
     @Transactional
     public PermanenciaResponseDTO novaSaida(SaidaCreateDTO saida) {
+        LocalDateTime dataSaida = LocalDateTime.now();
         Permanencia permanencia = permanenciaRepository.verificarVeiculoEstacionado(saida.getPlaca())
                 .orElseThrow(
                         () -> new EntityNotFoundException("Permanência não encontrada.")
                 );
 
         if (permanencia.getIsRotativo()) {
-            if (saida.getValor() == null || saida.getMeioPagamento() == null) {
-                throw new IllegalStateException("Veículo rotativo exige valor e meio de pagamento.");
+            if (saida.getMeioPagamento() == null) {
+                throw new IllegalStateException("Veículo rotativo exige meio de pagamento.");
             }
-            Pagamento pagamento = pagamentoService.gerarPagamento(saida.getValor(), saida.getMeioPagamento());
+            // O valor é sempre calculado no servidor; o valor enviado pela tela é ignorado.
+            BigDecimal valor = pagamentoService.calcularValorPermanencia(permanencia.getDataEntrada(), dataSaida);
+            Pagamento pagamento = pagamentoService.gerarPagamento(valor, saida.getMeioPagamento());
             permanencia.setPagamento(pagamento);
             pagamento.setPermanencia(permanencia);
         }
 
-        permanencia.setDataSaida(LocalDateTime.now());
+        permanencia.setDataSaida(dataSaida);
         permanencia.setStatus(PermanenciaStatus.concluida);
         vagaService.liberarVaga(permanencia.getVaga().getId());
         return PermanenciaMapper.INSTANCE.toPermanenciaDto(permanencia);

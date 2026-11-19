@@ -113,7 +113,7 @@ public class ContratosServiceTest {
 
             when(clienteService.verificarClienteExiste(any())).thenReturn(cliente);
             when(veiculoService.verificarVeiculoExiste(any())).thenReturn(veiculo);
-            when(parcelaService.gerarParcelas(any(), any())).thenReturn(List.of(new Parcela()));
+            when(parcelaService.gerarParcelas(any(), any(), any())).thenReturn(List.of(new Parcela()));
             when(contratoRepository.findByIdOptional(any())).thenReturn(Optional.of(contratoExistente));
 
             assertThatThrownBy(() -> contratoService.salvarContrato(dtoContrato))
@@ -133,7 +133,7 @@ public class ContratosServiceTest {
 
             when(clienteService.verificarClienteExiste(any())).thenReturn(cliente);
             when(veiculoService.verificarVeiculoExiste(any())).thenReturn(veiculo);
-            when(parcelaService.gerarParcelas(any(), any())).thenReturn(List.of(new Parcela()));
+            when(parcelaService.gerarParcelas(any(), any(), any())).thenReturn(List.of(new Parcela()));
             when(contratoRepository.findByIdOptional(any())).thenReturn(Optional.of(contratoExistente));
 
             assertThatThrownBy(() -> contratoService.salvarContrato(dtoContrato))

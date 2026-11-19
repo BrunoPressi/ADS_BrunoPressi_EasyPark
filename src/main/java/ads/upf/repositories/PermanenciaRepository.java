@@ -16,6 +16,18 @@ public class PermanenciaRepository implements PanacheRepository<Permanencia> {
                 .firstResultOptional();
     }
 
+    /**
+     * Retorna a permanência mais recente da placa, em qualquer status
+     * (em andamento ou concluída). Usada na busca por placa da listagem.
+     */
+    public Optional<Permanencia> buscarMaisRecentePorPlaca(String placa) {
+        return find(
+                "select p from Permanencia p join fetch p.veiculo join fetch p.vaga left join fetch p.pagamento " +
+                "where upper(p.veiculo.placa) = ?1 order by p.dataEntrada desc",
+                placa.trim().toUpperCase())
+                .firstResultOptional();
+    }
+
     public List<Permanencia> listarPaginado(int first, int pageSize) {
         return find(
                 "select p from Permanencia p join fetch p.veiculo join fetch p.vaga",

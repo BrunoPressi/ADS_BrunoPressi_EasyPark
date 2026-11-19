@@ -182,6 +182,34 @@ class ParcelaServiceWebhookTest {
         }
 
         @Test
+        @DisplayName("Aplica multa de 0,15% e torna o contrato inadimplente")
+        void aplicaMultaEMarcaContratoInadimplente() {
+            Contrato contrato = contratoAtivo();
+            Parcela p = parcela(ParcelaStatus.pendente, contrato);
+            p.setValor(new BigDecimal("180.00"));
+            when(query.firstResultOptional()).thenReturn(Optional.of(p));
+
+            parcelaService.marcarComoAtrasada(payment("PIX"));
+
+            assertThat(p.getValorMulta()).isEqualByComparingTo("0.27");
+            assertThat(contrato.getStatus()).isEqualTo(ContratoStatus.inadimplente);
+        }
+
+        @Test
+        @DisplayName("Pagar a única parcela atrasada regulariza o contrato inadimplente")
+        void pagamentoRegularizaContratoInadimplente() {
+            Contrato contrato = contratoAtivo();
+            contrato.setStatus(ContratoStatus.inadimplente);
+            Parcela p = parcela(ParcelaStatus.atrasada, contrato);
+            parcela(ParcelaStatus.pendente, contrato);
+            when(query.firstResultOptional()).thenReturn(Optional.of(p));
+
+            parcelaService.marcarComoPago(payment("PIX"));
+
+            assertThat(contrato.getStatus()).isEqualTo(ContratoStatus.ativo);
+        }
+
+        @Test
         @DisplayName("Não regride uma parcela já paga")
         void naoRegrideParcelaPaga() {
             Parcela p = parcela(ParcelaStatus.paga, contratoAtivo());

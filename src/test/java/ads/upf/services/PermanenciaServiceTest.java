@@ -51,6 +51,21 @@ class PermanenciaServiceTest {
     }
 
     @Test
+    @DisplayName("Busca por placa deve encontrar também permanências concluídas")
+    void deveBuscarPermanenciaConcluidaPelaPlaca() {
+        Permanencia p = new Permanencia();
+        p.setId(7L);
+        p.setStatus(ads.upf.model.enums.PermanenciaStatus.concluida);
+
+        when(permanenciaRepository.buscarMaisRecentePorPlaca("ABC1D23")).thenReturn(java.util.Optional.of(p));
+
+        PermanenciaResponseDTO resultado = permanenciaService.buscarPermanenciaPelaPlaca("ABC1D23");
+
+        assertThat(resultado).isNotNull();
+        assertThat(resultado.getId()).isEqualTo(7L);
+    }
+
+    @Test
     @DisplayName("Deve retornar lista vazia para parâmetros de paginação inválidos")
     void deveRetornarListaVaziaParaPaginacaoInvalida() {
         assertThat(permanenciaService.listarPaginado(-1, 10)).isEmpty();

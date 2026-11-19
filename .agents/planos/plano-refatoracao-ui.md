@@ -8,39 +8,39 @@ Este documento consolida o diagnóstico da camada de apresentação do projeto *
 
 ### Stack e Tecnologias
 * **Runtime & Framework Web:** Quarkus `3.39.1` (Java 21) + **Apache MyFaces `4.1.3`** (Jakarta Faces 4.0 / Jakarta EE 10).
-* **Componentes UI:** **PrimeFaces `15.0.7`** (`quarkus-primefaces 4.15.17`) com tema **`saga-blue`** (`src/main/resources/META-INF/web.xml`) e ícones **PrimeIcons** (`pi pi-*`).
+* **Componentes UI:** **PrimeFaces `15.0.7`** (`quarkus-primefaces 4.15.17`) com tema **`saga-blue`** (`../../src/main/resources/META-INF/web.xml`) e ícones **PrimeIcons** (`pi pi-*`).
 * **Utilitários CSS:** **PrimeFlex `3.3.1`** via WebJars (`primeflex/3.3.1/primeflex.min.css`).
-* **Permissões de Recursos Públicos:** Configuradas em `src/main/resources/application.properties` (`/pages/public/*`, `/login.xhtml`, `/logout.xhtml`, `/jakarta.faces.resource/*`).
+* **Permissões de Recursos Públicos:** Configuradas em `../../src/main/resources/application.properties` (`/pages/public/*`, `/login.xhtml`, `/logout.xhtml`, `/jakarta.faces.resource/*`).
 
 ### Mapa de Arquivos da Camada de Apresentação
 * **Template Principal:**
-  * `src/main/resources/META-INF/resources/templates/layout.xhtml` (usa `UserSessionBean`)
+  * `../../src/main/resources/META-INF/resources/templates/layout.xhtml` (usa `UserSessionBean`)
 * **Páginas Públicas / Autenticação (sem template):**
-  * `src/main/resources/META-INF/resources/login.xhtml`
-  * `src/main/resources/META-INF/resources/login-success.xhtml` (`UserSessionBean.redirecionar`)
-  * `src/main/resources/META-INF/resources/logout.xhtml` (`LogoutBean`)
-  * `src/main/resources/META-INF/resources/pages/public/esqueci-senha.xhtml` (`EsqueciSenhaBean`)
-  * `src/main/resources/META-INF/resources/pages/public/definir-senha.xhtml` (`NovaSenhaBean`)
-  * `src/main/resources/META-INF/resources/pages/public/nao-encontrado.xhtml`
+  * `../../src/main/resources/META-INF/resources/login.xhtml`
+  * `../../src/main/resources/META-INF/resources/login-success.xhtml` (`UserSessionBean.redirecionar`)
+  * `../../src/main/resources/META-INF/resources/logout.xhtml` (`LogoutBean`)
+  * `../../src/main/resources/META-INF/resources/pages/public/esqueci-senha.xhtml` (`EsqueciSenhaBean`)
+  * `../../src/main/resources/META-INF/resources/pages/public/definir-senha.xhtml` (`NovaSenhaBean`)
+  * `../../src/main/resources/META-INF/resources/pages/public/nao-encontrado.xhtml`
 * **Módulo de Gestão (`/pages/gestao/*` — role `gerente`):**
-  * `src/main/resources/META-INF/resources/pages/gestao/dashboard.xhtml` (`DashboardBean`)
-  * `src/main/resources/META-INF/resources/pages/gestao/vagas.xhtml` (`VagaBean`)
-  * `src/main/resources/META-INF/resources/pages/gestao/funcionarios.xhtml` (`FuncionarioBean`)
-  * `src/main/resources/META-INF/resources/pages/gestao/clientes.xhtml` (`ClienteBean`)
-  * `src/main/resources/META-INF/resources/pages/gestao/contratos.xhtml` (`ContratoBean`, `VeiculoBean`)
+  * `../../src/main/resources/META-INF/resources/pages/gestao/dashboard.xhtml` (`DashboardBean`)
+  * `../../src/main/resources/META-INF/resources/pages/gestao/vagas.xhtml` (`VagaBean`)
+  * `../../src/main/resources/META-INF/resources/pages/gestao/funcionarios.xhtml` (`FuncionarioBean`)
+  * `../../src/main/resources/META-INF/resources/pages/gestao/clientes.xhtml` (`ClienteBean`)
+  * `../../src/main/resources/META-INF/resources/pages/gestao/contratos.xhtml` (`ContratoBean`, `VeiculoBean`)
   * **Dialogs incluídos:**
-    * `src/main/resources/META-INF/resources/pages/gestao/dialogs/dialog-cliente.xhtml`
-    * `src/main/resources/META-INF/resources/pages/gestao/dialogs/dialog-veiculo.xhtml`
+    * `../../src/main/resources/META-INF/resources/pages/gestao/dialogs/dialog-cliente.xhtml`
+    * `../../src/main/resources/META-INF/resources/pages/gestao/dialogs/dialog-veiculo.xhtml`
   * **DataTables em Dialogs incluídos:**
-    * `src/main/resources/META-INF/resources/pages/gestao/dataTables/cliente-datatable.xhtml`
-    * `src/main/resources/META-INF/resources/pages/gestao/dataTables/veiculo-datatable.xhtml`
-    * `src/main/resources/META-INF/resources/pages/gestao/dataTables/parcelas-datatable.xhtml`
+    * `../../src/main/resources/META-INF/resources/pages/gestao/dataTables/cliente-datatable.xhtml`
+    * `../../src/main/resources/META-INF/resources/pages/gestao/dataTables/veiculo-datatable.xhtml`
+    * `../../src/main/resources/META-INF/resources/pages/gestao/dataTables/parcelas-datatable.xhtml`
 * **Módulo de Operação (`/pages/operacao/*` — role `atendente`):**
-  * `src/main/resources/META-INF/resources/pages/operacao/fluxo.xhtml` (`PermanenciaBean`)
+  * `../../src/main/resources/META-INF/resources/pages/operacao/fluxo.xhtml` (`PermanenciaBean`)
   * **Dialogs incluídos:**
-    * `src/main/resources/META-INF/resources/pages/operacao/dialogs/dialog-entrada.xhtml`
-    * `src/main/resources/META-INF/resources/pages/operacao/dialogs/dialog-saida.xhtml`
-    * `src/main/resources/META-INF/resources/pages/operacao/dialogs/dialog-pagamento.xhtml`
+    * `../../src/main/resources/META-INF/resources/pages/operacao/dialogs/dialog-entrada.xhtml`
+    * `../../src/main/resources/META-INF/resources/pages/operacao/dialogs/dialog-saida.xhtml`
+    * `../../src/main/resources/META-INF/resources/pages/operacao/dialogs/dialog-pagamento.xhtml`
 
 ---
 
@@ -75,7 +75,7 @@ Este documento consolida o diagnóstico da camada de apresentação do projeto *
 
 ## 3. Diretrizes de Identidade Visual e Layout (Padrão ERP com Sidebar)
 
-* **Folha de Estilo Centralizada:** Criar `src/main/resources/META-INF/resources/css/easypark.css` (carregada via `<h:outputStylesheet name="css/easypark.css"/>`, que é servida automaticamente por `/jakarta.faces.resource/*` já liberado no `application.properties`).
+* **Folha de Estilo Centralizada:** Criar `../../src/main/resources/META-INF/resources/css/easypark.css` (carregada via `<h:outputStylesheet name="css/easypark.css"/>`, que é servida automaticamente por `/jakarta.faces.resource/*` já liberado no `application.properties`).
 * **Paleta e Superfícies:**
   * Fundo da aplicação (`body`): `#f1f5f9` (Slate 100) para destacar cards e tabelas em fundo branco (`#ffffff`).
   * Sidebar esquerda: `#0f172a` / `#1e293b` (Slate 900/800) com texto claro `#cbd5e1`, hover `#334155` e item ativo com destaque azul (`#2563eb`).
@@ -102,19 +102,19 @@ Este documento consolida o diagnóstico da camada de apresentação do projeto *
 
 ### Etapa 1 — Fundação CSS e Template Principal com Sidebar (`[x] Concluída`)
 * **Arquivos:**
-  * `[CRIADO]` `src/main/resources/META-INF/resources/css/easypark.css`
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/templates/layout.xhtml`
+  * `[CRIADO]` `../../src/main/resources/META-INF/resources/css/easypark.css`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/templates/layout.xhtml`
 * **Entregas:**
   * Criado `easypark.css` (focado exclusivamente em Desktops e Notebooks) com variáveis CSS, estrutura `.app-layout`, `.app-sidebar`, `.app-main`, `.page-header`, `.erp-card`, padronização de `<p:dataTable>`, `<p:dialog>`, `.field` e layout de páginas públicas (`.auth-page`, `.auth-card`).
   * Refatorado `layout.xhtml` implementando a Sidebar esquerda fixa, removendo o `<p:panel header="#{viewTitle}">` vazio e mantendo `<p:growl id="messages">`, `<p:confirmDialog global="true">` e `<h:form id="menuForm">`.
 
 ### Etapa 2 — Telas Públicas e de Autenticação (`[x] Concluída`)
 * **Arquivos:**
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/login.xhtml`
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/logout.xhtml`
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/public/esqueci-senha.xhtml`
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/public/definir-senha.xhtml`
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/public/nao-encontrado.xhtml`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/login.xhtml`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/logout.xhtml`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/pages/public/esqueci-senha.xhtml`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/pages/public/definir-senha.xhtml`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/pages/public/nao-encontrado.xhtml`
 * **Entregas:**
   * Importados PrimeFlex e `easypark.css` em todas as 5 telas, incluindo `<meta name="viewport">`.
   * Padronizado card centralizado (`.auth-page` / `.auth-card`) com cabeçalho da marca EasyPark, alinhamento à esquerda para labels e inputs, mensagens de erro com `.field-error`, botão de submissão em largura total e links de retorno ao login/sistema (incluindo link de retorno em `logout.xhtml`).
@@ -122,17 +122,17 @@ Este documento consolida o diagnóstico da camada de apresentação do projeto *
 
 ### Etapa 3 — Refinamento do Dashboard (`[x] Concluída`)
 * **Arquivos:**
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/gestao/dashboard.xhtml`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/pages/gestao/dashboard.xhtml`
 * **Entregas:**
   * Definido `<ui:define name="title">EasyPark — Dashboard</ui:define>` e padronizado o cabeçalho com `.page-header`.
   * Substituído `shadow-5` nos cards e painéis por `.erp-card` com bordas e sombras sutis de ERP, mantendo os destaques laterais coloridos nos KPIs operacionais e adicionando `stripedRows="true"` nas duas tabelas de alertas inferiores.
 
 ### Etapa 4 — Telas de Gestão: Cadastros Base (Vagas, Funcionários e Clientes) (`[x] Concluída`)
 * **Arquivos:**
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/gestao/vagas.xhtml`
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/gestao/funcionarios.xhtml`
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/gestao/clientes.xhtml`
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/gestao/dialogs/dialog-cliente.xhtml`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/pages/gestao/vagas.xhtml`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/pages/gestao/funcionarios.xhtml`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/pages/gestao/clientes.xhtml`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/pages/gestao/dialogs/dialog-cliente.xhtml`
 * **Entregas:**
   * Adicionado cabeçalho de página (`.page-header`) com título, subtítulo e botão primário (`Nova Vaga`, `Novo Funcionário`, `Novo Cliente`).
   * Padronizada barra de filtro e `<p:dataTable>` (`stripedRows="true"`, `size="small"`, `responsiveLayout="scroll"`, correção de `'Em Manutenção'`, botões de ação padronizados).
@@ -140,11 +140,11 @@ Este documento consolida o diagnóstico da camada de apresentação do projeto *
 
 ### Etapa 5 — Telas de Gestão: Contratos e Sub-diálogos (`[x] Concluída`)
 * **Arquivos:**
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/gestao/contratos.xhtml`
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/gestao/dialogs/dialog-veiculo.xhtml`
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/gestao/dataTables/cliente-datatable.xhtml`
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/gestao/dataTables/veiculo-datatable.xhtml`
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/gestao/dataTables/parcelas-datatable.xhtml`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/pages/gestao/contratos.xhtml`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/pages/gestao/dialogs/dialog-veiculo.xhtml`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/pages/gestao/dataTables/cliente-datatable.xhtml`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/pages/gestao/dataTables/veiculo-datatable.xhtml`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/pages/gestao/dataTables/parcelas-datatable.xhtml`
 * **Entregas:**
   * Convertidos os 4 arquivos de include para `<ui:composition>`.
   * Adicionado cabeçalho de página em `contratos.xhtml`, formatados valores monetários com `<f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR"/>` e organizados os botões de consulta (`Cliente`, `Veículo`, `Parcelas`) e ações (`Editar`, `Cancelar`) de forma compacta e semântica.
@@ -152,10 +152,10 @@ Este documento consolida o diagnóstico da camada de apresentação do projeto *
 
 ### Etapa 6 — Módulo Operacional: Fluxo de Pátio (`[x] Concluída`)
 * **Arquivos:**
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/operacao/fluxo.xhtml`
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/operacao/dialogs/dialog-entrada.xhtml`
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/operacao/dialogs/dialog-saida.xhtml`
-  * `[MODIFICADO]` `src/main/resources/META-INF/resources/pages/operacao/dialogs/dialog-pagamento.xhtml`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/pages/operacao/fluxo.xhtml`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/pages/operacao/dialogs/dialog-entrada.xhtml`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/pages/operacao/dialogs/dialog-saida.xhtml`
+  * `[MODIFICADO]` `../../src/main/resources/META-INF/resources/pages/operacao/dialogs/dialog-pagamento.xhtml`
 * **Entregas:**
   * Convertidos os 3 diálogos para `<ui:composition>`.
   * Estruturado o cabeçalho operacional em `fluxo.xhtml` integrando o botão `Registrar Entrada` (`#formBotaoEntrada`) de forma alinhada ao topo da página.

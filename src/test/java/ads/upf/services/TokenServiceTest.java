@@ -45,7 +45,7 @@ class TokenServiceTest {
     }
 
     @Test
-    @DisplayName("criarToken gera UUID e expiração de 2h")
+    @DisplayName("criarToken gera UUID e expiração de 15 minutos")
     void criarTokenGeraUuidEExpiracao() {
         ArgumentCaptor<SenhaToken> captor = ArgumentCaptor.forClass(SenhaToken.class);
 
@@ -56,7 +56,8 @@ class TokenServiceTest {
         SenhaToken salvo = captor.getValue();
         assertThat(salvo.getToken()).isNotNull();
         assertThat(salvo.getExpirationDate())
-                .isAfter(starterTime.plusHours(2));
+                .isAfter(starterTime.plusMinutes(14))
+                .isBefore(starterTime.plusMinutes(16));
     }
 
     @Test

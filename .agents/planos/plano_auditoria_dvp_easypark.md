@@ -100,7 +100,7 @@ A base do sistema segue o DVP: arquitetura em camadas, Quarkus/JSF/PrimeFaces, P
 | RNF03 | Resposta <3 s | Lazy pagination; sem medição | **Não verificável** | `GenericLazyDataModel` |
 | RNF04 | Autenticação obrigatória | Políticas por caminho. Só `/pages/public/*`, login, logout e recursos são `permit`. Não há política catch-all | **Parcialmente atendido** | `application.properties` (`quarkus.http.auth.permission.*`) |
 | RNF05 | Restrição por perfil | `/pages/gestao/*` → gerente; `/pages/operacao/*` → atendente. **Só por caminho**: nenhum `@RolesAllowed` nos serviços/beans. O gerente não acessa operação | **Parcialmente atendido** | `application.properties`; `UserSessionBean`; ausência de `@RolesAllowed` |
-| RNF06 / RNF07 | Disponibilidade; Chrome/Edge/Firefox | Não verificável por leitura de código | **Não verificável** | `Dockerfile`, `docker-compose.yml` |
+| RNF06 / RNF07 | Disponibilidade; Chrome/Edge/Firefox | Não verificável por leitura de código | **Não verificável** | `../../Dockerfile`, `docker-compose.yml` |
 | RNF08 | Entradas, saídas e pagamentos persistidos permanentemente | `Permanencia` e `Pagamento` persistidos (entidades auditadas). Sem exclusão física identificada | **Atendido** | `Permanencia.java`, `Pagamento.java`, `Auditado.java` |
 
 ## 4. Problemas identificados

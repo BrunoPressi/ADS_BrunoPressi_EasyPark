@@ -23,6 +23,9 @@ public class ParcelaService {
 
     private static final BigDecimal VALOR_PADRAO = BigDecimal.valueOf(180.00);
 
+    /** Multa por atraso: 0,15% do valor da mensalidade (HU14). Expressa em percentual. */
+    public static final BigDecimal MULTA_PERCENTUAL = new BigDecimal("0.15");
+
     private final ParcelaRepository parcelaRepository;
 
     @Inject
@@ -35,6 +38,15 @@ public class ParcelaService {
      * Operação pura em memória (sem abertura de transação de banco).
      */
     public List<Parcela> gerarParcelas(LocalDate dataInicio, LocalDate dataTermino) {
+        return gerarParcelas(dataInicio, dataTermino, VALOR_PADRAO);
+    }
+
+    /**
+     * Gera as parcelas em memória com base no intervalo de datas e no valor contratado.
+     * Operação pura em memória (sem abertura de transação de banco).
+     */
+    public List<Parcela> gerarParcelas(LocalDate dataInicio, LocalDate dataTermino, BigDecimal valorParcela) {
+        BigDecimal valor = valorParcela != null ? valorParcela : VALOR_PADRAO;
 
         // Calcula a quantidade de meses considerando início e fim de calendário
         int totalMeses = calcularTotalMeses(dataInicio, dataTermino);
@@ -53,7 +65,7 @@ public class ParcelaService {
             parcela.setDataVencimento(dataVencimento);
             parcela.setNumeroParcela(i);
             parcela.setStatus(ParcelaStatus.pendente);
-            parcela.setValor(VALOR_PADRAO);
+            parcela.setValor(valor);
             parcela.setCobrancaEnviada(false);
 
             parcelas.add(parcela);
@@ -92,7 +104,9 @@ public class ParcelaService {
         parcela.setStatus(ParcelaStatus.paga);
         parcela.setDataPagamento(payment.paymentDate());
         parcela.setMeioPagamento(resolverMeioPagamento(payment.billingType()));
+        parcela.setValor(payment.value());
 
+        parcela.getContrato().regularizarSeSemAtrasos();
         parcela.getContrato().encerrarSeQuitado();
     }
 
@@ -121,6 +135,17 @@ public class ParcelaService {
         if (parcela.getStatus().equals(ParcelaStatus.paga)) return;
 
         parcela.setStatus(ParcelaStatus.atrasada);
+        parcela.setValorMulta(calcularMulta(parcela.getValor()));
+        if (parcela.getContrato() != null) {
+            parcela.getContrato().marcarInadimplente();
+        }
+    }
+
+    /** Multa de 0,15% sobre o valor da mensalidade, arredondada em 2 casas. */
+    public BigDecimal calcularMulta(BigDecimal valorParcela) {
+        if (valorParcela == null) return BigDecimal.ZERO;
+        return valorParcela.multiply(MULTA_PERCENTUAL)
+                .divide(BigDecimal.valueOf(100), 2, java.math.RoundingMode.HALF_UP);
     }
 
     @Transactional

@@ -35,7 +35,10 @@ public class PermanenciaService {
     }
 
     public PermanenciaResponseDTO buscarPermanenciaPelaPlaca(String placa) {
-        return permanenciaRepository.verificarVeiculoEstacionado(placa)
+        if (placa == null || placa.isBlank()) {
+            return null;
+        }
+        return permanenciaRepository.buscarMaisRecentePorPlaca(placa)
                 .map(PermanenciaMapper.INSTANCE::toPermanenciaDto)
                 .orElse(null);
     }

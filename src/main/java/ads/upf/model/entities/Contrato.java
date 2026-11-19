@@ -89,6 +89,9 @@ public class Contrato extends Auditado {
     }
 
     public void cancelar() {
+        if (this.status == ContratoStatus.inadimplente) {
+            throw new InvalidEditException("Não é possível cancelar um contrato inadimplente!");
+        }
         if (this.status == ContratoStatus.cancelado || this.status == ContratoStatus.encerrado) {
             throw new InvalidEditException("Contratos encerrados ou cancelados não podem ser cancelados!");
         }
@@ -103,6 +106,20 @@ public class Contrato extends Auditado {
         );
 
         this.status = ContratoStatus.cancelado;
+    }
+
+    /** Contrato ativo com parcela atrasada passa a inadimplente. */
+    public void marcarInadimplente() {
+        if (this.status == ContratoStatus.ativo) {
+            this.status = ContratoStatus.inadimplente;
+        }
+    }
+
+    /** Contrato inadimplente volta a ativo quando não restar nenhuma parcela atrasada. */
+    public void regularizarSeSemAtrasos() {
+        if (this.status == ContratoStatus.inadimplente && !possuiParcelaAtrasada()) {
+            this.status = ContratoStatus.ativo;
+        }
     }
 
     public void encerrarSeQuitado() {
